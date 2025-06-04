@@ -21,3 +21,12 @@
  * Debugger is active!
  * Debugger PIN: 139-255-421
 127.0.0.1 - - [04/Jun/2025 08:00:29] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jun/2025 08:02:39] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jun/2025 08:03:09] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jun/2025 08:04:47] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jun/2025 08:05:11] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jun/2025 08:05:16] "GET /api/health HTTP/1.1" 200 -
+Received message: Test SQL injection query
+Detected vulnerability type: sql_injection
+Sending response: 1099 characters
+127.0.0.1 - - [04/Jun/2025 08:05:22] "POST /stream_chat HTTP/1.1" 200 -
