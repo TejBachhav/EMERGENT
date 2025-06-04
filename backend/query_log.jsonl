@@ -1,1 +1,2 @@
 {"timestamp": "2025-06-04T08:05:22.062965", "input": "Test SQL injection query", "classification": "sql_injection", "session_id": "unknown"}
+{"timestamp": "2025-06-04T08:05:52.299230", "input": "What are SQL injection vulnerabilities?", "classification": "sql_injection", "session_id": "unknown"}
