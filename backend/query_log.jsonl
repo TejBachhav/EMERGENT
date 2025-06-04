@@ -1,0 +1,1 @@
+{"timestamp": "2025-06-04T08:05:22.062965", "input": "Test SQL injection query", "classification": "sql_injection", "session_id": "unknown"}
