@@ -1,0 +1,23 @@
+🛡️ Starting CyberGuard AI Security Backend...
+📡 Backend will be available at: http://localhost:5000
+🔗 Frontend connects to: /stream_chat endpoint
+✅ CORS enabled for frontend integration
+📝 Query logs saved to: /app/backend/query_log.jsonl
+🔍 Security modules: vulnerability_scanner, code_analyzer, threat_detector
+ * Serving Flask app 'cyberguard_server'
+ * Debug mode: on
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://10.64.133.247:5000
+[33mPress CTRL+C to quit[0m
+ * Restarting with stat
+🛡️ Starting CyberGuard AI Security Backend...
+📡 Backend will be available at: http://localhost:5000
+🔗 Frontend connects to: /stream_chat endpoint
+✅ CORS enabled for frontend integration
+📝 Query logs saved to: /app/backend/query_log.jsonl
+🔍 Security modules: vulnerability_scanner, code_analyzer, threat_detector
+ * Debugger is active!
+ * Debugger PIN: 139-255-421
+127.0.0.1 - - [04/Jun/2025 08:00:29] "GET /api/health HTTP/1.1" 200 -
