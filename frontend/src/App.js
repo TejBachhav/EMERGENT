@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import './App.css';
 
 const App = () => {
@@ -7,6 +8,7 @@ const App = () => {
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [isSending, setIsSending] = useState(false);
+  const [showReactions, setShowReactions] = useState(null);
   const messagesEndRef = useRef(null);
   const textareaRef = useRef(null);
 
@@ -19,16 +21,97 @@ const App = () => {
   }, [messages]);
 
   useEffect(() => {
-    // Welcome message
+    // Welcome message with enhanced security focus
     setMessages([
       {
         id: 1,
-        text: "Hello! I'm your security assistant. I can help you understand vulnerabilities, review code, and provide security guidance. How can I assist you today?",
+        text: "🛡️ **Security Assistant Activated**\n\nHello! I'm your cybersecurity expert. I can help you with:\n\n• 🔍 **Vulnerability Analysis** - Identify security flaws\n• 💻 **Code Review** - Security-focused code analysis  \n• 🚨 **Threat Assessment** - Evaluate potential risks\n• 🔒 **Best Practices** - Security implementation guidance\n• 📋 **Compliance** - Standards and frameworks\n\nWhat security challenge can I help you tackle today?",
         sender: 'bot',
-        timestamp: new Date().toLocaleTimeString()
+        timestamp: new Date().toLocaleTimeString(),
+        hasCode: false,
+        reactions: []
       }
     ]);
   }, []);
+
+  const detectCodeBlocks = (text) => {
+    const codeBlockRegex = /```(\w+)?\n([\s\S]*?)\n```/g;
+    const inlineCodeRegex = /`([^`]+)`/g;
+    
+    return codeBlockRegex.test(text) || inlineCodeRegex.test(text);
+  };
+
+  const parseMessageContent = (text) => {
+    const parts = [];
+    let lastIndex = 0;
+    
+    // Handle code blocks
+    const codeBlockRegex = /```(\w+)?\n([\s\S]*?)\n```/g;
+    let match;
+    
+    while ((match = codeBlockRegex.exec(text)) !== null) {
+      // Add text before code block
+      if (match.index > lastIndex) {
+        parts.push({
+          type: 'text',
+          content: text.slice(lastIndex, match.index)
+        });
+      }
+      
+      // Add code block
+      parts.push({
+        type: 'codeblock',
+        language: match[1] || 'javascript',
+        content: match[2]
+      });
+      
+      lastIndex = match.index + match[0].length;
+    }
+    
+    // Add remaining text
+    if (lastIndex < text.length) {
+      parts.push({
+        type: 'text',
+        content: text.slice(lastIndex)
+      });
+    }
+    
+    // If no code blocks found, handle inline code
+    if (parts.length === 0) {
+      const inlineCodeRegex = /`([^`]+)`/g;
+      let textContent = text;
+      let inlineMatch;
+      let processedParts = [];
+      lastIndex = 0;
+      
+      while ((inlineMatch = inlineCodeRegex.exec(text)) !== null) {
+        if (inlineMatch.index > lastIndex) {
+          processedParts.push({
+            type: 'text',
+            content: text.slice(lastIndex, inlineMatch.index)
+          });
+        }
+        
+        processedParts.push({
+          type: 'inline-code',
+          content: inlineMatch[1]
+        });
+        
+        lastIndex = inlineMatch.index + inlineMatch[0].length;
+      }
+      
+      if (lastIndex < text.length) {
+        processedParts.push({
+          type: 'text',
+          content: text.slice(lastIndex)
+        });
+      }
+      
+      return processedParts.length > 0 ? processedParts : [{ type: 'text', content: text }];
+    }
+    
+    return parts;
+  };
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || isSending) return;
@@ -37,7 +120,9 @@ const App = () => {
       id: Date.now(),
       text: inputMessage,
       sender: 'user',
-      timestamp: new Date().toLocaleTimeString()
+      timestamp: new Date().toLocaleTimeString(),
+      hasCode: detectCodeBlocks(inputMessage),
+      reactions: []
     };
 
     setMessages(prev => [...prev, userMessage]);
@@ -66,7 +151,9 @@ const App = () => {
         text: '',
         sender: 'bot',
         timestamp: new Date().toLocaleTimeString(),
-        isStreaming: true
+        isStreaming: true,
+        hasCode: false,
+        reactions: []
       };
 
       setMessages(prev => [...prev, botMessage]);
@@ -82,11 +169,17 @@ const App = () => {
 
         const chunk = decoder.decode(value);
         
-        setMessages(prev => prev.map(msg => 
-          msg.id === botMessageId 
-            ? { ...msg, text: msg.text + chunk }
-            : msg
-        ));
+        setMessages(prev => prev.map(msg => {
+          if (msg.id === botMessageId) {
+            const newText = msg.text + chunk;
+            return { 
+              ...msg, 
+              text: newText,
+              hasCode: detectCodeBlocks(newText)
+            };
+          }
+          return msg;
+        }));
       }
 
       // Mark streaming as complete
@@ -100,10 +193,12 @@ const App = () => {
       console.error('Error sending message:', error);
       setMessages(prev => [...prev, {
         id: Date.now() + 1,
-        text: "Sorry, I encountered an error. Please try again.",
+        text: "🚨 **Connection Error**\n\nI'm having trouble connecting to my security database. This could be due to:\n\n• Network connectivity issues\n• Backend service unavailable\n• Authentication problems\n\nPlease try again in a moment. If the issue persists, check your connection or contact support.",
         sender: 'bot',
         timestamp: new Date().toLocaleTimeString(),
-        isError: true
+        isError: true,
+        hasCode: false,
+        reactions: []
       }]);
       setIsTyping(false);
     } finally {
@@ -130,10 +225,113 @@ const App = () => {
     adjustTextareaHeight();
   }, [inputMessage]);
 
+  const handleReaction = (messageId, reaction) => {
+    setMessages(prev => prev.map(msg => {
+      if (msg.id === messageId) {
+        const existingReaction = msg.reactions.find(r => r.emoji === reaction);
+        if (existingReaction) {
+          return {
+            ...msg,
+            reactions: msg.reactions.map(r => 
+              r.emoji === reaction 
+                ? { ...r, count: r.count + 1 }
+                : r
+            )
+          };
+        } else {
+          return {
+            ...msg,
+            reactions: [...msg.reactions, { emoji: reaction, count: 1 }]
+          };
+        }
+      }
+      return msg;
+    }));
+    setShowReactions(null);
+  };
+
+  const formatMessageText = (content) => {
+    // Handle markdown-style formatting
+    return content
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      .replace(/^• (.*$)/gim, '<div class="bullet-point">• $1</div>')
+      .replace(/^\d+\. (.*$)/gim, '<div class="numbered-point">$&</div>');
+  };
+
+  const quickPrompts = [
+    "🔍 Analyze this code for vulnerabilities",
+    "🚨 Common SQL injection patterns",
+    "🔒 Secure authentication best practices",
+    "📋 OWASP Top 10 vulnerabilities",
+    "🛡️ Input validation techniques"
+  ];
+
+  const handleQuickPrompt = (prompt) => {
+    setInputMessage(prompt.replace(/^[🔍🚨🔒📋🛡️] /, ''));
+  };
+
+  const renderMessageContent = (message) => {
+    const parts = parseMessageContent(message.text);
+    
+    return parts.map((part, index) => {
+      switch (part.type) {
+        case 'codeblock':
+          return (
+            <div key={index} className="code-block-container">
+              <div className="code-header">
+                <span className="code-language">{part.language}</span>
+                <div className="code-actions">
+                  <button 
+                    className="code-action-btn"
+                    onClick={() => navigator.clipboard.writeText(part.content)}
+                    title="Copy code"
+                  >
+                    📋
+                  </button>
+                  <div className="security-indicator">
+                    <span className="security-badge">🛡️ Security</span>
+                  </div>
+                </div>
+              </div>
+              <SyntaxHighlighter
+                language={part.language}
+                style={atomDark}
+                customStyle={{
+                  margin: 0,
+                  borderRadius: '0 0 8px 8px',
+                  background: 'rgba(0, 0, 0, 0.7)',
+                }}
+                showLineNumbers={true}
+              >
+                {part.content}
+              </SyntaxHighlighter>
+            </div>
+          );
+        case 'inline-code':
+          return (
+            <code key={index} className="inline-code">
+              {part.content}
+            </code>
+          );
+        default:
+          return (
+            <span 
+              key={index}
+              dangerouslySetInnerHTML={{ 
+                __html: formatMessageText(part.content) 
+              }}
+            />
+          );
+      }
+    });
+  };
+
   return (
     <div className="app">
-      {/* Animated Background */}
+      {/* Enhanced Animated Background */}
       <div className="background">
+        <div className="cyber-grid"></div>
         <div className="stars"></div>
         <div className="floating-shapes">
           <div className="shape shape-1"></div>
@@ -146,23 +344,45 @@ const App = () => {
         <div className="gradient-orb orb-1"></div>
         <div className="gradient-orb orb-2"></div>
         <div className="gradient-orb orb-3"></div>
+        <div className="security-particles">
+          <div className="particle"></div>
+          <div className="particle"></div>
+          <div className="particle"></div>
+          <div className="particle"></div>
+          <div className="particle"></div>
+        </div>
       </div>
 
       {/* Main Chat Container */}
       <div className="chat-container">
-        {/* Header */}
+        {/* Enhanced Header */}
         <div className="chat-header">
           <div className="header-content">
             <div className="bot-avatar">
               <div className="avatar-ring"></div>
               <div className="avatar-core">🛡️</div>
+              <div className="security-pulse"></div>
             </div>
             <div className="header-info">
-              <h1 className="bot-name">Security Assistant</h1>
+              <h1 className="bot-name">CyberGuard AI</h1>
               <p className="bot-status">
                 <span className="status-dot"></span>
-                Online • Ready to help
+                Secured • Analyzing threats
+                <span className="threat-level">
+                  <span className="level-indicator green"></span>
+                  THREAT LEVEL: LOW
+                </span>
               </p>
+            </div>
+            <div className="security-stats">
+              <div className="stat">
+                <div className="stat-value">99.9%</div>
+                <div className="stat-label">Uptime</div>
+              </div>
+              <div className="stat">
+                <div className="stat-value">{messages.length}</div>
+                <div className="stat-label">Messages</div>
+              </div>
             </div>
           </div>
         </div>
@@ -176,16 +396,51 @@ const App = () => {
                 className={`message-wrapper ${message.sender}`}
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <div className={`message ${message.sender} ${message.isError ? 'error' : ''}`}>
+                <div className={`message ${message.sender} ${message.isError ? 'error' : ''} ${message.hasCode ? 'has-code' : ''}`}>
                   {message.sender === 'bot' && (
-                    <div className="bot-message-avatar">🛡️</div>
+                    <div className="bot-message-avatar">
+                      🛡️
+                      <div className="avatar-glow"></div>
+                    </div>
                   )}
                   <div className="message-content">
                     <div className="message-text">
-                      {message.text}
+                      {renderMessageContent(message)}
                       {message.isStreaming && <span className="cursor">|</span>}
                     </div>
-                    <div className="message-time">{message.timestamp}</div>
+                    <div className="message-footer">
+                      <div className="message-time">{message.timestamp}</div>
+                      {message.sender === 'bot' && !message.isStreaming && (
+                        <div className="message-actions">
+                          <button 
+                            className="reaction-btn"
+                            onClick={() => setShowReactions(showReactions === message.id ? null : message.id)}
+                          >
+                            😊
+                          </button>
+                          {showReactions === message.id && (
+                            <div className="reactions-popup">
+                              {['👍', '🎯', '🔥', '💡', '❤️'].map(emoji => (
+                                <button
+                                  key={emoji}
+                                  className="reaction-option"
+                                  onClick={() => handleReaction(message.id, emoji)}
+                                >
+                                  {emoji}
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                          <div className="message-reactions">
+                            {message.reactions.map(reaction => (
+                              <span key={reaction.emoji} className="reaction">
+                                {reaction.emoji} {reaction.count}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -194,13 +449,17 @@ const App = () => {
             {isTyping && (
               <div className="message-wrapper bot typing-indicator">
                 <div className="message bot">
-                  <div className="bot-message-avatar">🛡️</div>
+                  <div className="bot-message-avatar">
+                    🛡️
+                    <div className="avatar-glow"></div>
+                  </div>
                   <div className="message-content">
                     <div className="typing-animation">
                       <span></span>
                       <span></span>
                       <span></span>
                     </div>
+                    <div className="typing-text">Analyzing security patterns...</div>
                   </div>
                 </div>
               </div>
@@ -209,7 +468,24 @@ const App = () => {
           </div>
         </div>
 
-        {/* Input Area */}
+        {/* Quick Prompts */}
+        <div className="quick-prompts">
+          <div className="prompts-label">Quick Security Checks:</div>
+          <div className="prompts-container">
+            {quickPrompts.map((prompt, index) => (
+              <button
+                key={index}
+                className="quick-prompt"
+                onClick={() => handleQuickPrompt(prompt)}
+                disabled={isSending}
+              >
+                {prompt}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Enhanced Input Area */}
         <div className="input-container">
           <div className="input-wrapper">
             <textarea
@@ -217,7 +493,7 @@ const App = () => {
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Ask about security vulnerabilities, code review, or get security advice..."
+              placeholder="Describe your security concern, paste code for review, or ask about vulnerabilities..."
               className="message-input"
               rows="1"
               disabled={isSending}
@@ -236,6 +512,11 @@ const App = () => {
                 </svg>
               )}
             </button>
+          </div>
+          <div className="input-footer">
+            <div className="security-indicator-small">
+              🔒 End-to-end encrypted • 🛡️ Threat monitoring active
+            </div>
           </div>
         </div>
       </div>
