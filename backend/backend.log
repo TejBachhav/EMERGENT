@@ -30,3 +30,13 @@ Received message: Test SQL injection query
 Detected vulnerability type: sql_injection
 Sending response: 1099 characters
 127.0.0.1 - - [04/Jun/2025 08:05:22] "POST /stream_chat HTTP/1.1" 200 -
+Received message: What are SQL injection vulnerabilities?
+Detected vulnerability type: sql_injection
+Sending response: 1099 characters
+127.0.0.1 - - [04/Jun/2025 08:05:52] "POST /stream_chat HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jun/2025 08:06:24] "GET /api/health HTTP/1.1" 200 -
+127.0.0.1 - - [04/Jun/2025 08:06:24] "GET /api/health HTTP/1.1" 200 -
+Received message: Hello
+Detected vulnerability type: general
+Sending response: 1748 characters
+127.0.0.1 - - [04/Jun/2025 08:06:24] "POST /stream_chat HTTP/1.1" 200 -
