@@ -9,7 +9,6 @@ from gpt4all import GPT4All
 import faiss
 from functools import lru_cache
 import torch
-import requests  # Import requests for Gemini API calls
 
 app = Flask(__name__)
 app.secret_key = "supersecurekey"
@@ -88,13 +87,8 @@ faiss_index = None
 if os.path.exists("vuln_index.faiss"):
     faiss_index = faiss.read_index("vuln_index.faiss")
 
-# Ensure metadata is initialized properly
-try:
-    with open("vuln_metadata.json", "r") as f:
-        metadata = json.load(f)
-except (FileNotFoundError, json.JSONDecodeError):
-    print("Warning: vuln_metadata.json not found or invalid. Initializing empty metadata.")
-    metadata = {}
+with open("vuln_metadata.json", "r") as f:
+    metadata = json.load(f)
 
 # === Build FAISS index if not present ===
 def build_faiss_index(json_path="vulnerabilities.json"):
@@ -118,13 +112,7 @@ def build_faiss_index(json_path="vulnerabilities.json"):
         json.dump(data, f_meta)
     print("✅ FAISS index built and saved with optimizations.")
 
-# Removed Gemini API integration and related changes
-# Removed fetch_context_from_gemini function
-# Removed Gemini API logic from retrieve_context
-# Removed streaming logic from stream_chat
-# Removed debugging logs related to Gemini API and streaming
-
-# Restored original retrieve_context function
+# === Context Retrieval ===
 def retrieve_context(query, k=1):
     if faiss_index is None:
         return None
@@ -132,15 +120,10 @@ def retrieve_context(query, k=1):
     query_vec = embed_model.encode([query])
     D, I = faiss_index.search(query_vec, k)
 
+    # If distance > 50, treat as no match
     if D[0][0] > 50.0:
         return None
-
-    # Gracefully handle missing keys in metadata
-    try:
-        return metadata[I[0][0]]
-    except KeyError:
-        print(f"Warning: Key {I[0][0]} not found in metadata.")
-        return None
+    return metadata[I[0][0]]
 
 # === Prompt Builder ===
 def build_prompt(query, context_data):
@@ -153,9 +136,6 @@ Use the following context to help answer:
 
 Vulnerability: {context_data['name']}
 Description: {context_data['description']}
-
-CVSS Score: {context_data.get('cvss_score', 'Not available')}
-Risk Rating: {context_data.get('risk_rating', 'Not available')}
 
 Example:
 {context_data['examples'][0]['code']}
@@ -184,11 +164,10 @@ def detect_vulnerability_type(query):
     else:
         return 'general'
 
-# Fixed indentation issues and undefined variables
-
-# Corrected indentation in generate_security_response function
 @lru_cache(maxsize=128)
 def generate_security_response(query, vuln_type):
+    """Generate a security-focused response"""
+    
     if vuln_type in MOCK_VULNERABILITIES:
         vuln = MOCK_VULNERABILITIES[vuln_type]
         response = f"""🛡️ **{vuln['name']} Analysis**
@@ -224,6 +203,7 @@ def generate_security_response(query, vuln_type):
 
 Would you like me to analyze specific code or explain other security vulnerabilities?"""
     else:
+        # General security response
         response = f"""🛡️ **CyberGuard AI Security Analysis**
 
 Thank you for your security question: "{query}"
@@ -268,7 +248,7 @@ Please provide:
 • Compliance requirements (PCI DSS, HIPAA, etc.)
 
 How can I assist you further with your cybersecurity needs?"""
-
+    
     return response
 
 # === Flask Routes ===
@@ -291,7 +271,6 @@ def health_check():
         "security_modules": ["vulnerability_scanner", "code_analyzer", "threat_detector"]
     })
 
-# Updated stream_chat endpoint to format response as plain text
 @app.route("/stream_chat", methods=["POST"])
 def stream_chat():
     data = request.get_json()
@@ -322,10 +301,10 @@ def stream_chat():
     if len(prompt.split()) > max_context_window:
         prompt = ' '.join(prompt.split()[:max_context_window])
 
-    # Generate full response
-    full_response = llm.generate(prompt, max_tokens=1500, temp=0.5)
+    # 1. Generate full response (no streaming flag)
+    full_response = llm.generate(prompt, max_tokens=1500, temp=0.5)  # Reduced max_tokens and temperature
 
-    # Update session and log
+    # 2. Update session and log BEFORE streaming
     history.append({"role": "user", "content": user_input})
     history.append({"role": "assistant", "content": full_response})
     session["conversation"] = history
@@ -340,8 +319,12 @@ def stream_chat():
             "classification": classification
         }) + "\n")
 
-    # Return response as plain text
-    return Response(full_response, content_type="text/plain")
+    # 3. Return a generator that yields one character at a time
+    def generate_stream():
+        for char in full_response:
+            yield char
+
+    return Response(generate_stream(), mimetype="text/plain")
 
 # Add this route to handle OPTIONS requests for CORS
 @app.before_request
@@ -366,5 +349,3 @@ if __name__ == "__main__":
     print("🔍 Security modules: vulnerability_scanner, code_analyzer, threat_detector")
     
     app.run(debug=True, host="0.0.0.0", port=9000)
-
-

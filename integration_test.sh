@@ -14,17 +14,17 @@ fi
 
 echo ""
 echo "2. Testing Backend Health..."
-BACKEND_HEALTH=$(curl -s http://localhost:5000/api/health | jq -r '.status' 2>/dev/null)
+BACKEND_HEALTH=$(curl -s http://localhost:9000/api/health | jq -r '.status' 2>/dev/null)
 if [ "$BACKEND_HEALTH" = "healthy" ]; then
-    echo "✅ Backend healthy on localhost:5000"
-    curl -s http://localhost:5000/api/health | jq '.' 2>/dev/null || echo "Backend response: $(curl -s http://localhost:5000/api/health)"
+    echo "✅ Backend healthy on localhost:9000"
+    curl -s http://localhost:9000/api/health | jq '.' 2>/dev/null || echo "Backend response: $(curl -s http://localhost:9000/api/health)"
 else
     echo "❌ Backend not healthy"
 fi
 
 echo ""
 echo "3. Testing Chat Endpoint..."
-CHAT_TEST=$(curl -s -X POST http://localhost:5000/stream_chat \
+CHAT_TEST=$(curl -s -X POST http://localhost:9000/stream_chat \
   -H "Content-Type: application/json" \
   -d '{"message": "Hello"}' | head -c 100)
 if [ -n "$CHAT_TEST" ]; then
@@ -56,7 +56,7 @@ if [ "$FRONTEND_STATUS" = "200" ] && [ "$BACKEND_HEALTH" = "healthy" ] && [ -n "
     echo "   • Professional security analysis"
     echo ""
     echo "🔗 Access your chat interface at: http://localhost:3000"
-    echo "🛡️ Backend API available at: http://localhost:5000"
+    echo "🛡️ Backend API available at: http://localhost:9000"
 else
     echo "⚠️  Some components need attention"
 fi

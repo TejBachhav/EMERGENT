@@ -72,7 +72,7 @@ def get_stats():
 python app.py
 ```
 
-Make sure it runs on `http://localhost:5000` (or update the REACT_APP_BACKEND_URL)
+Make sure it runs on `http://localhost:9000` (or update the REACT_APP_BACKEND_URL)
 
 ## Frontend Integration Points
 
@@ -116,7 +116,7 @@ Make sure it runs on `http://localhost:5000` (or update the REACT_APP_BACKEND_UR
 
 ## Testing Your Integration
 
-1. **Start your Flask backend** (port 5000)
+1. **Start your Flask backend** (port 9000)
 2. **Frontend is already running** on the preview URL
 3. **Test with security queries**:
    - "What are SQL injection vulnerabilities?"
@@ -127,7 +127,7 @@ Make sure it runs on `http://localhost:5000` (or update the REACT_APP_BACKEND_UR
 
 Update your `.env` if needed:
 ```
-REACT_APP_BACKEND_URL=http://localhost:5000
+REACT_APP_BACKEND_URL=http://localhost:9000
 ```
 
 ## Security Features Supported

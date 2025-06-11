@@ -493,6 +493,14 @@ body {
   background: rgba(255, 255, 255, 0.3);
 }
 
+/* Ensure text wrapping and scrolling for message content and code blocks */
+.message-content {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+  max-width: 90%;
+}
+
 /* Enhanced Message Styles */
 .message-wrapper {
   display: flex;
@@ -632,6 +640,13 @@ body {
   border: 1px solid rgba(102, 126, 234, 0.3);
   background: rgba(0, 0, 0, 0.4);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: auto;
+  background-color: #1e1e1e;
+  padding: 10px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .code-header {

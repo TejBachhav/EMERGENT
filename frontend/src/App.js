@@ -9,6 +9,7 @@ const App = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [showReactions, setShowReactions] = useState(null);
+  const [mode, setMode] = useState('vulnerability');
   const messagesEndRef = useRef(null);
   const textareaRef = useRef(null);
 
@@ -217,7 +218,8 @@ const App = () => {
     const textarea = textareaRef.current;
     if (textarea) {
       textarea.style.height = 'auto';
-      textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+      const newHeight = Math.min(Math.max(textarea.scrollHeight, 35), 120);
+      textarea.style.height = `${newHeight}px`;
     }
   };
 
@@ -278,7 +280,7 @@ const App = () => {
       switch (part.type) {
         case 'codeblock':
           return (
-            <div key={index} className="code-block-container">
+            <div key={index} className="code-block-container" style={{ overflowX: 'auto', overflowY: 'auto', maxWidth: '100%', maxHeight: '300px', wordWrap: 'break-word' }}>
               <div className="code-header">
                 <span className="code-language">{part.language}</span>
                 <div className="code-actions">
@@ -301,6 +303,8 @@ const App = () => {
                   margin: 0,
                   borderRadius: '0 0 8px 8px',
                   background: 'rgba(0, 0, 0, 0.7)',
+                  overflowX: 'auto',
+                  maxWidth: '100%',
                 }}
                 showLineNumbers={true}
               >
@@ -310,14 +314,14 @@ const App = () => {
           );
         case 'inline-code':
           return (
-            <code key={index} className="inline-code">
-              {part.content}
+            <code key={index} className="inline-code" style={{ wordWrap: 'break-word', overflowWrap: 'break-word' }}>               {part.content}
             </code>
           );
         default:
           return (
             <span 
               key={index}
+              style={{ wordWrap: 'break-word', overflowWrap: 'break-word' }}
               dangerouslySetInnerHTML={{ 
                 __html: formatMessageText(part.content) 
               }}
@@ -325,6 +329,13 @@ const App = () => {
           );
       }
     });
+  };
+
+  // Add buttons for vulnerability-specific and general chatbot modes
+  const handleModeChange = (mode) => {
+    setInputMessage('');
+    setMessages([]);
+    setMode(mode);
   };
 
   return (
@@ -385,6 +396,22 @@ const App = () => {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Mode Selector */}
+        <div className="mode-selector">
+          <button
+            className={`mode-btn ${mode === 'vulnerability' ? 'active' : ''}`}
+            onClick={() => handleModeChange('vulnerability')}
+          >
+            Vulnerability-Specific Query
+          </button>
+          <button
+            className={`mode-btn ${mode === 'general' ? 'active' : ''}`}
+            onClick={() => handleModeChange('general')}
+          >
+            General Chatbot
+          </button>
         </div>
 
         {/* Messages Area */}
@@ -493,9 +520,10 @@ const App = () => {
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Describe your security concern, paste code for review, or ask about vulnerabilities..."
+              placeholder={mode === 'vulnerability' ? "Enter vulnerability name or description..." : "Describe your security concern, paste code for review, or ask about vulnerabilities..."}
               className="message-input"
               rows="1"
+              style={{ height: "35px", minHeight: "24px", maxHeight: "120px" }}
               disabled={isSending}
             />
             <button

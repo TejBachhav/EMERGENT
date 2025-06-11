@@ -1,0 +1,884 @@
+[
+  {
+    "name": "SQL Injection",
+    "description": "SQL Injection allows attackers to manipulate SQL queries by injecting malicious input. This can lead to unauthorized access, data leakage, or even destruction of the database.",
+    "examples": [
+      {
+        "language": "PHP",
+        "context": "Unescaped GET input",
+        "code": "$query = \"SELECT * FROM users WHERE email = '\" . $_GET['email'] . \"'\";"
+      },
+      {
+        "language": "SQL",
+        "context": "Using raw user input",
+        "code": "SELECT * FROM users WHERE email = 'user_email';"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "PHP",
+        "method": "Use parameterized queries",
+        "code": "$stmt = $pdo->prepare('SELECT * FROM users WHERE email = ?');\n$stmt->execute([$_GET['email']]);"
+      },
+      {
+        "language": "SQL",
+        "method": "Use prepared statements",
+        "code": "PREPARE stmt FROM 'SELECT * FROM users WHERE email = ?';\nEXECUTE stmt USING user_email;"
+      }
+    ],
+    "patch": "https://owasp.org/www-community/attacks/SQL_Injection",
+    "additional_recommendations": [
+      "Always validate and sanitize user inputs.",
+      "Use parameterized queries or prepared statements.",
+      "Implement database access controls and limit privileges.",
+      "Regularly audit and test your code for vulnerabilities."
+    ]
+  },
+  {
+    "name": "Cross-Site Scripting (XSS)",
+    "description": "XSS enables attackers to inject scripts into web pages viewed by other users.",
+    "examples": [
+      {
+        "language": "JavaScript",
+        "context": "Injecting HTML into DOM",
+        "code": "document.body.innerHTML = userInput;"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "JavaScript",
+        "method": "Escape output or use textContent",
+        "code": "element.textContent = userInput;"
+      }
+    ],
+    "patch": "https://owasp.org/www-community/attacks/xss"
+  },
+  {
+    "name": "Command Injection",
+    "description": "Command Injection occurs when input is passed to a system shell without sanitization.",
+    "examples": [
+      {
+        "language": "Python",
+        "context": "os.system with raw input",
+        "code": "os.system('ping ' + user_input)"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "Python",
+        "method": "Use subprocess with list input",
+        "code": "subprocess.run(['ping', user_input])"
+      }
+    ],
+    "patch": "https://owasp.org/www-community/attacks/Command_Injection"
+  },
+  {
+    "name": "Insecure Deserialization",
+    "description": "Leads to remote code execution when untrusted data is deserialized.",
+    "examples": [
+      {
+        "language": "Java",
+        "context": "Deserializing user input",
+        "code": "ObjectInputStream in = new ObjectInputStream(socket.getInputStream());\nObject obj = in.readObject();"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "Java",
+        "method": "Validate input classes or use JSON",
+        "code": "// Prefer JSON parsing libraries like Jackson or Gson"
+      }
+    ],
+    "patch": "https://owasp.org/www-community/vulnerabilities/Deserialization_of_untrusted_data"
+  },
+  {
+    "name": "Broken Authentication",
+    "description": "Occurs when attackers exploit poor authentication mechanisms.",
+    "examples": [
+      {
+        "language": "Node.js",
+        "context": "Weak password hashing",
+        "code": "const hashed = md5(password);"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "Node.js",
+        "method": "Use bcrypt or Argon2",
+        "code": "const bcrypt = require('bcrypt');\nbcrypt.hash(password, 10);"
+      }
+    ],
+    "patch": "https://owasp.org/Top10/A01_2021-Broken_Access_Control/"
+  },
+  {
+    "name": "Sensitive Data Exposure",
+    "description": "Occurs when sensitive information is not properly protected.",
+    "examples": [
+      {
+        "language": "Python",
+        "context": "Logging passwords",
+        "code": "print('User password:', password)"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "Python",
+        "method": "Avoid logging sensitive data",
+        "code": "# Do not log sensitive credentials"
+      }
+    ],
+    "patch": "https://owasp.org/www-project-top-ten/2017/A3_2017-Sensitive_Data_Exposure"
+  },
+  {
+    "name": "Security Misconfiguration",
+    "description": "Default settings, overly verbose errors, or unpatched systems expose vulnerabilities.",
+    "examples": [
+      {
+        "language": "Apache",
+        "context": "Verbose error pages",
+        "code": "ErrorDocument 404 /error.html"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "Apache",
+        "method": "Hide server version info",
+        "code": "ServerSignature Off\nServerTokens Prod"
+      }
+    ],
+    "patch": "https://owasp.org/Top10/A05_2021-Security_Misconfiguration/"
+  },
+  {
+    "name": "Using Components with Known Vulnerabilities",
+    "description": "Libraries or packages with public vulnerabilities can be exploited.",
+    "examples": [
+      {
+        "language": "JavaScript",
+        "context": "Old jQuery version",
+        "code": "<script src='https://code.jquery.com/jquery-1.7.1.min.js'></script>"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "JavaScript",
+        "method": "Use latest versions",
+        "code": "<script src='https://code.jquery.com/jquery-3.6.0.min.js'></script>"
+      }
+    ],
+    "patch": "https://owasp.org/www-community/vulnerabilities/Using_components_with_known_vulnerabilities"
+  },
+  {
+    "name": "Insufficient Logging & Monitoring",
+    "description": "Without proper logs, breaches go undetected.",
+    "examples": [
+      {
+        "language": "Python",
+        "context": "No logging on failed login",
+        "code": "if not is_valid(user):\n    return 'Unauthorized'"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "Python",
+        "method": "Log access attempts",
+        "code": "logger.warning('Failed login for user: %s', username)"
+      }
+    ],
+    "patch": "https://owasp.org/Top10/A09_2021-Security_Logging_and_Monitoring_Failures/"
+  },
+  {
+    "name": "Broken Access Control",
+    "description": "Access controls are not properly enforced on functions or endpoints.",
+    "examples": [
+      {
+        "language": "Django",
+        "context": "No permission check on endpoint",
+        "code": "@api_view(['GET'])\ndef user_list(request):\n    return Response(User.objects.all())"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "Django",
+        "method": "Use permission classes",
+        "code": "@permission_classes([IsAdminUser])"
+      }
+    ],
+    "patch": "https://owasp.org/Top10/A01_2021-Broken_Access_Control/"
+  },
+  {
+    "name": "Web Server Fingerprinting",
+    "description": "Exposing server details allows attackers to identify exploitable vulnerabilities.",
+    "examples": [
+      {
+        "language": "Apache",
+        "context": "Exposing server version",
+        "code": "ServerSignature On\nServerTokens Full"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "Apache",
+        "method": "Hide server details",
+        "code": "ServerSignature Off\nServerTokens Prod"
+      }
+    ],
+    "patch": "https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/01-Information_Gathering/02-Fingerprint_Web_Server",
+    "cve_id": "CVE-2025-30871",
+    "cvss_vector": "AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+    "risk_rating": "Low"
+  },
+  {
+    "name": "Application Fingerprinting",
+    "description": "Exposing application details helps attackers target specific vulnerabilities.",
+    "examples": [
+      {
+        "language": "HTTP",
+        "context": "Exposing framework version",
+        "code": "X-Powered-By: PHP/5.6.0"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "PHP",
+        "method": "Disable version exposure",
+        "code": "expose_php = Off"
+      }
+    ],
+    "patch": "https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/01-Information_Gathering/04-Fingerprint_Web_Application"
+  },
+  {
+    "name": "Information Disclosure via Web Content",
+    "description": "Sensitive information is exposed through comments, error messages, or hidden fields.",
+    "examples": [
+      {
+        "language": "HTML",
+        "context": "Hidden comment with credentials",
+        "code": "<!-- Database: dbname, User: admin -->"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "HTML",
+        "method": "Remove sensitive comments",
+        "code": "<!-- General comment -->"
+      }
+    ],
+    "patch": "https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management_Testing/04-Review_Webpage_Content_for_Information_Leakage"
+  },
+  {
+    "name": "Weak Transport Layer Security",
+    "description": "Insecure TLS/SSL configurations allow attackers to intercept sensitive data.",
+    "examples": [
+      {
+        "language": "Apache",
+        "context": "Using outdated SSL protocol",
+        "code": "SSLEngine on\nSSLProtocol SSLv3"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "Apache",
+        "method": "Use modern TLS protocols",
+        "code": "SSLEngine on\nSSLProtocol TLSv1.2 TLSv1.3"
+      }
+    ],
+    "patch": "https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management_Testing/09-Testing_for_Weak_Transport_Layer_Security",
+    "cve_id": "CVE-2023-4420",
+    "cvss_vector": "AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+    "risk_rating": "High"
+  },
+  {
+    "name": "Weak Cryptography",
+    "description": "Use of outdated or weak cryptographic algorithms risks data exposure.",
+    "examples": [
+      {
+        "language": "Node.js",
+        "context": "Using MD5 for hashing",
+        "code": "const hash = crypto.createHash('md5').update(data).digest('hex');"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "Node.js",
+        "method": "Use SHA-256 or stronger",
+        "code": "const hash = crypto.createHash('sha256').update(data).digest('hex');"
+      }
+    ],
+    "patch": "https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/09-Testing_for_Weak_Cryptography/01-Testing_for_Weak_Encryption"
+  },
+  {
+    "name": "SQL Injection",
+    "description": "Attackers manipulate SQL queries by injecting malicious input.",
+    "examples": [
+      {
+        "language": "PHP",
+        "context": "Unescaped GET input",
+        "code": "$query = \"SELECT * FROM users WHERE email = '\" . $_GET['email'] . \"'\";"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "PHP",
+        "method": "Use parameterized queries",
+        "code": "$stmt = $pdo->prepare('SELECT * FROM users WHERE email = ?');\n$stmt->execute([$_GET['email']]);"
+      }
+    ],
+    "patch": "https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/07-Input_Validation_Testing/05-Testing_for_SQL_Injection"
+  },
+  {
+    "name": "Cross-Site Scripting (XSS)",
+    "description": "Attackers inject scripts into web pages viewed by other users.",
+    "examples": [
+      {
+        "language": "JavaScript",
+        "context": "Injecting HTML into DOM",
+        "code": "document.body.innerHTML = userInput;"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "JavaScript",
+        "method": "Use textContent for safe output",
+        "code": "element.textContent = userInput;"
+      }
+    ],
+    "patch": "https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/07-Input_Validation_Testing/01-Testing_for_Reflected_Cross_Site_Scripting"
+  },
+  {
+    "name": "Command Injection",
+    "description": "Unvalidated input passed to system shell commands allows arbitrary command execution.",
+    "examples": [
+      {
+        "language": "Python",
+        "context": "os.system with raw input",
+        "code": "os.system('ping ' + user_input)"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "Python",
+        "method": "Use subprocess with list input",
+        "code": "subprocess.run(['ping', user_input])"
+      }
+    ],
+    "patch": "https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/07-Input_Validation_Testing/12-Testing_for_Command_Injection"
+  },
+  {
+    "name": "LDAP Injection",
+    "description": "Unvalidated input in LDAP queries allows unauthorized data access or manipulation.",
+    "examples": [
+      {
+        "language": "PHP",
+        "context": "Unescaped LDAP query",
+        "code": "$filter = \"(uid=\" . $_GET['username'] . \")\";\n$ldap_search = ldap_search($conn, $base_dn, $filter);"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "PHP",
+        "method": "Sanitize LDAP input",
+        "code": "$username = ldap_escape($_GET['username'], '', LDAP_ESCAPE_FILTER);\n$filter = \"(uid=$username)\";"
+      }
+    ],
+    "patch": "https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/07-Input_Validation_Testing/06-Testing_for_LDAP_Injection"
+  },
+  {
+    "name": "File Inclusion Vulnerability",
+    "description": "Attackers include malicious files to execute arbitrary code.",
+    "examples": [
+      {
+        "language": "PHP",
+        "context": "Unvalidated file inclusion",
+        "code": "include($_GET['page'] . '.php');"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "PHP",
+        "method": "Use a whitelist for file inclusion",
+        "code": "$pages = ['home', 'about', 'contact'];\n$page = $_GET['page'];\nif (in_array($page, $pages)) {\n    include($page . '.php');\n}"
+      }
+    ],
+    "patch": "https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/07-Input_Validation_Testing/11.2-Testing_for_Local_File_Inclusion",
+    "cve_id": "CVE-2023-22973",
+    "cvss_vector": "AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:N",
+    "risk_rating": "High"
+  },
+  {
+    "name": "Server-Side Request Forgery (SSRF)",
+    "description": "Attackers manipulate server-side requests to access internal systems or external resources.",
+    "examples": [
+      {
+        "language": "Python",
+        "context": "Unvalidated URL fetch",
+        "code": "import requests\nurl = request.args.get('url')\nresponse = requests.get(url)"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "Python",
+        "method": "Validate and whitelist URLs",
+        "code": "import requests\nallowed_hosts = ['api.example.com']\nurl = request.args.get('url')\nif urlparse(url).hostname in allowed_hosts:\n    response = requests.get(url)"
+      }
+    ],
+    "patch": "https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/07-Input_Validation_Testing/20-Testing_for_Server-Side_Request_Forgery",
+    "cve_id": "CVE-2025-21385",
+    "cvss_vector": "AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:N",
+    "risk_rating": "High"
+  },
+  {
+    "name": "HTTP Parameter Pollution",
+    "description": "Duplicate or manipulated HTTP parameters cause unexpected application behavior.",
+    "examples": [
+      {
+        "language": "PHP",
+        "context": "Unvalidated parameter handling",
+        "code": "$id = $_GET['id'];\necho process($id);"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "PHP",
+        "method": "Validate parameter uniqueness",
+        "code": "if (count($_GET['id']) > 1) {\n    die('Multiple id parameters detected');\n}\n$id = $_GET['id'];"
+      }
+    ],
+    "patch": "https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/07-Input_Validation_Testing/19-Testing_for_HTTP_Parameter_Pollution"
+  },
+  {
+    "name": "Insecure Direct Object References (IDOR)",
+    "description": "Attackers access unauthorized resources by manipulating object references.",
+    "examples": [
+      {
+        "language": "Node.js",
+        "context": "Unrestricted resource access",
+        "code": "app.get('/user/:id', (req, res) => {\n  res.send(getUserById(req.params.id));\n});"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "Node.js",
+        "method": "Implement access control checks",
+        "code": "app.get('/user/:id', (req, res) => {\n  if (req.user.id === req.params.id) {\n    res.send(getUserById(req.params.id));\n  } else {\n    res.status(403).send('Unauthorized');\n  }\n});"
+      }
+    ],
+    "patch": "https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/05-Authorization_Testing/04-Testing_for_Insecure_Direct_Object_References",
+    "cve_id": "CVE-2024-38874",
+    "cvss_vector": "AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:N",
+    "risk_rating": "Medium"
+  },
+  {
+    "name": "Broken Access Control",
+    "description": "Access controls are not properly enforced on functions or endpoints.",
+    "examples": [
+      {
+        "language": "Django",
+        "context": "No permission check on endpoint",
+        "code": "@api_view(['GET'])\ndef user_list(request):\n    return Response(User.objects.all())"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "Django",
+        "method": "Use permission classes",
+        "code": "@permission_classes([IsAdminUser])\n@api_view(['GET'])\ndef user_list(request):\n    return Response(User.objects.all())"
+      }
+    ],
+    "patch": "https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/05-Authorization_Testing/01-Testing_Directory_Traversal-File_Include"
+  },
+  {
+    "name": "Session Fixation",
+    "description": "Attackers hijack sessions by fixing a session ID known to them.",
+    "examples": [
+      {
+        "language": "PHP",
+        "context": "Reusing session ID",
+        "code": "session_id($_GET['sid']);\nsession_start();"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "PHP",
+        "method": "Regenerate session ID on login",
+        "code": "session_start();\nsession_regenerate_id(true);"
+      }
+    ],
+    "patch": "https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/06-Session_Management_Testing/03-Testing_for_Session_Fixation",
+    "cve_id": "CVE-2025-0126",
+    "cvss_vector": "AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N",
+    "risk_rating": "Medium"
+  },
+  {
+    "name": "Cross-Site Request Forgery (CSRF)",
+    "description": "Attackers trick users into performing actions without consent.",
+    "examples": [
+      {
+        "language": "HTML",
+        "context": "Form without CSRF token",
+        "code": "<form action='/transfer' method='POST'>\n  <input type='text' name='amount'>\n  <input type='submit'>\n</form>"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "HTML",
+        "method": "Include CSRF token",
+        "code": "<form action='/transfer' method='POST'>\n  <input type='hidden' name='csrf_token' value='{{csrf_token}}'>\n  <input type='text' name='amount'>\n  <input type='submit'>\n</form>"
+      }
+    ],
+    "patch": "https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/06-Session_Management_Testing/05-Testing_for_Cross_Site_Request_Forgery",
+    "cve_id": "CVE-2024-0555",
+    "cvss_vector": "AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+    "risk_rating": "Medium"
+  },
+  {
+    "name": "Browser Cache Weakness",
+    "description": "Sensitive data is improperly cached by browsers, risking exposure.",
+    "examples": [
+      {
+        "language": "HTTP",
+        "context": "Missing cache-control headers",
+        "code": "HTTP/1.1 200 OK\nContent-Type: text/html"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "HTTP",
+        "method": "Set proper cache-control headers",
+        "code": "HTTP/1.1 200 OK\nContent-Type: text/html\nCache-Control: no-store, no-cache, must-revalidate"
+      }
+    ],
+    "patch": "https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/06-Session_Management_Testing/07-Testing_for_Browser_Cache_Weaknesses",
+    "cve_id": "CVE-2020-10096",
+    "cvss_vector": "AV:L/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+    "risk_rating": "Medium"
+  },
+  {
+    "name": "Weak Session Cookie Attributes",
+    "description": "Missing or weak cookie attributes expose sessions to hijacking.",
+    "examples": [
+      {
+        "language": "PHP",
+        "context": "Insecure cookie settings",
+        "code": "setcookie('session_id', $session_id);"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "PHP",
+        "method": "Set secure cookie attributes",
+        "code": "setcookie('session_id', $session_id, ['secure' => true, 'httponly' => true, 'samesite' => 'Strict']);"
+      }
+    ],
+    "patch": "https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/06-Session_Management_Testing/02-Testing_for_Cookies_Attributes"
+  },
+  {
+    "name": "Weak Password Policy",
+    "description": "Weak password requirements allow attackers to guess or crack credentials.",
+    "examples": [
+      {
+        "language": "JavaScript",
+        "context": "No password complexity check",
+        "code": "if (password.length >= 6) { registerUser(password); }"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "JavaScript",
+        "method": "Enforce strong password policy",
+        "code": "if (password.length >= 12 && /[A-Z]/.test(password) && /[0-9]/.test(password)) { registerUser(password); }"
+      }
+    ],
+    "patch": "https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/04-Authentication_Testing/03-Testing_for_Weak_Password_Policy"
+  },
+  {
+    "name": "Weak Password Recovery Mechanism",
+    "description": "Flawed password recovery processes allow unauthorized access.",
+    "examples": [
+      {
+        "language": "PHP",
+        "context": "Predictable reset token",
+        "code": "$reset_token = md5($user_id);\nsendResetLink($reset_token);"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "PHP",
+        "method": "Use secure random tokens",
+        "code": "$reset_token = bin2hex(random_bytes(32));\nsendResetLink($reset_token);"
+      }
+    ],
+    "patch": "https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/04-Authentication_Testing/07-Testing_for_Weak_Password_Change_or_Reset_Functionalities",
+    "cve_id": "CVE-2024-28320",
+    "cvss_vector": "AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:N",
+    "risk_rating": "Medium"
+  },
+  {
+    "name": "Weak Lockout Mechanism",
+    "description": "Inadequate account lockout allows brute force attacks.",
+    "examples": [
+      {
+        "language": "Python",
+        "context": "No login attempt limit",
+        "code": "if check_password(user, password):\n    login(user)"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "Python",
+        "method": "Implement lockout after failed attempts",
+        "code": "if user.failed_attempts >= 5:\n    lock_account(user)\nelse if check_password(user, password):\n    login(user)\nelse:\n    user.failed_attempts += 1"
+      }
+    ],
+    "patch": "https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/04-Authentication_Testing/04-Testing_for_Account_Lockout_Mechanisms"
+  },
+  {
+    "name": "Insecure Deserialization",
+    "description": "Untrusted data deserialization leads to remote code execution.",
+    "examples": [
+      {
+        "language": "Java",
+        "context": "Deserializing user input",
+        "code": "ObjectInputStream in = new ObjectInputStream(socket.getInputStream());\nObject obj = in.readObject();"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "Java",
+        "method": "Use JSON parsing instead",
+        "code": "ObjectMapper mapper = new ObjectMapper();\nObject obj = mapper.readValue(json, Object.class);"
+      }
+    ],
+    "patch": "https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/08-Testing_for_Business_Logic/13-Testing_for_Insecure_Deserialization"
+  },
+  {
+    "name": "Business Logic Flaws",
+    "description": "Logic vulnerabilities allow attackers to abuse application functionality.",
+    "examples": [
+      {
+        "language": "PHP",
+        "context": "Unvalidated discount application",
+        "code": "$total = $price * $quantity;\nif ($_POST['discount']) $total *= 0.9;"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "PHP",
+        "method": "Validate discount eligibility",
+        "code": "if (user_has_discount($user_id)) $total *= 0.9;"
+      }
+    ],
+    "patch": "https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/08-Testing_for_Business_Logic/00-Testing_for_Business_Logic"
+  },
+  {
+    "name": "Improper HTTP Method Usage",
+    "description": "Allowing unsafe HTTP methods (e.g., TRACE) exposes the application to attacks.",
+    "examples": [
+      {
+        "language": "Apache",
+        "context": "Allowing TRACE method",
+        "code": "<LimitExcept GET POST>\n  Deny from all\n</LimitExcept>"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "Apache",
+        "method": "Disable unsafe methods",
+        "code": "TraceEnable Off"
+      }
+    ],
+    "patch": "https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management_Testing/07-Test_HTTP_Methods"
+  },
+  {
+    "name": "Insecure File Upload",
+    "description": "Unrestricted file uploads allow malicious files to be executed.",
+    "examples": [
+      {
+        "language": "PHP",
+        "context": "No file type validation",
+        "code": "move_uploaded_file($_FILES['file']['tmp_name'], 'uploads/' . $_FILES['file']['name']);"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "PHP",
+        "method": "Validate file type and size",
+        "code": "$allowed = ['jpg', 'png'];\n$ext = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);\nif (in_array($ext, $allowed) && $_FILES['file']['size'] < 1000000) {\n    move_uploaded_file($_FILES['file']['tmp_name'], 'uploads/' . $_FILES['file']['name']);\n}"
+      }
+    ],
+    "patch": "https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/07-Input_Validation_Testing/15-Testing_for_Unrestricted_File_Upload"
+  },
+  {
+    "name": "WebSocket Vulnerabilities",
+    "description": "Insecure WebSocket implementations allow data exposure or injection attacks.",
+    "examples": [
+      {
+        "language": "JavaScript",
+        "context": "Unvalidated WebSocket input",
+        "code": "ws.onmessage = (event) => { eval(event.data); };"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "JavaScript",
+        "method": "Sanitize WebSocket input",
+        "code": "ws.onmessage = (event) => { if (isValidJSON(event.data)) { process(JSON.parse(event.data)); } };"
+      }
+    ],
+    "patch": "https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/12-Client_Side_Testing/12-Testing_WebSockets"
+  },
+  {
+    "name": "DOM-Based XSS",
+    "description": "Client-side scripts manipulate the DOM with untrusted input, leading to XSS.",
+    "examples": [
+      {
+        "language": "JavaScript",
+        "context": "Unescaped URL parameter",
+        "code": "document.getElementById('output').innerHTML = location.hash;"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "JavaScript",
+        "method": "Use textContent for safe output",
+        "code": "document.getElementById('output').textContent = decodeURIComponent(location.hash);"
+      }
+    ],
+    "patch": "https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/12-Client_Side_Testing/03-Testing_for_DOM-based_Cross_Site_Scripting"
+  },
+  {
+    "name": "Insecure API Authentication",
+    "description": "Weak API authentication allows unauthorized access to endpoints.",
+    "examples": [
+      {
+        "language": "Node.js",
+        "context": "No API key validation",
+        "code": "app.get('/api/data', (req, res) => { res.json(data); });"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "Node.js",
+        "method": "Validate API keys",
+        "code": "app.get('/api/data', (req, res) => {\n  if (req.headers['api-key'] === validKey) {\n    res.json(data);\n  } else {\n    res.status(401).send('Unauthorized');\n  }\n});"
+      }
+    ],
+    "patch": "https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/11-API_Testing/01-Testing_for_API_Authentication"
+  },
+  {
+    "name": "Security Misconfiguration",
+    "description": "Default settings or verbose errors expose vulnerabilities.",
+    "examples": [
+      {
+        "language": "Apache",
+        "context": "Verbose error pages",
+        "code": "ErrorDocument 404 /error.html"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "Apache",
+        "method": "Hide server version info",
+        "code": "ServerSignature Off\nServerTokens Prod"
+      }
+    ],
+    "patch": "https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management_Testing/01-Test_Network-Infrastructure_Configuration"
+  },
+  {
+    "name": "Information Disclosure",
+    "description": "Sensitive information is exposed through error messages, comments, or misconfigured servers.",
+    "examples": [
+      {
+        "language": "PHP",
+        "context": "Verbose error message",
+        "code": "ini_set('display_errors', 1);\necho mysql_error();"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "PHP",
+        "method": "Disable error display",
+        "code": "ini_set('display_errors', 0);\nini_set('log_errors', 1);"
+      }
+    ],
+    "patch": "https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management_Testing/04-Review_Webpage_Content_for_Information_Leakage",
+    "cve_id": "CVE-2023-44206",
+    "cvss_vector": "AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+    "risk_rating": "High"
+  },
+  {
+    "name": "Broken Authentication",
+    "description": "Occurs when attackers exploit poor authentication mechanisms.",
+    "examples": [
+      {
+        "language": "Node.js",
+        "context": "Weak password hashing",
+        "code": "const hashed = md5(password);"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "Node.js",
+        "method": "Use bcrypt or Argon2",
+        "code": "const bcrypt = require('bcrypt');\nbcrypt.hash(password, 10);"
+      }
+    ],
+    "patch": "https://owasp.org/Top10/A01_2021-Broken_Access_Control/"
+  },
+  {
+    "name": "Sensitive Data Exposure",
+    "description": "Occurs when sensitive information is not properly protected.",
+    "examples": [
+      {
+        "language": "Python",
+        "context": "Logging passwords",
+        "code": "print('User password:', password)"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "Python",
+        "method": "Avoid logging sensitive data",
+        "code": "# Do not log sensitive credentials"
+      }
+    ],
+    "patch": "https://owasp.org/www-project-top-ten/2017/A3_2017-Sensitive_Data_Exposure"
+  },
+  {
+    "name": "Using Components with Known Vulnerabilities",
+    "description": "Libraries or packages with public vulnerabilities can be exploited.",
+    "examples": [
+      {
+        "language": "JavaScript",
+        "context": "Old jQuery version",
+        "code": "<script src='https://code.jquery.com/jquery-1.7.1.min.js'></script>"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "JavaScript",
+        "method": "Use latest versions",
+        "code": "<script src='https://code.jquery.com/jquery-3.6.0.min.js'></script>"
+      }
+    ],
+    "patch": "https://owasp.org/www-community/vulnerabilities/Using_components_with_known_vulnerabilities"
+  },
+  {
+    "name": "Insufficient Logging & Monitoring",
+    "description": "Without proper logs, breaches go undetected.",
+    "examples": [
+      {
+        "language": "Python",
+        "context": "No logging on failed login",
+        "code": "if not is_valid(user):\n    return 'Unauthorized'"
+      }
+    ],
+    "remediations": [
+      {
+        "language": "Python",
+        "method": "Log access attempts",
+        "code": "logger.warning('Failed login for user: %s', username)"
+      }
+    ],
+    "patch": "https://owasp.org/Top10/A09_2021-Security_Logging_and_Monitoring_Failures/"
+  }
+]
