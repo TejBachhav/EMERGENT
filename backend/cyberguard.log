@@ -2989,3 +2989,15 @@ Response (reference the Gemini Insight above):
 2025-06-10 17:33:40,554 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
 2025-06-10 17:33:40,669 - WARNING -  * Debugger is active!
 2025-06-10 17:33:40,677 - INFO -  * Debugger PIN: 122-842-223
+2025-06-11 10:44:25,006 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-11 10:44:25,083 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-11 10:44:25,195 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:9000
+ * Running on http://10.50.50.161:9000
+2025-06-11 10:44:25,195 - INFO - [33mPress CTRL+C to quit[0m
+2025-06-11 10:44:25,214 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-11 10:44:42,713 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-11 10:44:42,780 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-11 10:44:42,901 - WARNING -  * Debugger is active!
+2025-06-11 10:44:42,910 - INFO -  * Debugger PIN: 122-842-223
