@@ -22,5 +22,21 @@
   {
     "query": "provide the CVSS String/Vector for cross-site scripting",
     "context": "**XSS CVSS Vector Example (Reflected):**\n\n`AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N`\n\n**Explanation:**\n\n*   **AV:N** (Network): Vulnerability exploitable over the network.\n*   **AC:L** (Low): Attack complexity is low.\n*   **PR:N** (None): No privileges required.\n*   **UI:R** (Required): User interaction required.\n*   **S:C** (Changed): Scope is changed, affects other components.\n*   **C:L** (Low): Limited confidentiality impact.\n*   **I:L** (Low): Limited integrity impact.\n*   **A:N** (None): No availability impact.\n\nThe vector will vary depending on XSS type (stored, DOM) and impact.\n"
+  },
+  {
+    "query": "Who is Tejas Parekh",
+    "context": "Without more context, the name Tejas Parekh alone provides little actionable cybersecurity information. Further information is required to provide specific cybersecurity context. For example, is Tejas Parekh:\n\n*   **A known threat actor?** (e.g., associated with a specific APT group or malware)\n*   **A security researcher?** (e.g., known for vulnerability disclosures)\n*   **An employee/contractor** of an organization you are trying to secure?\n*   **Mentioned in leaked credentials?**\n*   **Related to a specific vulnerability?**\n\nWithout additional context, I cannot provide a useful cybersecurity response.\n"
+  },
+  {
+    "query": "Who is cristiano Ronaldo?",
+    "context": "This query likely probes for data security vulnerabilities related to celebrity impersonation or phishing attacks targeting fans.\n\nContext: User-provided data like \"Cristiano Ronaldo\" could be used to:\n\n*   Craft personalized phishing emails.\n*   Impersonate Ronaldo for account takeover.\n*   Attempt social engineering on support services.\n*   Identify possible passwords based on known facts.\n"
+  },
+  {
+    "query": "what is todays weather in Mumbai ?",
+    "context": "This query is not related to cybersecurity. No relevant context can be provided.\n"
+  },
+  {
+    "query": "provide the rest",
+    "context": "REST (Representational State Transfer) in cybersecurity often refers to **REST APIs**.\n\n*   **Security:** Secure REST APIs using **authentication** (e.g., API keys, OAuth), **authorization** (RBAC), **HTTPS (TLS encryption)**, **input validation**, **rate limiting**, and **Web Application Firewalls (WAFs)**.\n*   **Vulnerabilities:** Common risks include **injection attacks, broken authentication/authorization, data exposure, and denial-of-service.**\n*   **Testing:** Penetration testing should be conducted to assess security.\n"
   }
 ]

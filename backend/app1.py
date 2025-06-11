@@ -3,16 +3,22 @@ CyberGuard AI - Simple Backend with GPT4All Mistral Instruct 7B Q4
 A cybersecurity-focused chatbot using local GPT4All model
 """
 
-from flask import Flask, request, jsonify, session, Response
-from datetime import datetime
+from flask import Flask, request, jsonify, session, Response, g
+from datetime import datetime, timedelta
 import json
 import os
 import logging
-import requests # Added import
+import requests
 import subprocess
 import re
 import time
 import threading
+from werkzeug.security import generate_password_hash, check_password_hash
+from functools import wraps
+import jwt
+from pymongo import MongoClient
+import uuid
+
 try:
     from sentence_transformers import SentenceTransformer, util as st_util
     _sentence_transformers_available = True
@@ -20,6 +26,64 @@ try:
 except ImportError:
     _sentence_transformers_available = False
     _embedding_model = None
+
+# MongoDB setup
+MONGO_URI = os.getenv('MONGO_URI', 'mongodb://localhost:27017')
+mongo_client = MongoClient(MONGO_URI)
+db = mongo_client['cyberguard']
+users_col = db['users']
+chats_col = db['chats']
+
+def ensure_mongodb_collections():
+    """
+    Ensure 'users' and 'chats' collections exist with schema validation and unique index on username.
+    """
+    # USERS COLLECTION
+    user_validator = {
+        "$jsonSchema": {
+            "bsonType": "object",
+            "required": ["username", "password"],
+            "properties": {
+                "username": {"bsonType": "string", "description": "must be a string and is required"},
+                "password": {"bsonType": "string", "description": "must be a string and is required"}
+            }
+        }
+    }
+    if 'users' not in db.list_collection_names():
+        db.create_collection('users', validator=user_validator)
+    else:
+        db.command('collMod', 'users', validator=user_validator)
+    # Ensure unique index on username
+    db['users'].create_index('username', unique=True)
+
+    # CHATS COLLECTION
+    # Update chat_validator to require conversation_id
+    chat_validator = {
+        "$jsonSchema": {
+            "bsonType": "object",
+            "required": ["username", "id", "text", "sender", "timestamp", "conversation_id"],
+            "properties": {
+                "username": {"bsonType": "string"},
+                "id": {"bsonType": ["int", "long", "double", "string"]},
+                "text": {"bsonType": "string"},
+                "sender": {"bsonType": "string"},
+                "timestamp": {"bsonType": "string"},
+                "hasCode": {"bsonType": ["bool", "null"]},
+                "reactions": {"bsonType": ["array", "null"]},
+                "conversation_id": {"bsonType": "string"}
+            }
+        }
+    }
+    if 'chats' not in db.list_collection_names():
+        db.create_collection('chats', validator=chat_validator)
+    else:
+        db.command('collMod', 'chats', validator=chat_validator)
+
+# Call this at startup
+ensure_mongodb_collections()
+
+JWT_SECRET = os.getenv('JWT_SECRET', 'cyberguard-jwt-secret')
+JWT_ALGO = 'HS256'
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -648,6 +712,31 @@ def internal_server_error(error):
     return jsonify({"error": "Internal Server Error", "message": "An unexpected error occurred. Please try again later."}), 500
 
 # ============================================================================
+# AUTHENTICATION DECORATOR
+# ============================================================================
+
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = None
+        if 'Authorization' in request.headers:
+            auth_header = request.headers['Authorization']
+            if auth_header.startswith('Bearer '):
+                token = auth_header.split(' ')[1]
+        if not token:
+            return jsonify({'error': 'Token is missing!'}), 401
+        try:
+            data = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGO])
+            current_user = users_col.find_one({'username': data['username']})
+            if not current_user:
+                return jsonify({'error': 'User not found!'}), 401
+            g.user = current_user
+        except Exception as e:
+            return jsonify({'error': 'Token is invalid!'}), 401
+        return f(*args, **kwargs)
+    return decorated
+
+# ============================================================================
 # API ROUTES
 # ============================================================================
 
@@ -707,7 +796,84 @@ def list_vulnerabilities():
         "total": len(vuln_list)
     })
 
+@app.route('/register', methods=['POST'])
+def register():
+    data = request.get_json()
+    username = data.get('username', '').strip()
+    password = data.get('password', '').strip()
+    if not username or not password:
+        return jsonify({'error': 'Username and password required'}), 400
+    if users_col.find_one({'username': username}):
+        return jsonify({'error': 'Username already exists'}), 409
+    hashed_pw = generate_password_hash(password)
+    users_col.insert_one({'username': username, 'password': hashed_pw})
+    return jsonify({'message': 'Registration successful'}), 201
+
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    username = data.get('username', '').strip()
+    password = data.get('password', '').strip()
+    user = users_col.find_one({'username': username})
+    if not user or not check_password_hash(user['password'], password):
+        return jsonify({'error': 'Invalid username or password'}), 401
+    token = jwt.encode({'username': username, 'exp': datetime.utcnow() + timedelta(days=1)}, JWT_SECRET, algorithm=JWT_ALGO)
+    return jsonify({'token': token})
+
+@app.route('/conversations', methods=['GET'])
+@token_required
+def list_conversations():
+    """List all conversations for the current user, with metadata."""
+    username = g.user['username']
+    pipeline = [
+        {"$match": {"username": username}},
+        {"$group": {
+            "_id": "$conversation_id",
+            "start_time": {"$min": "$timestamp"},
+            "last_time": {"$max": "$timestamp"},
+            "message_count": {"$sum": 1},
+            "last_message": {"$last": "$text"}
+        }},
+        {"$sort": {"last_time": -1}}
+    ]
+    conversations = list(chats_col.aggregate(pipeline))
+    result = [
+        {
+            "conversation_id": c["_id"],
+            "start_time": c["start_time"],
+            "last_time": c["last_time"],
+            "message_count": c["message_count"],
+            "last_message": c["last_message"]
+        }
+        for c in conversations
+    ]
+    return jsonify({"conversations": result})
+
+@app.route('/chat_history', methods=['GET'])
+@token_required
+def chat_history():
+    username = g.user['username']
+    conversation_id = request.args.get('conversation_id')
+    query = {'username': username}
+    if conversation_id:
+        query['conversation_id'] = conversation_id
+    chats = chats_col.find(query).sort('timestamp', 1)
+    history = [
+        {
+            'id': chat.get('id'),
+            'text': chat.get('text'),
+            'sender': chat.get('sender'),
+            'timestamp': chat.get('timestamp'),
+            'hasCode': chat.get('hasCode', False),
+            'reactions': chat.get('reactions', []),
+            'conversation_id': chat.get('conversation_id')
+        }
+        for chat in chats
+    ]
+    return jsonify({'history': history})
+
 @app.route('/stream_chat', methods=['POST'])
+@token_required
 def stream_chat():
     """Main chat endpoint for cybersecurity queries with streaming response"""
     try:
@@ -715,8 +881,12 @@ def stream_chat():
             return jsonify({"error": "Request must be JSON"}), 400
         data = request.get_json()
         user_message = data.get('message', '').strip()
+        conversation_id = data.get('conversation_id')
         if not user_message:
             return jsonify({"error": "Message cannot be empty"}), 400
+        if not conversation_id:
+            # New conversation, generate a new UUID
+            conversation_id = str(uuid.uuid4())
         logger.info(f"Processing query: {user_message[:400]}...")
         vuln_type = detect_vulnerability_type(user_message)
         if vuln_type in VULNERABILITIES:
@@ -724,17 +894,69 @@ def stream_chat():
         else:
             response = generate_general_response(user_message)
         response = truncate_response(response)
-        def generate_stream():
-            for char in response:
-                yield char
-        return Response(generate_stream(), mimetype="text/plain")
+        # Save user message to chat history
+        username = g.user['username']
+        now = datetime.utcnow().isoformat()
+        user_msg_doc = {
+            'username': username,
+            'id': int(time.time() * 1000),
+            'text': user_message,
+            'sender': 'user',
+            'timestamp': now,
+            'hasCode': detectCodeBlocks(user_message),
+            'reactions': [],
+            'conversation_id': conversation_id
+        }
+        chats_col.insert_one(user_msg_doc)
+        # Save bot response to chat history
+        bot_msg_doc = {
+            'username': username,
+            'id': int(time.time() * 1000) + 1,
+            'text': response,
+            'sender': 'bot',
+            'timestamp': now,
+            'hasCode': detectCodeBlocks(response),
+            'reactions': [],
+            'conversation_id': conversation_id
+        }
+        chats_col.insert_one(bot_msg_doc)
+        return jsonify({
+            "response": response,
+            "vulnerability_type": vuln_type,
+            "conversation_id": conversation_id
+        })
     except Exception as e:
-        logger.error(f"Error processing chat request: {e}")
-        error_response = "[SYSTEM ERROR] I'm experiencing technical difficulties. Please try again in a moment."
-        def error_stream():
-            for char in error_response:
-                yield char
-        return Response(error_stream(), mimetype="text/plain")
+        logger.error(f"Error in stream_chat: {str(e)}")
+        return jsonify({"error": "An error occurred processing your request"}), 500
+    return Response(error_stream(), mimetype="text/plain")
+
+# JWT authentication decorator and code block detector must be defined before any route uses them
+
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = None
+        if 'Authorization' in request.headers:
+            auth_header = request.headers['Authorization']
+            if auth_header.startswith('Bearer '):
+                token = auth_header.split(' ')[1]
+        if not token:
+            return jsonify({'error': 'Token is missing!'}), 401
+        try:
+            data = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGO])
+            current_user = users_col.find_one({'username': data['username']})
+            if not current_user:
+                return jsonify({'error': 'User not found!'}), 401
+            g.user = current_user
+        except Exception as e:
+            return jsonify({'error': 'Token is invalid!'}), 401
+        return f(*args, **kwargs)
+    return decorated
+
+def detectCodeBlocks(text):
+    codeBlockRegex = re.compile(r'```(\w+)?\n([\s\S]*?)\n```')
+    inlineCodeRegex = re.compile(r'`([^`]+)`')
+    return bool(codeBlockRegex.search(text) or inlineCodeRegex.search(text))
 
 if __name__ == "__main__":
     print("[CYBERGUARD AI] Starting Security Backend with Llama 3 + Gemini")
