@@ -241,9 +241,10 @@ class GeminiAPI:
         self.sim_threshold = CACHE_SIMILARITY_THRESHOLD
         # No per-instance cache, use global helpers
 
-    def get_context(self, query: str) -> str:
+    def get_context(self, query: str, user_gemini_key: str = None) -> str:
         """
         Retrieves short, relevant context from the Gemini API or cache.
+        If user_gemini_key is provided, use it for the Gemini API call.
         """
         with CACHE_LOCK:
             cache = _load_cache()
@@ -262,29 +263,30 @@ class GeminiAPI:
         # Use google-generativeai if available for more robust Gemini API calls
         try:
             import google.generativeai as genai
-            api_key = os.getenv("GEMINI_API_KEY")
+            api_key = user_gemini_key or os.getenv("GEMINI_API_KEY")
+            if user_gemini_key:
+                logger.info("[GEMINI] Using user-supplied Gemini API key from frontend for this request.")
+            else:
+                logger.info("[GEMINI] Using backend/server Gemini API key for this request.")
             if not api_key:
                 self.failed_calls += 1
-                logger.error("[GEMINI] GEMINI_API_KEY not found in environment variables.")
-                return ("Gemini Insight: [ERROR] Gemini API key is not configured on the server. "
-                        "Real-time context could not be fetched. Please contact the administrator to set up the GEMINI_API_KEY.")
+                logger.error("[GEMINI] GEMINI_API_KEY not found in environment variables or user input.")
+                return ("Gemini Insight: [ERROR] Gemini API key is not configured on the server or provided by user. "
+                        "Real-time context could not be fetched. Please provide a valid Gemini API key.")
             genai.configure(api_key=api_key)
             model = genai.GenerativeModel("gemini-2.0-flash")
-            # Limit context to 2048 characters and instruct Gemini to be concise and specific
             gemini_prompt = (
                 f"INSTRUCTION: Provide only the most relevant, concise, and specific cybersecurity context for the following query. "
                 f"Limit your response to 2000 characters. Avoid generalities and focus on actionable, technical details.\n\nQUERY: {query}\n\nRESPONSE:")
             gemini_response = model.generate_content(gemini_prompt)
             context = getattr(gemini_response, 'text', None)
             if context:
-                # Truncate context to 2048 characters if needed
                 context = context[:3000]
                 elapsed_time = time.time() - start_time
                 self.successful_calls += 1
                 logger.info(f"[GEMINI] Successfully retrieved context from Gemini API (google-generativeai) - Length: {len(context)} characters, Time: {elapsed_time:.2f}s")
                 logger.debug(f"[GEMINI] Context preview: {context[:400]}{'...' if len(context) > 400 else ''}")
                 logger.info(f"[GEMINI] API Stats - Total: {self.api_call_count}, Success: {self.successful_calls}, Failed: {self.failed_calls}")
-                # Save to cache
                 with CACHE_LOCK:
                     cache = _load_cache()
                     cache.append({'query': query, 'context': context})
@@ -295,48 +297,41 @@ class GeminiAPI:
         except Exception as e:
             self.failed_calls += 1
             logger.error(f"[GEMINI] google-generativeai client error: {e}")
-            # Fallback to HTTP API below
 
-        api_key = os.getenv("GEMINI_API_KEY")
+        api_key = user_gemini_key or os.getenv("GEMINI_API_KEY")
+        if user_gemini_key:
+            logger.info("[GEMINI] Using user-supplied Gemini API key from frontend for this request.")
+        else:
+            logger.info("[GEMINI] Using backend/server Gemini API key for this request.")
         if not api_key:
             self.failed_calls += 1
-            logger.error("[GEMINI] GEMINI_API_KEY not found in environment variables.")
-            return ("Gemini Insight: [ERROR] Gemini API key is not configured on the server. "
-                    "Real-time context could not be fetched. Please contact the administrator to set up the GEMINI_API_KEY.")
+            logger.error("[GEMINI] GEMINI_API_KEY not found in environment variables or user input.")
+            return ("Gemini Insight: [ERROR] Gemini API key is not configured on the server or provided by user. "
+                    "Real-time context could not be fetched. Please provide a valid Gemini API key.")
 
-        # Corrected endpoint from the user's cURL command
         url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
-        logger.debug(f"[GEMINI] Using endpoint: {url.split('?')[0]}...")  # Log URL without API key
+        logger.debug(f"[GEMINI] Using endpoint: {url.split('?')[0]}...")
         headers = {
             'Content-Type': 'application/json'
         }
-        
-        # Payload structure based on the cURL command
         payload = {
             "contents": [
                 {
                     "parts": [
                         {
-                            "text": query # Use the user's query as the input text
+                            "text": query
                         }
                     ]
                 }
             ]
         }
-        
         logger.debug(f"[GEMINI] Request payload size: {len(str(payload))} characters")
-        
         try:
             logger.info("[GEMINI] Making POST request to Gemini API...")
-            response = requests.post(url, headers=headers, json=payload, timeout=15) # Added timeout
+            response = requests.post(url, headers=headers, json=payload, timeout=15)
             logger.info(f"[GEMINI] Response received - Status Code: {response.status_code}")
-            response.raise_for_status()  # Raise an exception for HTTP errors (4xx or 5xx)
-            
+            response.raise_for_status()
             response_json = response.json()
-            logger.debug(f"[GEMINI] Response JSON keys: {list(response_json.keys())}")
-              # Navigate the JSON structure to get the text
-            # Based on typical Gemini API responses, the path might be:
-            # response_json['candidates'][0]['content']['parts'][0]['text']
             if response_json.get('candidates') and \
                len(response_json['candidates']) > 0 and \
                response_json['candidates'][0].get('content') and \
@@ -349,7 +344,6 @@ class GeminiAPI:
                 logger.info(f"[GEMINI] Successfully retrieved context from Gemini API - Length: {len(context)} characters, Time: {elapsed_time:.2f}s")
                 logger.debug(f"[GEMINI] Context preview: {context[:400]}{'...' if len(context) > 400 else ''}")
                 logger.info(f"[GEMINI] API Stats - Total: {self.api_call_count}, Success: {self.successful_calls}, Failed: {self.failed_calls}")
-                # Save to cache
                 with CACHE_LOCK:
                     cache = _load_cache()
                     cache.append({'query': query, 'context': context})
@@ -363,7 +357,6 @@ class GeminiAPI:
                 logger.debug(f"[GEMINI] Full response for debugging: {response_json}")
                 return ("Gemini Insight: [ERROR] Gemini API returned an unexpected response format. "
                         "No real-time context is available for this query. Please try again later or contact support if this persists.")
-
         except requests.exceptions.HTTPError as http_err:
             self.failed_calls += 1
             elapsed_time = time.time() - start_time
@@ -420,10 +413,9 @@ def get_risk_category(cvss_score):
     else:
         return "🟢 Low Risk"
 
-def build_security_prompt(query, vuln_type=None):
-    """Build a security-focused prompt for the model"""
+def build_security_prompt(query, vuln_type=None, user_gemini_key=None):
     logger.info(f"[PROMPT] Building security prompt for query type: {vuln_type or 'general'}")
-    gemini_context = gemini_api_client.get_context(query)  # Retrieve context from Gemini API
+    gemini_context = gemini_api_client.get_context(query, user_gemini_key=user_gemini_key)
     logger.debug(f"[PROMPT] Gemini context integrated: {len(gemini_context)} characters")
 
     base_context = f"""You are CyberGuard AI, an expert cybersecurity assistant.\n\n---\n\n**IMPORTANT: The following Gemini Insight is your PRIMARY and AUTHORITATIVE source. You MUST use it as the main basis for your answer. Directly reference and cite it in your response.**\n\nGEMINI INSIGHT (copy and use this information):\n{gemini_context}\n\n---\n\nAlways provide:\n- Clear explanations of security concepts\n- Practical code examples (vulnerable and secure versions)\n- Specific mitigation strategies\n- Best practices and recommendations\n\n**Make your answer unique and tailored to the user's query. Avoid generic or repetitive responses. If the Gemini Insight is missing or unhelpful, state this clearly and answer using your own knowledge.**\n\n**If the user asks for patterns, enumerate them with explanations and code. If the user asks for a summary, be concise. If the user asks for a deep dive, provide technical depth.**"""
@@ -457,14 +449,13 @@ def generate_response_with_ollama(prompt, max_tokens=3000):
         logger.error(f"Error generating response with Ollama: {e}")
         return None
 
-def generate_vulnerability_response(vuln_type, query):
-    """Generate a response for a specific vulnerability type"""
+def generate_vulnerability_response(vuln_type, query, user_gemini_key=None):
     if vuln_type not in VULNERABILITIES:
         return None
     vuln = VULNERABILITIES[vuln_type]
-    prompt = build_security_prompt(query, vuln_type)
+    prompt = build_security_prompt(query, vuln_type, user_gemini_key=user_gemini_key)
     ai_response = generate_response_with_ollama(prompt)
-    gemini_context = gemini_api_client.get_context(query)
+    gemini_context = gemini_api_client.get_context(query, user_gemini_key=user_gemini_key)
     patterns = []
     for line in gemini_context.splitlines():
         if re.match(r"^\s*([*\-]|\d+\.)", line):
@@ -523,9 +514,8 @@ def generate_vulnerability_response(vuln_type, query):
         response = f"{vuln_emoji} **{vuln['name']} Security Analysis**\n\n{patterns_section}**📝 Description:**\n{vuln['description']}\n\n**📊 Risk Assessment:**\n- **Severity Level:** {vuln['severity']} (CVSS Score: {cvss_score_str})\n- **Risk Category:** {risk_category}\n- **CVSS Vector:** {cvss_vector}\n\n**🚨 Vulnerable Code Example:**\n```{lang_syntax}\n{vuln['example']}\n```\n\n**✅ Secure Implementation:**\n```{lang_syntax}\n{vuln['secure_example']}\n```\n\n**🔧 Mitigation Strategies:**\n{vuln['mitigation']}\n\n**📚 Security Resources:**\n{owasp_ref}• OWASP Top 10 Security Risks\n{cwe_ref}• SANS Top 25 Most Dangerous Software Errors\n• NIST Cybersecurity Framework Guidelines\n• CVE Database and NVD"
     return response
 
-def generate_general_response(query):
-    """Generate a general cybersecurity response using GPT4All"""
-    prompt = build_security_prompt(query)
+def generate_general_response(query, user_gemini_key=None):
+    prompt = build_security_prompt(query, user_gemini_key=user_gemini_key)
     ai_response = generate_response_with_ollama(prompt, max_tokens=3000)
     
     if ai_response:
@@ -667,17 +657,22 @@ def calculate_cvss_base_score(cvss_vector):
 # CORS HANDLERS
 # ============================================================================
 
+ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://localhost:5000",
+    "http://localhost:9000"
+]
+
 @app.before_request
 def handle_preflight():
     """Handle CORS preflight requests"""
     if request.method == "OPTIONS":
         response = Response()
         origin = request.headers.get('Origin')
-        allowed_origins = ["http://localhost:3000", "http://localhost:5000", "http://localhost:9000"]
-        if origin in allowed_origins:
+        if origin in ALLOWED_ORIGINS:
             response.headers["Access-Control-Allow-Origin"] = origin
         response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
-        response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS, DELETE"
         response.headers["Access-Control-Allow-Credentials"] = "true"
         return response
 
@@ -685,10 +680,11 @@ def handle_preflight():
 def after_request(response):
     """Add CORS headers to all responses"""
     origin = request.headers.get('Origin')
-    allowed_origins = ["http://localhost:3000", "http://localhost:5000", "http://localhost:9000"]
-    if origin in allowed_origins:
+    if origin in ALLOWED_ORIGINS:
         response.headers["Access-Control-Allow-Origin"] = origin
         response.headers["Access-Control-Allow-Credentials"] = "true"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS, DELETE"
     return response
 
 # ============================================================================
@@ -818,7 +814,7 @@ def login():
     if not user or not check_password_hash(user['password'], password):
         return jsonify({'error': 'Invalid username or password'}), 401
     token = jwt.encode({'username': username, 'exp': datetime.utcnow() + timedelta(days=1)}, JWT_SECRET, algorithm=JWT_ALGO)
-    return jsonify({'token': token})
+    return jsonify({'token': token, 'username': username})
 
 @app.route('/conversations', methods=['GET'])
 @token_required
@@ -875,24 +871,23 @@ def chat_history():
 @app.route('/stream_chat', methods=['POST'])
 @token_required
 def stream_chat():
-    """Main chat endpoint for cybersecurity queries with streaming response"""
     try:
         if not request.is_json:
             return jsonify({"error": "Request must be JSON"}), 400
         data = request.get_json()
         user_message = data.get('message', '').strip()
         conversation_id = data.get('conversation_id')
+        user_gemini_key = data.get('gemini_api_key')  # <-- Accept Gemini API key from frontend
         if not user_message:
             return jsonify({"error": "Message cannot be empty"}), 400
         if not conversation_id:
-            # New conversation, generate a new UUID
             conversation_id = str(uuid.uuid4())
         logger.info(f"Processing query: {user_message[:400]}...")
         vuln_type = detect_vulnerability_type(user_message)
         if vuln_type in VULNERABILITIES:
-            response = generate_vulnerability_response(vuln_type, user_message)
+            response = generate_vulnerability_response(vuln_type, user_message, user_gemini_key=user_gemini_key)
         else:
-            response = generate_general_response(user_message)
+            response = generate_general_response(user_message, user_gemini_key=user_gemini_key)
         response = truncate_response(response)
         # Save user message to chat history
         username = g.user['username']
@@ -929,6 +924,154 @@ def stream_chat():
         logger.error(f"Error in stream_chat: {str(e)}")
         return jsonify({"error": "An error occurred processing your request"}), 500
     return Response(error_stream(), mimetype="text/plain")
+
+@app.route('/conversation/<conversation_id>', methods=['DELETE'])
+@token_required
+def delete_conversation(conversation_id):
+    """Delete all messages in a conversation for the current user."""
+    username = g.user['username']
+    result = chats_col.delete_many({'username': username, 'conversation_id': conversation_id})
+    if result.deleted_count > 0:
+        logger.info(f"[CONVERSATION] Deleted conversation {conversation_id} for user {username} (messages deleted: {result.deleted_count})")
+        return jsonify({'success': True, 'deleted_count': result.deleted_count})
+    else:
+        logger.warning(f"[CONVERSATION] No messages found to delete for conversation {conversation_id} and user {username}")
+        return jsonify({'success': False, 'error': 'Conversation not found or already deleted.'}), 404
+
+@app.route('/web_search', methods=['POST'])
+@token_required
+def web_search():
+    try:
+        data = request.get_json()
+        query = data.get('query', '').strip()
+        if not query:
+            return jsonify({'error': 'Query is required.'}), 400
+        # --- Web search logic using Google Custom Search API ---
+        SEARCH_API_KEY = os.getenv('SEARCH_API_KEY', 'AIzaSyA8twmTNR78KB_Zk0Fn8h1TcXMIb7gtlvo')
+        SEARCH_ENGINE_ID = os.getenv('SEARCH_ENGINE_ID', '06946e95765a74451')
+        try:
+            api_url = (
+                f'https://www.googleapis.com/customsearch/v1?key={SEARCH_API_KEY}'
+                f'&cx={SEARCH_ENGINE_ID}&q={requests.utils.quote(query)}&num=5'
+            )
+            resp = requests.get(api_url, timeout=10)
+            resp.raise_for_status()
+            data = resp.json()
+            items = data.get('items', [])
+            if not items:
+                result_text = 'No relevant web results found.'
+            else:
+                results = []
+                for item in items:
+                    title = item.get('title', 'No Title')
+                    link = item.get('link', '')
+                    snippet = item.get('snippet', '')
+                    results.append(f'- [{title}]({link})\n    {snippet}')
+                result_text = '\n\n'.join(results)
+        except Exception as e:
+            logger.error(f"[WEB_SEARCH] Google Custom Search API error: {e}")
+            result_text = f"[ERROR] Web search failed: {e}"
+        return jsonify({'results': result_text})
+    except Exception as e:
+        logger.error(f"[WEB_SEARCH] Unexpected error: {e}")
+        return jsonify({'error': f'Web search error: {e}'}), 500
+
+@app.route('/web_search_summarized', methods=['POST'])
+@token_required
+def web_search_summarized():
+    """
+    Enhanced web search: fetches top web results, extracts main content, and synthesizes a conversational answer using Llama 3.
+    Also saves both the user query and the bot's answer to chat history.
+    """
+    try:
+        data = request.get_json()
+        query = data.get('query', '').strip()
+        conversation_id = data.get('conversation_id')
+        if not query:
+            return jsonify({'error': 'Query is required.'}), 400
+        if not conversation_id:
+            conversation_id = str(uuid.uuid4())
+        SEARCH_API_KEY = os.getenv('SEARCH_API_KEY', 'AIzaSyA8twmTNR78KB_Zk0Fn8h1TcXMIb7gtlvo')
+        SEARCH_ENGINE_ID = os.getenv('SEARCH_ENGINE_ID', '06946e95765a74451')
+        try:
+            api_url = (
+                f'https://www.googleapis.com/customsearch/v1?key={SEARCH_API_KEY}'
+                f'&cx={SEARCH_ENGINE_ID}&q={requests.utils.quote(query)}&num=3'
+            )
+            resp = requests.get(api_url, timeout=10)
+            resp.raise_for_status()
+            data = resp.json()
+            items = data.get('items', [])
+            if not items:
+                return jsonify({'results': 'No relevant web results found.'})
+            from bs4 import BeautifulSoup
+            web_contents = []
+            sources = []
+            for idx, item in enumerate(items):
+                title = item.get('title', 'No Title')
+                link = item.get('link', '')
+                snippet = item.get('snippet', '')
+                try:
+                    page_resp = requests.get(link, timeout=7, headers={'User-Agent': 'Mozilla/5.0'})
+                    soup = BeautifulSoup(page_resp.text, 'html.parser')
+                    paragraphs = [p.get_text(separator=' ', strip=True) for p in soup.find_all('p')]
+                    text_content = ' '.join(paragraphs)
+                    if len(text_content) < 300:
+                        text_content = snippet
+                except Exception as e:
+                    text_content = snippet
+                web_contents.append(f"Source [{idx+1}]: {title}\n{text_content}")
+                # Always include the actual link in the markdown source list
+                sources.append(f"[{idx+1}] [{title}]({link}) - {link}")
+            web_context = '\n\n'.join(web_contents)
+            prompt = (
+                f"You are a helpful assistant. Use the following web search results to answer the user's question. "
+                f"Cite sources inline as [1], [2], etc. when relevant.\n\n"
+                f"User question: {query}\n\n"
+                f"Web results:\n{web_context}\n\n"
+                f"Answer:"
+            )
+            answer = generate_response_with_ollama(prompt, max_tokens=1800)
+            sources_section = '\n'.join(sources)
+            # Improved markdown formatting
+            final_response = (
+                f"> **User Query:** {query}\n\n"
+                f"{answer}\n\n"
+                f"---\n"
+                f"**Sources:**\n{sources_section}"
+            )
+            # Save both user and bot messages to chat history
+            username = g.user['username']
+            now = datetime.utcnow().isoformat()
+            user_msg_doc = {
+                'username': username,
+                'id': int(time.time() * 1000),
+                'text': query,
+                'sender': 'user',
+                'timestamp': now,
+                'hasCode': False,
+                'reactions': [],
+                'conversation_id': conversation_id
+            }
+            chats_col.insert_one(user_msg_doc)
+            bot_msg_doc = {
+                'username': username,
+                'id': int(time.time() * 1000) + 1,
+                'text': final_response,
+                'sender': 'bot',
+                'timestamp': now,
+                'hasCode': False,
+                'reactions': [],
+                'conversation_id': conversation_id
+            }
+            chats_col.insert_one(bot_msg_doc)
+            return jsonify({'results': final_response, 'query': query, 'conversation_id': conversation_id})
+        except Exception as e:
+            logger.error(f"[WEB_SEARCH_SUMMARIZED] Error: {e}")
+            return jsonify({'error': f'Web search summarization failed: {e}'}), 500
+    except Exception as e:
+        logger.error(f"[WEB_SEARCH_SUMMARIZED] Unexpected error: {e}")
+        return jsonify({'error': f'Web search summarization error: {e}'}), 500
 
 # JWT authentication decorator and code block detector must be defined before any route uses them
 

@@ -38,5 +38,33 @@
   {
     "query": "provide the rest",
     "context": "REST (Representational State Transfer) in cybersecurity often refers to **REST APIs**.\n\n*   **Security:** Secure REST APIs using **authentication** (e.g., API keys, OAuth), **authorization** (RBAC), **HTTPS (TLS encryption)**, **input validation**, **rate limiting**, and **Web Application Firewalls (WAFs)**.\n*   **Vulnerabilities:** Common risks include **injection attacks, broken authentication/authorization, data exposure, and denial-of-service.**\n*   **Testing:** Penetration testing should be conducted to assess security.\n"
+  },
+  {
+    "query": "Tell me about Command Injection",
+    "context": "Command injection exploits vulnerabilities where user input is incorporated into OS commands. Attackers inject malicious code to execute arbitrary commands on the server. Mitigation: Input validation, sanitization (allow-listing), and using parameterized functions/APIs instead of directly executing commands. Least privilege execution limits impact.\n"
+  },
+  {
+    "query": "Insecure Deserialization",
+    "context": "Exploiting flaws when untrusted data is deserialized. Risks: remote code execution (RCE), denial-of-service (DoS), authentication bypass.\n\nMitigation: avoid deserialization of untrusted data. If required: input validation, use allowlists, digitally sign serialized objects, implement integrity checks. Use safe serialization formats (JSON), not binary formats. Regularly update deserialization libraries.\n"
+  },
+  {
+    "query": "Broken Authentication",
+    "context": "**Broken Authentication:**\n\n*   **Cause:** Flaws in login, session management, or credential recovery.\n*   **Examples:** Weak/default passwords, exposed session IDs, predictable password reset links.\n*   **Impact:** Unauthorized access to accounts/systems.\n*   **Mitigation:** Multifactor authentication (MFA), strong password policies, secure session management (HTTPS, short timeouts), robust password reset procedures, rate limiting login attempts.\n*   **Testing:** Password cracking, session ID analysis, password reset flow assessment.\n"
+  },
+  {
+    "query": "Sensitive Data Exposure",
+    "context": "**Definition:** Unintentional disclosure of protected information.\n\n**Risks:** Identity theft, financial fraud, reputational damage, legal violations (e.g., GDPR, HIPAA).\n\n**Common Causes:** Weak access controls, insecure storage (e.g., misconfigured cloud buckets), software vulnerabilities, improper data handling (logging, retention), SQL injection.\n\n**Prevention:**\n*   **Access Control:** RBAC, MFA, least privilege.\n*   **Data Encryption:** At rest and in transit.\n*   **Vulnerability Management:** Patching, security scanning.\n*   **Secure Development:** SAST/DAST, secure coding practices.\n*   **Data Loss Prevention (DLP):** Monitor & prevent sensitive data leaving the organization.\n*   **Regular Security Audits & Penetration Testing.**\n"
+  },
+  {
+    "query": "how to reach andheri station?",
+    "context": "This query is not cybersecurity related. No cybersecurity context applicable.\n"
+  },
+  {
+    "query": "CVSS Score for SQL-Injection",
+    "context": "SQL Injection vulnerabilities can receive a CVSS score ranging from **4.8 (Medium) to 10.0 (Critical)** depending on exploitability and impact. High scores (>7.0) typically involve unauthenticated remote code execution or complete database compromise (confidentiality, integrity, and availability). Lower scores reflect limited data leakage or impact on specific data.\n"
+  },
+  {
+    "query": "Security Misconfiguration",
+    "context": "*   **Cause:** Default credentials, unnecessary features enabled, open ports, verbose error messages, missing security headers.\n*   **Impact:** Data breaches, system compromise.\n*   **Mitigation:** Secure defaults, least privilege, patch management, disable unused features, hardened configurations, remove unnecessary ports, implement security headers.\n*   **Testing:** Configuration reviews, penetration testing, vulnerability scanning (Nessus, OpenVAS).\n*   **Standards:** CIS Benchmarks, NIST guidance, OWASP ASVS.\n"
   }
 ]

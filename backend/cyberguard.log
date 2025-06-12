@@ -4070,3 +4070,1047 @@ Response (reference the Gemini Insight above):
 2025-06-11 14:47:08,100 - INFO - 127.0.0.1 - - [11/Jun/2025 14:47:08] "GET /chat_history?conversation_id=9c815647-cf25-450d-b11a-e12199b49d40 HTTP/1.1" 200 -
 2025-06-11 14:47:18,086 - INFO - 127.0.0.1 - - [11/Jun/2025 14:47:18] "OPTIONS /chat_history?conversation_id=ce6fec84-6b00-4ee0-8264-4a945c3bd773 HTTP/1.1" 200 -
 2025-06-11 14:47:18,421 - INFO - 127.0.0.1 - - [11/Jun/2025 14:47:18] "GET /chat_history?conversation_id=ce6fec84-6b00-4ee0-8264-4a945c3bd773 HTTP/1.1" 200 -
+2025-06-11 14:57:09,365 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-11 14:57:09,367 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-11 14:57:15,505 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-11 14:57:43,134 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-11 14:57:43,247 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-11 14:57:43,340 - WARNING -  * Debugger is active!
+2025-06-11 14:57:43,344 - INFO -  * Debugger PIN: 122-842-223
+2025-06-11 14:57:57,213 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-11 14:57:57,214 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-11 14:57:59,337 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-11 14:58:17,404 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-11 14:58:17,465 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-11 14:58:17,534 - WARNING -  * Debugger is active!
+2025-06-11 14:58:17,539 - INFO -  * Debugger PIN: 122-842-223
+2025-06-11 14:58:49,273 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-11 14:58:49,353 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-11 14:58:49,465 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:9000
+ * Running on http://10.50.50.161:9000
+2025-06-11 14:58:49,466 - INFO - [33mPress CTRL+C to quit[0m
+2025-06-11 14:58:49,489 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-11 14:59:07,407 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-11 14:59:07,481 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-11 14:59:07,581 - WARNING -  * Debugger is active!
+2025-06-11 14:59:07,589 - INFO -  * Debugger PIN: 122-842-223
+2025-06-11 15:01:08,627 - INFO - 127.0.0.1 - - [11/Jun/2025 15:01:08] "OPTIONS /login HTTP/1.1" 200 -
+2025-06-11 15:01:09,092 - INFO - 127.0.0.1 - - [11/Jun/2025 15:01:09] "POST /login HTTP/1.1" 200 -
+2025-06-11 15:01:09,103 - INFO - 127.0.0.1 - - [11/Jun/2025 15:01:09] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-11 15:01:09,422 - INFO - 127.0.0.1 - - [11/Jun/2025 15:01:09] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-11 15:01:09,438 - INFO - 127.0.0.1 - - [11/Jun/2025 15:01:09] "GET /chat_history HTTP/1.1" 200 -
+2025-06-11 15:01:09,682 - INFO - 127.0.0.1 - - [11/Jun/2025 15:01:09] "GET /conversations HTTP/1.1" 200 -
+2025-06-11 15:02:03,396 - INFO - 127.0.0.1 - - [11/Jun/2025 15:02:03] "OPTIONS /stream_chat HTTP/1.1" 200 -
+2025-06-11 15:02:03,409 - INFO - Processing query: Tell me about Command Injection...
+2025-06-11 15:02:03,411 - INFO - [PROMPT] Building security prompt for query type: sql_injection
+2025-06-11 15:02:04,696 - INFO - [GEMINI] Starting API call #1 for query: Tell me about Command Injection
+2025-06-11 15:02:11,783 - INFO - [GEMINI] Successfully retrieved context from Gemini API (google-generativeai) - Length: 351 characters, Time: 7.09s
+2025-06-11 15:02:11,787 - INFO - [GEMINI] API Stats - Total: 1, Success: 1, Failed: 0
+2025-06-11 15:02:11,802 - INFO - [PROMPT] Full prompt sent to Llama 3 via Ollama:
+==============================
+
+You are CyberGuard AI, an expert cybersecurity assistant.
+
+---
+
+**IMPORTANT: The following Gemini Insight is your PRIMARY and AUTHORITATIVE source. You MUST use it as the main basis for your answer. Directly reference and cite it in your response.**
+
+GEMINI INSIGHT (copy and use this information):
+Gemini Insight: Command injection exploits vulnerabilities where user input is incorporated into OS commands. Attackers inject malicious code to execute arbitrary commands on the server. Mitigation: Input validation, sanitization (allow-listing), and using parameterized functions/APIs instead of directly executing commands. Least privilege execution limits impact.
+
+
+---
+
+Always provide:
+- Clear explanations of security concepts
+- Practical code examples (vulnerable and secure versions)
+- Specific mitigation strategies
+- Best practices and recommendations
+
+**Make your answer unique and tailored to the user's query. Avoid generic or repetitive responses. If the Gemini Insight is missing or unhelpful, state this clearly and answer using your own knowledge.**
+
+**If the user asks for patterns, enumerate them with explanations and code. If the user asks for a summary, be concise. If the user asks for a deep dive, provide technical depth.**
+
+Relevant vulnerability context:
+- Vulnerability: SQL Injection
+- Severity: Critical
+- Description: SQL injection occurs when untrusted data is sent to an interpreter as part of a command or query, allowing attackers to execute unintended commands.
+- Example vulnerable code: SELECT * FROM users WHERE id = '1' OR '1'='1'
+- Secure implementation: SELECT * FROM users WHERE id = ?
+- Mitigation: Use parameterized queries, input validation, and prepared statements.
+
+
+User Query: Tell me about Command Injection
+
+Response (reference the Gemini Insight above):
+==============================
+2025-06-11 15:02:42,398 - INFO - [CACHE] Returning cached context for query: Tell me about Command Injection
+2025-06-11 15:02:42,407 - INFO - 127.0.0.1 - - [11/Jun/2025 15:02:42] "POST /stream_chat HTTP/1.1" 200 -
+2025-06-11 15:02:42,419 - INFO - 127.0.0.1 - - [11/Jun/2025 15:02:42] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-11 15:02:42,743 - INFO - 127.0.0.1 - - [11/Jun/2025 15:02:42] "GET /conversations HTTP/1.1" 200 -
+2025-06-11 15:02:43,809 - INFO - 127.0.0.1 - - [11/Jun/2025 15:02:43] "OPTIONS /chat_history?conversation_id=2cee410b-512d-45ba-b397-486de674589d HTTP/1.1" 200 -
+2025-06-11 15:02:43,821 - INFO - 127.0.0.1 - - [11/Jun/2025 15:02:43] "GET /chat_history?conversation_id=2cee410b-512d-45ba-b397-486de674589d HTTP/1.1" 200 -
+2025-06-11 15:03:43,014 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-11 15:03:43,120 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-11 15:03:43,258 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:9000
+ * Running on http://10.50.50.161:9000
+2025-06-11 15:03:43,260 - INFO - [33mPress CTRL+C to quit[0m
+2025-06-11 15:03:43,290 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-11 15:04:18,929 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-11 15:04:19,061 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-11 15:04:19,212 - WARNING -  * Debugger is active!
+2025-06-11 15:04:19,227 - INFO -  * Debugger PIN: 122-842-223
+2025-06-11 15:05:30,417 - INFO - 127.0.0.1 - - [11/Jun/2025 15:05:30] "OPTIONS /login HTTP/1.1" 200 -
+2025-06-11 15:05:30,833 - INFO - 127.0.0.1 - - [11/Jun/2025 15:05:30] "POST /login HTTP/1.1" 200 -
+2025-06-11 15:05:30,843 - INFO - 127.0.0.1 - - [11/Jun/2025 15:05:30] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-11 15:05:31,147 - INFO - 127.0.0.1 - - [11/Jun/2025 15:05:31] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-11 15:05:31,160 - INFO - 127.0.0.1 - - [11/Jun/2025 15:05:31] "GET /chat_history HTTP/1.1" 200 -
+2025-06-11 15:05:31,425 - INFO - 127.0.0.1 - - [11/Jun/2025 15:05:31] "GET /conversations HTTP/1.1" 200 -
+2025-06-11 15:06:23,886 - INFO - 127.0.0.1 - - [11/Jun/2025 15:06:23] "OPTIONS /stream_chat HTTP/1.1" 200 -
+2025-06-11 15:06:23,889 - INFO - Processing query: Insecure Deserialization...
+2025-06-11 15:06:23,890 - INFO - [PROMPT] Building security prompt for query type: general
+2025-06-11 15:06:24,343 - INFO - [GEMINI] Starting API call #1 for query: Insecure Deserialization
+2025-06-11 15:06:31,312 - INFO - [GEMINI] Successfully retrieved context from Gemini API (google-generativeai) - Length: 405 characters, Time: 6.97s
+2025-06-11 15:06:31,316 - INFO - [GEMINI] API Stats - Total: 1, Success: 1, Failed: 0
+2025-06-11 15:06:31,324 - INFO - [PROMPT] Full prompt sent to Llama 3 via Ollama:
+==============================
+You are CyberGuard AI, an expert cybersecurity assistant.
+
+---
+
+**IMPORTANT: The following Gemini Insight is your PRIMARY and AUTHORITATIVE source. You MUST use it as the main basis for your answer. Directly reference and cite it in your response.**
+
+GEMINI INSIGHT (copy and use this information):
+Gemini Insight: Exploiting flaws when untrusted data is deserialized. Risks: remote code execution (RCE), denial-of-service (DoS), authentication bypass.
+
+Mitigation: avoid deserialization of untrusted data. If required: input validation, use allowlists, digitally sign serialized objects, implement integrity checks. Use safe serialization formats (JSON), not binary formats. Regularly update deserialization libraries.
+
+
+---
+
+Always provide:
+- Clear explanations of security concepts
+- Practical code examples (vulnerable and secure versions)
+- Specific mitigation strategies
+- Best practices and recommendations
+
+**Make your answer unique and tailored to the user's query. Avoid generic or repetitive responses. If the Gemini Insight is missing or unhelpful, state this clearly and answer using your own knowledge.**
+
+**If the user asks for patterns, enumerate them with explanations and code. If the user asks for a summary, be concise. If the user asks for a deep dive, provide technical depth.**
+
+User Query: Insecure Deserialization
+
+Response (reference the Gemini Insight above):
+==============================
+2025-06-11 15:06:55,922 - INFO - 127.0.0.1 - - [11/Jun/2025 15:06:55] "POST /stream_chat HTTP/1.1" 200 -
+2025-06-11 15:06:55,933 - INFO - 127.0.0.1 - - [11/Jun/2025 15:06:55] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-11 15:06:56,259 - INFO - 127.0.0.1 - - [11/Jun/2025 15:06:56] "GET /conversations HTTP/1.1" 200 -
+2025-06-11 15:06:56,620 - INFO - 127.0.0.1 - - [11/Jun/2025 15:06:56] "OPTIONS /chat_history?conversation_id=1980f25c-b8b7-4b3e-a3e0-a4fd598a3221 HTTP/1.1" 200 -
+2025-06-11 15:06:56,632 - INFO - 127.0.0.1 - - [11/Jun/2025 15:06:56] "GET /chat_history?conversation_id=1980f25c-b8b7-4b3e-a3e0-a4fd598a3221 HTTP/1.1" 200 -
+2025-06-11 15:09:44,300 - INFO - 127.0.0.1 - - [11/Jun/2025 15:09:44] "OPTIONS /login HTTP/1.1" 200 -
+2025-06-11 15:09:44,721 - INFO - 127.0.0.1 - - [11/Jun/2025 15:09:44] "POST /login HTTP/1.1" 200 -
+2025-06-11 15:09:44,729 - INFO - 127.0.0.1 - - [11/Jun/2025 15:09:44] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-11 15:09:45,034 - INFO - 127.0.0.1 - - [11/Jun/2025 15:09:45] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-11 15:09:45,042 - INFO - 127.0.0.1 - - [11/Jun/2025 15:09:45] "GET /chat_history HTTP/1.1" 200 -
+2025-06-11 15:09:45,303 - INFO - 127.0.0.1 - - [11/Jun/2025 15:09:45] "GET /conversations HTTP/1.1" 200 -
+2025-06-11 15:13:11,124 - INFO - 127.0.0.1 - - [11/Jun/2025 15:13:11] "OPTIONS /login HTTP/1.1" 200 -
+2025-06-11 15:13:11,554 - INFO - 127.0.0.1 - - [11/Jun/2025 15:13:11] "POST /login HTTP/1.1" 200 -
+2025-06-11 15:13:11,562 - INFO - 127.0.0.1 - - [11/Jun/2025 15:13:11] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-11 15:13:11,873 - INFO - 127.0.0.1 - - [11/Jun/2025 15:13:11] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-11 15:13:11,882 - INFO - 127.0.0.1 - - [11/Jun/2025 15:13:11] "GET /chat_history HTTP/1.1" 200 -
+2025-06-11 15:13:12,141 - INFO - 127.0.0.1 - - [11/Jun/2025 15:13:12] "GET /conversations HTTP/1.1" 200 -
+2025-06-11 15:13:49,956 - INFO - 127.0.0.1 - - [11/Jun/2025 15:13:49] "OPTIONS /stream_chat HTTP/1.1" 200 -
+2025-06-11 15:13:49,962 - INFO - Processing query: Broken Authentication...
+2025-06-11 15:13:49,962 - INFO - [PROMPT] Building security prompt for query type: general
+2025-06-11 15:13:49,986 - INFO - [GEMINI] Starting API call #2 for query: Broken Authentication
+2025-06-11 15:13:51,490 - INFO - [GEMINI] Successfully retrieved context from Gemini API (google-generativeai) - Length: 541 characters, Time: 1.50s
+2025-06-11 15:13:51,491 - INFO - [GEMINI] API Stats - Total: 2, Success: 2, Failed: 0
+2025-06-11 15:13:51,495 - INFO - [PROMPT] Full prompt sent to Llama 3 via Ollama:
+==============================
+You are CyberGuard AI, an expert cybersecurity assistant.
+
+---
+
+**IMPORTANT: The following Gemini Insight is your PRIMARY and AUTHORITATIVE source. You MUST use it as the main basis for your answer. Directly reference and cite it in your response.**
+
+GEMINI INSIGHT (copy and use this information):
+Gemini Insight: **Broken Authentication:**
+
+*   **Cause:** Flaws in login, session management, or credential recovery.
+*   **Examples:** Weak/default passwords, exposed session IDs, predictable password reset links.
+*   **Impact:** Unauthorized access to accounts/systems.
+*   **Mitigation:** Multifactor authentication (MFA), strong password policies, secure session management (HTTPS, short timeouts), robust password reset procedures, rate limiting login attempts.
+*   **Testing:** Password cracking, session ID analysis, password reset flow assessment.
+
+
+---
+
+Always provide:
+- Clear explanations of security concepts
+- Practical code examples (vulnerable and secure versions)
+- Specific mitigation strategies
+- Best practices and recommendations
+
+**Make your answer unique and tailored to the user's query. Avoid generic or repetitive responses. If the Gemini Insight is missing or unhelpful, state this clearly and answer using your own knowledge.**
+
+**If the user asks for patterns, enumerate them with explanations and code. If the user asks for a summary, be concise. If the user asks for a deep dive, provide technical depth.**
+
+User Query: Broken Authentication
+
+Response (reference the Gemini Insight above):
+==============================
+2025-06-11 15:14:24,163 - INFO - 127.0.0.1 - - [11/Jun/2025 15:14:24] "POST /stream_chat HTTP/1.1" 200 -
+2025-06-11 15:14:24,195 - INFO - 127.0.0.1 - - [11/Jun/2025 15:14:24] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-11 15:14:24,510 - INFO - 127.0.0.1 - - [11/Jun/2025 15:14:24] "GET /conversations HTTP/1.1" 200 -
+2025-06-11 15:14:26,251 - INFO - 127.0.0.1 - - [11/Jun/2025 15:14:26] "OPTIONS /chat_history?conversation_id=49b681e2-9c76-45b4-a842-b9879556b16b HTTP/1.1" 200 -
+2025-06-11 15:14:26,259 - INFO - 127.0.0.1 - - [11/Jun/2025 15:14:26] "GET /chat_history?conversation_id=49b681e2-9c76-45b4-a842-b9879556b16b HTTP/1.1" 200 -
+2025-06-11 15:15:34,725 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\server.py', reloading
+2025-06-11 15:15:40,852 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-11 15:16:06,854 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-11 15:16:06,921 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-11 15:16:07,018 - WARNING -  * Debugger is active!
+2025-06-11 15:16:07,023 - INFO -  * Debugger PIN: 122-842-223
+2025-06-11 15:16:31,565 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-11 15:16:31,566 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-11 15:16:31,567 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-11 15:16:34,046 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-11 15:16:54,045 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-11 15:16:54,115 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-11 15:16:54,224 - WARNING -  * Debugger is active!
+2025-06-11 15:16:54,228 - INFO -  * Debugger PIN: 122-842-223
+2025-06-11 15:16:54,374 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-11 15:16:54,375 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-11 15:16:54,375 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-11 15:16:57,467 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-11 15:17:14,509 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-11 15:17:14,561 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-11 15:17:14,658 - WARNING -  * Debugger is active!
+2025-06-11 15:17:14,666 - INFO -  * Debugger PIN: 122-842-223
+2025-06-11 15:17:36,087 - INFO - 127.0.0.1 - - [11/Jun/2025 15:17:36] "OPTIONS /login HTTP/1.1" 200 -
+2025-06-11 15:17:36,478 - INFO - 127.0.0.1 - - [11/Jun/2025 15:17:36] "POST /login HTTP/1.1" 200 -
+2025-06-11 15:17:36,507 - INFO - 127.0.0.1 - - [11/Jun/2025 15:17:36] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-11 15:17:36,824 - INFO - 127.0.0.1 - - [11/Jun/2025 15:17:36] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-11 15:17:36,829 - INFO - 127.0.0.1 - - [11/Jun/2025 15:17:36] "GET /chat_history HTTP/1.1" 200 -
+2025-06-11 15:17:37,077 - INFO - 127.0.0.1 - - [11/Jun/2025 15:17:37] "GET /conversations HTTP/1.1" 200 -
+2025-06-11 15:18:04,481 - INFO - 127.0.0.1 - - [11/Jun/2025 15:18:04] "OPTIONS /stream_chat HTTP/1.1" 200 -
+2025-06-11 15:18:04,494 - INFO - Processing query: Sensitive Data Exposure...
+2025-06-11 15:18:04,496 - INFO - [PROMPT] Building security prompt for query type: general
+2025-06-11 15:18:05,561 - INFO - [GEMINI] Starting API call #1 for query: Sensitive Data Exposure
+2025-06-11 15:18:11,225 - INFO - [GEMINI] Using user-supplied Gemini API key from frontend for this request.
+2025-06-11 15:18:14,442 - INFO - [GEMINI] Successfully retrieved context from Gemini API (google-generativeai) - Length: 748 characters, Time: 8.88s
+2025-06-11 15:18:14,443 - INFO - [GEMINI] API Stats - Total: 1, Success: 1, Failed: 0
+2025-06-11 15:18:14,445 - INFO - [PROMPT] Full prompt sent to Llama 3 via Ollama:
+==============================
+You are CyberGuard AI, an expert cybersecurity assistant.
+
+---
+
+**IMPORTANT: The following Gemini Insight is your PRIMARY and AUTHORITATIVE source. You MUST use it as the main basis for your answer. Directly reference and cite it in your response.**
+
+GEMINI INSIGHT (copy and use this information):
+Gemini Insight: **Definition:** Unintentional disclosure of protected information.
+
+**Risks:** Identity theft, financial fraud, reputational damage, legal violations (e.g., GDPR, HIPAA).
+
+**Common Causes:** Weak access controls, insecure storage (e.g., misconfigured cloud buckets), software vulnerabilities, improper data handling (logging, retention), SQL injection.
+
+**Prevention:**
+*   **Access Control:** RBAC, MFA, least privilege.
+*   **Data Encryption:** At rest and in transit.
+*   **Vulnerability Management:** Patching, security scanning.
+*   **Secure Development:** SAST/DAST, secure coding practices.
+*   **Data Loss Prevention (DLP):** Monitor & prevent sensitive data leaving the organization.
+*   **Regular Security Audits & Penetration Testing.**
+
+
+---
+
+Always provide:
+- Clear explanations of security concepts
+- Practical code examples (vulnerable and secure versions)
+- Specific mitigation strategies
+- Best practices and recommendations
+
+**Make your answer unique and tailored to the user's query. Avoid generic or repetitive responses. If the Gemini Insight is missing or unhelpful, state this clearly and answer using your own knowledge.**
+
+**If the user asks for patterns, enumerate them with explanations and code. If the user asks for a summary, be concise. If the user asks for a deep dive, provide technical depth.**
+
+User Query: Sensitive Data Exposure
+
+Response (reference the Gemini Insight above):
+==============================
+2025-06-11 15:18:36,878 - INFO - 127.0.0.1 - - [11/Jun/2025 15:18:36] "POST /stream_chat HTTP/1.1" 200 -
+2025-06-11 15:18:36,911 - INFO - 127.0.0.1 - - [11/Jun/2025 15:18:36] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-11 15:18:37,227 - INFO - 127.0.0.1 - - [11/Jun/2025 15:18:37] "GET /conversations HTTP/1.1" 200 -
+2025-06-11 15:18:39,224 - INFO - 127.0.0.1 - - [11/Jun/2025 15:18:39] "OPTIONS /chat_history?conversation_id=ccebb752-40a5-41c5-b2e4-054d750057c4 HTTP/1.1" 200 -
+2025-06-11 15:18:39,236 - INFO - 127.0.0.1 - - [11/Jun/2025 15:18:39] "GET /chat_history?conversation_id=ccebb752-40a5-41c5-b2e4-054d750057c4 HTTP/1.1" 200 -
+2025-06-11 15:24:31,223 - INFO - 127.0.0.1 - - [11/Jun/2025 15:24:31] "OPTIONS /login HTTP/1.1" 200 -
+2025-06-11 15:24:31,640 - INFO - 127.0.0.1 - - [11/Jun/2025 15:24:31] "POST /login HTTP/1.1" 200 -
+2025-06-11 15:24:31,651 - INFO - 127.0.0.1 - - [11/Jun/2025 15:24:31] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-11 15:24:31,964 - INFO - 127.0.0.1 - - [11/Jun/2025 15:24:31] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-11 15:24:31,974 - INFO - 127.0.0.1 - - [11/Jun/2025 15:24:31] "GET /chat_history HTTP/1.1" 200 -
+2025-06-11 15:24:32,216 - INFO - 127.0.0.1 - - [11/Jun/2025 15:24:32] "GET /conversations HTTP/1.1" 200 -
+2025-06-11 15:26:59,941 - INFO -  * Detected change in 'C:\\Program Files (x86)\\Eclipse\\Sumo\\tools\\osmWebWizard.py', reloading
+2025-06-11 15:27:06,526 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-11 15:27:49,186 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-11 15:27:49,306 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-11 15:27:49,452 - WARNING -  * Debugger is active!
+2025-06-11 15:27:49,472 - INFO -  * Debugger PIN: 122-842-223
+2025-06-11 15:32:32,556 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-11 15:32:32,558 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-11 15:32:35,129 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-11 15:32:52,342 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-11 15:32:52,411 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-11 15:32:52,522 - WARNING -  * Debugger is active!
+2025-06-11 15:32:52,528 - INFO -  * Debugger PIN: 122-842-223
+2025-06-11 15:33:09,247 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-11 15:33:09,249 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-11 15:33:11,871 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-11 15:33:28,095 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-11 15:33:28,141 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-11 15:33:28,233 - WARNING -  * Debugger is active!
+2025-06-11 15:33:28,241 - INFO -  * Debugger PIN: 122-842-223
+2025-06-11 15:33:39,340 - INFO - 127.0.0.1 - - [11/Jun/2025 15:33:39] "OPTIONS /login HTTP/1.1" 200 -
+2025-06-11 15:33:39,784 - INFO - 127.0.0.1 - - [11/Jun/2025 15:33:39] "POST /login HTTP/1.1" 200 -
+2025-06-11 15:33:39,836 - INFO - 127.0.0.1 - - [11/Jun/2025 15:33:39] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-11 15:33:40,143 - INFO - 127.0.0.1 - - [11/Jun/2025 15:33:40] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-11 15:33:40,155 - INFO - 127.0.0.1 - - [11/Jun/2025 15:33:40] "GET /chat_history HTTP/1.1" 200 -
+2025-06-11 15:33:40,524 - INFO - 127.0.0.1 - - [11/Jun/2025 15:33:40] "GET /conversations HTTP/1.1" 200 -
+2025-06-11 15:33:55,153 - INFO - 127.0.0.1 - - [11/Jun/2025 15:33:55] "OPTIONS /conversation/null HTTP/1.1" 200 -
+2025-06-11 15:34:26,755 - INFO - 127.0.0.1 - - [11/Jun/2025 15:34:26] "OPTIONS /conversation/null HTTP/1.1" 200 -
+2025-06-11 15:35:23,137 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-11 15:35:23,138 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-11 15:35:23,139 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-11 15:35:26,305 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-11 15:35:44,602 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-11 15:35:44,689 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-11 15:35:44,789 - WARNING -  * Debugger is active!
+2025-06-11 15:35:44,796 - INFO -  * Debugger PIN: 122-842-223
+2025-06-11 15:36:09,451 - INFO - 127.0.0.1 - - [11/Jun/2025 15:36:09] "OPTIONS /login HTTP/1.1" 200 -
+2025-06-11 15:36:09,897 - INFO - 127.0.0.1 - - [11/Jun/2025 15:36:09] "POST /login HTTP/1.1" 200 -
+2025-06-11 15:36:09,907 - INFO - 127.0.0.1 - - [11/Jun/2025 15:36:09] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-11 15:36:10,216 - INFO - 127.0.0.1 - - [11/Jun/2025 15:36:10] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-11 15:36:10,225 - INFO - 127.0.0.1 - - [11/Jun/2025 15:36:10] "GET /chat_history HTTP/1.1" 200 -
+2025-06-11 15:36:10,486 - INFO - 127.0.0.1 - - [11/Jun/2025 15:36:10] "GET /conversations HTTP/1.1" 200 -
+2025-06-11 15:36:22,687 - INFO - 127.0.0.1 - - [11/Jun/2025 15:36:22] "OPTIONS /conversation/null HTTP/1.1" 200 -
+2025-06-11 15:36:22,703 - WARNING - [CONVERSATION] No messages found to delete for conversation null and user user
+2025-06-11 15:36:22,705 - INFO - 127.0.0.1 - - [11/Jun/2025 15:36:22] "[33mDELETE /conversation/null HTTP/1.1[0m" 404 -
+2025-06-11 15:36:35,770 - INFO - 127.0.0.1 - - [11/Jun/2025 15:36:35] "OPTIONS /conversation/458e5f28-0d4e-4486-bd00-88069de4c33a HTTP/1.1" 200 -
+2025-06-11 15:36:36,103 - INFO - [CONVERSATION] Deleted conversation 458e5f28-0d4e-4486-bd00-88069de4c33a for user user (messages deleted: 4)
+2025-06-11 15:36:36,106 - INFO - 127.0.0.1 - - [11/Jun/2025 15:36:36] "DELETE /conversation/458e5f28-0d4e-4486-bd00-88069de4c33a HTTP/1.1" 200 -
+2025-06-11 15:36:40,923 - INFO - 127.0.0.1 - - [11/Jun/2025 15:36:40] "OPTIONS /conversation/null HTTP/1.1" 200 -
+2025-06-11 15:36:40,935 - WARNING - [CONVERSATION] No messages found to delete for conversation null and user user
+2025-06-11 15:36:40,940 - INFO - 127.0.0.1 - - [11/Jun/2025 15:36:40] "[33mDELETE /conversation/null HTTP/1.1[0m" 404 -
+2025-06-11 15:37:07,829 - INFO - 127.0.0.1 - - [11/Jun/2025 15:37:07] "OPTIONS /login HTTP/1.1" 200 -
+2025-06-11 15:37:08,311 - INFO - 127.0.0.1 - - [11/Jun/2025 15:37:08] "POST /login HTTP/1.1" 200 -
+2025-06-11 15:37:08,398 - INFO - 127.0.0.1 - - [11/Jun/2025 15:37:08] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-11 15:37:08,634 - INFO - 127.0.0.1 - - [11/Jun/2025 15:37:08] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-11 15:37:08,718 - INFO - 127.0.0.1 - - [11/Jun/2025 15:37:08] "GET /chat_history HTTP/1.1" 200 -
+2025-06-11 15:37:08,951 - INFO - 127.0.0.1 - - [11/Jun/2025 15:37:08] "GET /conversations HTTP/1.1" 200 -
+2025-06-11 15:38:17,747 - INFO - 127.0.0.1 - - [11/Jun/2025 15:38:17] "OPTIONS /chat_history?conversation_id=ccebb752-40a5-41c5-b2e4-054d750057c4 HTTP/1.1" 200 -
+2025-06-11 15:38:18,096 - INFO - 127.0.0.1 - - [11/Jun/2025 15:38:18] "GET /chat_history?conversation_id=ccebb752-40a5-41c5-b2e4-054d750057c4 HTTP/1.1" 200 -
+2025-06-11 15:51:10,257 - INFO - 127.0.0.1 - - [11/Jun/2025 15:51:10] "OPTIONS /login HTTP/1.1" 200 -
+2025-06-11 15:51:10,715 - INFO - 127.0.0.1 - - [11/Jun/2025 15:51:10] "POST /login HTTP/1.1" 200 -
+2025-06-11 15:51:10,763 - INFO - 127.0.0.1 - - [11/Jun/2025 15:51:10] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-11 15:51:11,075 - INFO - 127.0.0.1 - - [11/Jun/2025 15:51:11] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-11 15:51:11,088 - INFO - 127.0.0.1 - - [11/Jun/2025 15:51:11] "GET /chat_history HTTP/1.1" 200 -
+2025-06-11 15:51:11,343 - INFO - 127.0.0.1 - - [11/Jun/2025 15:51:11] "GET /conversations HTTP/1.1" 200 -
+2025-06-11 15:52:38,723 - INFO - 127.0.0.1 - - [11/Jun/2025 15:52:38] "OPTIONS /chat_history?conversation_id=ccebb752-40a5-41c5-b2e4-054d750057c4 HTTP/1.1" 200 -
+2025-06-11 15:52:39,040 - INFO - 127.0.0.1 - - [11/Jun/2025 15:52:39] "GET /chat_history?conversation_id=ccebb752-40a5-41c5-b2e4-054d750057c4 HTTP/1.1" 200 -
+2025-06-11 16:27:28,947 - INFO -  * Detected change in 'C:\\Program Files (x86)\\Eclipse\\Sumo\\tools\\osmWebWizard.py', reloading
+2025-06-11 16:27:32,558 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-11 16:27:55,263 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-11 16:27:55,355 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-11 16:27:55,431 - WARNING -  * Debugger is active!
+2025-06-11 16:27:55,435 - INFO -  * Debugger PIN: 122-842-223
+2025-06-11 16:35:40,160 - INFO - 127.0.0.1 - - [11/Jun/2025 16:35:40] "OPTIONS /login HTTP/1.1" 200 -
+2025-06-11 16:35:40,606 - INFO - 127.0.0.1 - - [11/Jun/2025 16:35:40] "POST /login HTTP/1.1" 200 -
+2025-06-11 16:35:40,615 - INFO - 127.0.0.1 - - [11/Jun/2025 16:35:40] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-11 16:35:40,933 - INFO - 127.0.0.1 - - [11/Jun/2025 16:35:40] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-11 16:35:40,941 - INFO - 127.0.0.1 - - [11/Jun/2025 16:35:40] "GET /chat_history HTTP/1.1" 200 -
+2025-06-11 16:35:41,212 - INFO - 127.0.0.1 - - [11/Jun/2025 16:35:41] "GET /conversations HTTP/1.1" 200 -
+2025-06-11 16:35:46,366 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-11 16:35:49,745 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-11 16:36:09,807 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-11 16:36:09,897 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-11 16:36:10,017 - WARNING -  * Debugger is active!
+2025-06-11 16:36:10,021 - INFO -  * Debugger PIN: 122-842-223
+2025-06-11 16:39:25,342 - INFO - 127.0.0.1 - - [11/Jun/2025 16:39:25] "OPTIONS /login HTTP/1.1" 200 -
+2025-06-11 16:39:25,700 - INFO - 127.0.0.1 - - [11/Jun/2025 16:39:25] "POST /login HTTP/1.1" 200 -
+2025-06-11 16:39:25,706 - INFO - 127.0.0.1 - - [11/Jun/2025 16:39:25] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-11 16:39:26,022 - INFO - 127.0.0.1 - - [11/Jun/2025 16:39:26] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-11 16:39:26,028 - INFO - 127.0.0.1 - - [11/Jun/2025 16:39:26] "GET /chat_history HTTP/1.1" 200 -
+2025-06-11 16:39:26,275 - INFO - 127.0.0.1 - - [11/Jun/2025 16:39:26] "GET /conversations HTTP/1.1" 200 -
+2025-06-11 16:39:57,660 - INFO - 127.0.0.1 - - [11/Jun/2025 16:39:57] "OPTIONS /login HTTP/1.1" 200 -
+2025-06-11 16:39:58,102 - INFO - 127.0.0.1 - - [11/Jun/2025 16:39:58] "POST /login HTTP/1.1" 200 -
+2025-06-11 16:39:58,114 - INFO - 127.0.0.1 - - [11/Jun/2025 16:39:58] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-11 16:39:58,137 - INFO - 127.0.0.1 - - [11/Jun/2025 16:39:58] "GET /chat_history HTTP/1.1" 200 -
+2025-06-11 16:39:58,432 - INFO - 127.0.0.1 - - [11/Jun/2025 16:39:58] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-11 16:39:58,752 - INFO - 127.0.0.1 - - [11/Jun/2025 16:39:58] "GET /conversations HTTP/1.1" 200 -
+2025-06-11 16:40:59,157 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-11 16:40:59,158 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-11 16:40:59,680 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-11 16:40:59,682 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-11 16:41:01,831 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-11 16:41:23,085 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-11 16:41:23,182 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-11 16:41:23,263 - WARNING -  * Debugger is active!
+2025-06-11 16:41:23,272 - INFO -  * Debugger PIN: 122-842-223
+2025-06-11 16:41:50,834 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-11 16:41:50,835 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-11 16:41:53,431 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-11 16:42:15,410 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-11 16:42:15,485 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-11 16:42:15,639 - WARNING -  * Debugger is active!
+2025-06-11 16:42:15,644 - INFO -  * Debugger PIN: 122-842-223
+2025-06-11 16:42:22,726 - INFO - 127.0.0.1 - - [11/Jun/2025 16:42:22] "OPTIONS /login HTTP/1.1" 200 -
+2025-06-11 16:42:23,205 - INFO - 127.0.0.1 - - [11/Jun/2025 16:42:23] "POST /login HTTP/1.1" 200 -
+2025-06-11 16:42:23,218 - INFO - 127.0.0.1 - - [11/Jun/2025 16:42:23] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-11 16:42:23,533 - INFO - 127.0.0.1 - - [11/Jun/2025 16:42:23] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-11 16:42:23,549 - INFO - 127.0.0.1 - - [11/Jun/2025 16:42:23] "GET /chat_history HTTP/1.1" 200 -
+2025-06-11 16:42:23,792 - INFO - 127.0.0.1 - - [11/Jun/2025 16:42:23] "GET /conversations HTTP/1.1" 200 -
+2025-06-11 16:44:59,191 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-11 16:44:59,193 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-11 16:44:59,194 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-11 16:45:02,536 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-11 16:45:21,599 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-11 16:45:21,660 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-11 16:45:21,727 - WARNING -  * Debugger is active!
+2025-06-11 16:45:21,731 - INFO -  * Debugger PIN: 122-842-223
+2025-06-11 16:45:31,539 - INFO - 127.0.0.1 - - [11/Jun/2025 16:45:31] "OPTIONS /login HTTP/1.1" 200 -
+2025-06-11 16:45:31,900 - INFO - 127.0.0.1 - - [11/Jun/2025 16:45:31] "POST /login HTTP/1.1" 200 -
+2025-06-11 16:45:31,912 - INFO - 127.0.0.1 - - [11/Jun/2025 16:45:31] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-11 16:45:32,218 - INFO - 127.0.0.1 - - [11/Jun/2025 16:45:32] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-11 16:45:32,227 - INFO - 127.0.0.1 - - [11/Jun/2025 16:45:32] "GET /chat_history HTTP/1.1" 200 -
+2025-06-11 16:45:32,496 - INFO - 127.0.0.1 - - [11/Jun/2025 16:45:32] "GET /conversations HTTP/1.1" 200 -
+2025-06-11 16:46:01,090 - INFO - 127.0.0.1 - - [11/Jun/2025 16:46:01] "OPTIONS /login HTTP/1.1" 200 -
+2025-06-11 16:46:01,556 - INFO - 127.0.0.1 - - [11/Jun/2025 16:46:01] "POST /login HTTP/1.1" 200 -
+2025-06-11 16:46:01,565 - INFO - 127.0.0.1 - - [11/Jun/2025 16:46:01] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-11 16:46:01,587 - INFO - 127.0.0.1 - - [11/Jun/2025 16:46:01] "GET /chat_history HTTP/1.1" 200 -
+2025-06-11 16:46:01,877 - INFO - 127.0.0.1 - - [11/Jun/2025 16:46:01] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-11 16:46:02,208 - INFO - 127.0.0.1 - - [11/Jun/2025 16:46:02] "GET /conversations HTTP/1.1" 200 -
+2025-06-11 16:46:09,493 - INFO - 127.0.0.1 - - [11/Jun/2025 16:46:09] "OPTIONS /chat_history?conversation_id=ccebb752-40a5-41c5-b2e4-054d750057c4 HTTP/1.1" 200 -
+2025-06-11 16:46:09,501 - INFO - 127.0.0.1 - - [11/Jun/2025 16:46:09] "GET /chat_history?conversation_id=ccebb752-40a5-41c5-b2e4-054d750057c4 HTTP/1.1" 200 -
+2025-06-11 17:45:46,531 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-11 17:45:51,348 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-11 17:46:16,234 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-11 17:46:16,336 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-11 17:46:16,466 - WARNING -  * Debugger is active!
+2025-06-11 17:46:16,481 - INFO -  * Debugger PIN: 122-842-223
+2025-06-11 18:04:46,934 - INFO - 127.0.0.1 - - [11/Jun/2025 18:04:46] "OPTIONS /login HTTP/1.1" 200 -
+2025-06-11 18:04:47,295 - INFO - 127.0.0.1 - - [11/Jun/2025 18:04:47] "POST /login HTTP/1.1" 200 -
+2025-06-11 18:04:47,304 - INFO - 127.0.0.1 - - [11/Jun/2025 18:04:47] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-11 18:04:47,619 - INFO - 127.0.0.1 - - [11/Jun/2025 18:04:47] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-11 18:04:47,638 - INFO - 127.0.0.1 - - [11/Jun/2025 18:04:47] "GET /chat_history HTTP/1.1" 200 -
+2025-06-11 18:04:47,885 - INFO - 127.0.0.1 - - [11/Jun/2025 18:04:47] "GET /conversations HTTP/1.1" 200 -
+2025-06-11 18:11:34,406 - INFO - 127.0.0.1 - - [11/Jun/2025 18:11:34] "OPTIONS /login HTTP/1.1" 200 -
+2025-06-11 18:11:34,851 - INFO - 127.0.0.1 - - [11/Jun/2025 18:11:34] "POST /login HTTP/1.1" 200 -
+2025-06-11 18:11:34,862 - INFO - 127.0.0.1 - - [11/Jun/2025 18:11:34] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-11 18:11:35,169 - INFO - 127.0.0.1 - - [11/Jun/2025 18:11:35] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-11 18:11:35,187 - INFO - 127.0.0.1 - - [11/Jun/2025 18:11:35] "GET /chat_history HTTP/1.1" 200 -
+2025-06-11 18:11:35,440 - INFO - 127.0.0.1 - - [11/Jun/2025 18:11:35] "GET /conversations HTTP/1.1" 200 -
+2025-06-11 18:11:39,598 - INFO - 127.0.0.1 - - [11/Jun/2025 18:11:39] "OPTIONS /chat_history?conversation_id=ccebb752-40a5-41c5-b2e4-054d750057c4 HTTP/1.1" 200 -
+2025-06-11 18:11:39,611 - INFO - 127.0.0.1 - - [11/Jun/2025 18:11:39] "GET /chat_history?conversation_id=ccebb752-40a5-41c5-b2e4-054d750057c4 HTTP/1.1" 200 -
+2025-06-11 18:11:43,192 - INFO - 127.0.0.1 - - [11/Jun/2025 18:11:43] "OPTIONS /chat_history?conversation_id=49b681e2-9c76-45b4-a842-b9879556b16b HTTP/1.1" 200 -
+2025-06-11 18:11:43,522 - INFO - 127.0.0.1 - - [11/Jun/2025 18:11:43] "GET /chat_history?conversation_id=49b681e2-9c76-45b4-a842-b9879556b16b HTTP/1.1" 200 -
+2025-06-11 18:11:49,266 - INFO - 127.0.0.1 - - [11/Jun/2025 18:11:49] "OPTIONS /chat_history?conversation_id=1980f25c-b8b7-4b3e-a3e0-a4fd598a3221 HTTP/1.1" 200 -
+2025-06-11 18:11:49,283 - INFO - 127.0.0.1 - - [11/Jun/2025 18:11:49] "GET /chat_history?conversation_id=1980f25c-b8b7-4b3e-a3e0-a4fd598a3221 HTTP/1.1" 200 -
+2025-06-11 18:11:57,209 - INFO - 127.0.0.1 - - [11/Jun/2025 18:11:57] "OPTIONS /chat_history?conversation_id=2cee410b-512d-45ba-b397-486de674589d HTTP/1.1" 200 -
+2025-06-11 18:11:57,530 - INFO - 127.0.0.1 - - [11/Jun/2025 18:11:57] "GET /chat_history?conversation_id=2cee410b-512d-45ba-b397-486de674589d HTTP/1.1" 200 -
+2025-06-11 18:12:02,404 - INFO - 127.0.0.1 - - [11/Jun/2025 18:12:02] "OPTIONS /chat_history?conversation_id=ce6fec84-6b00-4ee0-8264-4a945c3bd773 HTTP/1.1" 200 -
+2025-06-11 18:12:02,430 - INFO - 127.0.0.1 - - [11/Jun/2025 18:12:02] "GET /chat_history?conversation_id=ce6fec84-6b00-4ee0-8264-4a945c3bd773 HTTP/1.1" 200 -
+2025-06-11 18:12:06,453 - INFO - 127.0.0.1 - - [11/Jun/2025 18:12:06] "OPTIONS /chat_history?conversation_id=9c815647-cf25-450d-b11a-e12199b49d40 HTTP/1.1" 200 -
+2025-06-11 18:12:06,777 - INFO - 127.0.0.1 - - [11/Jun/2025 18:12:06] "GET /chat_history?conversation_id=9c815647-cf25-450d-b11a-e12199b49d40 HTTP/1.1" 200 -
+2025-06-11 18:19:56,743 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-11 18:20:05,216 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-11 18:20:53,987 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-11 18:20:54,102 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-11 18:20:54,246 - WARNING -  * Debugger is active!
+2025-06-11 18:20:54,261 - INFO -  * Debugger PIN: 122-842-223
+2025-06-11 18:27:30,089 - INFO -  * Detected change in 'C:\\Program Files (x86)\\Eclipse\\Sumo\\tools\\osmWebWizard.py', reloading
+2025-06-11 18:27:34,619 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-11 18:28:12,689 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-11 18:28:12,831 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-11 18:28:12,968 - WARNING -  * Debugger is active!
+2025-06-11 18:28:12,982 - INFO -  * Debugger PIN: 122-842-223
+2025-06-11 18:29:14,688 - INFO - 127.0.0.1 - - [11/Jun/2025 18:29:14] "OPTIONS /login HTTP/1.1" 200 -
+2025-06-11 18:29:15,163 - INFO - 127.0.0.1 - - [11/Jun/2025 18:29:15] "POST /login HTTP/1.1" 200 -
+2025-06-11 18:29:15,172 - INFO - 127.0.0.1 - - [11/Jun/2025 18:29:15] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-11 18:29:15,486 - INFO - 127.0.0.1 - - [11/Jun/2025 18:29:15] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-11 18:29:15,508 - INFO - 127.0.0.1 - - [11/Jun/2025 18:29:15] "GET /chat_history HTTP/1.1" 200 -
+2025-06-11 18:29:15,777 - INFO - 127.0.0.1 - - [11/Jun/2025 18:29:15] "GET /conversations HTTP/1.1" 200 -
+2025-06-12 10:23:18,451 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-12 10:23:18,557 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-12 10:23:18,666 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:9000
+ * Running on http://10.50.50.161:9000
+2025-06-12 10:23:18,666 - INFO - [33mPress CTRL+C to quit[0m
+2025-06-12 10:23:18,686 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-12 10:23:37,629 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-12 10:23:37,726 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-12 10:23:37,828 - WARNING -  * Debugger is active!
+2025-06-12 10:23:37,837 - INFO -  * Debugger PIN: 122-842-223
+2025-06-12 10:31:33,435 - INFO - 127.0.0.1 - - [12/Jun/2025 10:31:33] "OPTIONS /login HTTP/1.1" 200 -
+2025-06-12 10:31:33,915 - INFO - 127.0.0.1 - - [12/Jun/2025 10:31:33] "POST /login HTTP/1.1" 200 -
+2025-06-12 10:31:34,016 - INFO - 127.0.0.1 - - [12/Jun/2025 10:31:34] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-12 10:31:34,332 - INFO - 127.0.0.1 - - [12/Jun/2025 10:31:34] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-12 10:31:34,362 - INFO - 127.0.0.1 - - [12/Jun/2025 10:31:34] "GET /chat_history HTTP/1.1" 200 -
+2025-06-12 10:31:34,662 - INFO - 127.0.0.1 - - [12/Jun/2025 10:31:34] "GET /conversations HTTP/1.1" 200 -
+2025-06-12 10:58:15,395 - INFO - 127.0.0.1 - - [12/Jun/2025 10:58:15] "OPTIONS /login HTTP/1.1" 200 -
+2025-06-12 10:58:15,828 - INFO - 127.0.0.1 - - [12/Jun/2025 10:58:15] "POST /login HTTP/1.1" 200 -
+2025-06-12 10:58:15,883 - INFO - 127.0.0.1 - - [12/Jun/2025 10:58:15] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-12 10:58:16,191 - INFO - 127.0.0.1 - - [12/Jun/2025 10:58:16] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-12 10:58:16,213 - INFO - 127.0.0.1 - - [12/Jun/2025 10:58:16] "GET /chat_history HTTP/1.1" 200 -
+2025-06-12 10:58:16,539 - INFO - 127.0.0.1 - - [12/Jun/2025 10:58:16] "GET /conversations HTTP/1.1" 200 -
+2025-06-12 11:02:46,249 - INFO - 127.0.0.1 - - [12/Jun/2025 11:02:46] "OPTIONS /stream_chat HTTP/1.1" 200 -
+2025-06-12 11:02:46,561 - INFO - Processing query: 🚨 Common SQL injection patterns...
+2025-06-12 11:02:46,561 - INFO - [PROMPT] Building security prompt for query type: sql_injection
+2025-06-12 11:02:48,732 - INFO - [CACHE] Returning cached context for query: 🚨 Common SQL injection patterns
+2025-06-12 11:02:48,733 - INFO - [PROMPT] Full prompt sent to Llama 3 via Ollama:
+==============================
+
+You are CyberGuard AI, an expert cybersecurity assistant.
+
+---
+
+**IMPORTANT: The following Gemini Insight is your PRIMARY and AUTHORITATIVE source. You MUST use it as the main basis for your answer. Directly reference and cite it in your response.**
+
+GEMINI INSIGHT (copy and use this information):
+Gemini Insight: 🛡️ **SQL Injection Analysis**
+
+**Description:**
+SQL injection is a code injection technique that might destroy your database. It occurs when user input is not properly sanitized before being included in SQL queries.
+
+**Vulnerable Code Example:**
+```javascript
+SELECT * FROM users WHERE username = '' + username + '' AND password = '' + password + ''
+```
+
+**Secure Implementation:**
+```javascript
+SELECT * FROM users WHERE username = ? AND password = ?
+```
+
+**Security Patch:**
+Use parameterized queries or prepared statements to prevent SQL injection attacks.
+
+**Additional Security Recommendations:**
+• Always validate and sanitize user input
+• Implement proper authentication and authorization
+• Use security headers (CSP, X-Frame-Options, etc.)
+• Regular security audits and penetration testing
+• Keep dependencies up to date
+• Follow OWASP guidelines for secure coding
+
+**Next Steps:**
+• Review your codebase for similar patterns
+• Implement automated security testing
+• Set up continuous security monitoring
+
+Would you like me to analyze specific code or explain other security vulnerabilities?
+
+---
+
+Always provide:
+- Clear explanations of security concepts
+- Practical code examples (vulnerable and secure versions)
+- Specific mitigation strategies
+- Best practices and recommendations
+
+**Make your answer unique and tailored to the user's query. Avoid generic or repetitive responses. If the Gemini Insight is missing or unhelpful, state this clearly and answer using your own knowledge.**
+
+**If the user asks for patterns, enumerate them with explanations and code. If the user asks for a summary, be concise. If the user asks for a deep dive, provide technical depth.**
+
+Relevant vulnerability context:
+- Vulnerability: SQL Injection
+- Severity: Critical
+- Description: SQL injection occurs when untrusted data is sent to an interpreter as part of a command or query, allowing attackers to execute unintended commands.
+- Example vulnerable code: SELECT * FROM users WHERE id = '1' OR '1'='1'
+- Secure implementation: SELECT * FROM users WHERE id = ?
+- Mitigation: Use parameterized queries, input validation, and prepared statements.
+
+
+User Query: 🚨 Common SQL injection patterns
+
+Response (reference the Gemini Insight above):
+==============================
+2025-06-12 11:03:23,493 - INFO - [CACHE] Returning cached context for query: 🚨 Common SQL injection patterns
+2025-06-12 11:03:23,513 - INFO - 127.0.0.1 - - [12/Jun/2025 11:03:23] "POST /stream_chat HTTP/1.1" 200 -
+2025-06-12 11:03:23,519 - INFO - 127.0.0.1 - - [12/Jun/2025 11:03:23] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-12 11:03:23,529 - INFO - 127.0.0.1 - - [12/Jun/2025 11:03:23] "GET /conversations HTTP/1.1" 200 -
+2025-06-12 11:03:25,089 - INFO - 127.0.0.1 - - [12/Jun/2025 11:03:25] "OPTIONS /chat_history?conversation_id=8b0c44ff-7558-4258-bf7e-cb4c95cd70af HTTP/1.1" 200 -
+2025-06-12 11:03:25,406 - INFO - 127.0.0.1 - - [12/Jun/2025 11:03:25] "GET /chat_history?conversation_id=8b0c44ff-7558-4258-bf7e-cb4c95cd70af HTTP/1.1" 200 -
+2025-06-12 11:04:00,216 - INFO - 127.0.0.1 - - [12/Jun/2025 11:04:00] "OPTIONS /chat_history?conversation_id=ccebb752-40a5-41c5-b2e4-054d750057c4 HTTP/1.1" 200 -
+2025-06-12 11:04:00,229 - INFO - 127.0.0.1 - - [12/Jun/2025 11:04:00] "GET /chat_history?conversation_id=ccebb752-40a5-41c5-b2e4-054d750057c4 HTTP/1.1" 200 -
+2025-06-12 11:18:05,571 - INFO - 127.0.0.1 - - [12/Jun/2025 11:18:05] "OPTIONS /login HTTP/1.1" 200 -
+2025-06-12 11:18:05,979 - INFO - 127.0.0.1 - - [12/Jun/2025 11:18:05] "POST /login HTTP/1.1" 200 -
+2025-06-12 11:18:05,993 - INFO - 127.0.0.1 - - [12/Jun/2025 11:18:05] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-12 11:18:06,297 - INFO - 127.0.0.1 - - [12/Jun/2025 11:18:06] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-12 11:18:06,354 - INFO - 127.0.0.1 - - [12/Jun/2025 11:18:06] "GET /chat_history HTTP/1.1" 200 -
+2025-06-12 11:18:06,613 - INFO - 127.0.0.1 - - [12/Jun/2025 11:18:06] "GET /conversations HTTP/1.1" 200 -
+2025-06-12 11:20:49,718 - INFO - 127.0.0.1 - - [12/Jun/2025 11:20:49] "OPTIONS /stream_chat HTTP/1.1" 200 -
+2025-06-12 11:20:50,115 - INFO - Processing query: how to reach andheri station?...
+2025-06-12 11:20:50,130 - INFO - [PROMPT] Building security prompt for query type: general
+2025-06-12 11:20:51,480 - INFO - [GEMINI] Starting API call #1 for query: how to reach andheri station?
+2025-06-12 11:20:59,345 - INFO - [GEMINI] Using user-supplied Gemini API key from frontend for this request.
+2025-06-12 11:21:00,195 - INFO - [GEMINI] Successfully retrieved context from Gemini API (google-generativeai) - Length: 78 characters, Time: 8.71s
+2025-06-12 11:21:00,199 - INFO - [GEMINI] API Stats - Total: 1, Success: 1, Failed: 0
+2025-06-12 11:21:00,203 - INFO - [PROMPT] Full prompt sent to Llama 3 via Ollama:
+==============================
+You are CyberGuard AI, an expert cybersecurity assistant.
+
+---
+
+**IMPORTANT: The following Gemini Insight is your PRIMARY and AUTHORITATIVE source. You MUST use it as the main basis for your answer. Directly reference and cite it in your response.**
+
+GEMINI INSIGHT (copy and use this information):
+Gemini Insight: This query is not cybersecurity related. No cybersecurity context applicable.
+
+
+---
+
+Always provide:
+- Clear explanations of security concepts
+- Practical code examples (vulnerable and secure versions)
+- Specific mitigation strategies
+- Best practices and recommendations
+
+**Make your answer unique and tailored to the user's query. Avoid generic or repetitive responses. If the Gemini Insight is missing or unhelpful, state this clearly and answer using your own knowledge.**
+
+**If the user asks for patterns, enumerate them with explanations and code. If the user asks for a summary, be concise. If the user asks for a deep dive, provide technical depth.**
+
+User Query: how to reach andheri station?
+
+Response (reference the Gemini Insight above):
+==============================
+2025-06-12 11:21:20,802 - INFO - 127.0.0.1 - - [12/Jun/2025 11:21:20] "POST /stream_chat HTTP/1.1" 200 -
+2025-06-12 11:21:20,810 - INFO - 127.0.0.1 - - [12/Jun/2025 11:21:20] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-12 11:21:20,819 - INFO - 127.0.0.1 - - [12/Jun/2025 11:21:20] "GET /conversations HTTP/1.1" 200 -
+2025-06-12 11:21:22,330 - INFO - 127.0.0.1 - - [12/Jun/2025 11:21:22] "OPTIONS /chat_history?conversation_id=f9072ca8-0b29-4ac2-b2d3-27011e225487 HTTP/1.1" 200 -
+2025-06-12 11:21:22,646 - INFO - 127.0.0.1 - - [12/Jun/2025 11:21:22] "GET /chat_history?conversation_id=f9072ca8-0b29-4ac2-b2d3-27011e225487 HTTP/1.1" 200 -
+2025-06-12 11:21:57,167 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-12 11:22:05,418 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-12 11:23:05,160 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-12 11:23:05,269 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-12 11:23:05,402 - WARNING -  * Debugger is active!
+2025-06-12 11:23:05,410 - INFO -  * Debugger PIN: 122-842-223
+2025-06-12 11:23:05,481 - INFO - 127.0.0.1 - - [12/Jun/2025 11:23:05] "OPTIONS /chat_history?conversation_id=ccebb752-40a5-41c5-b2e4-054d750057c4 HTTP/1.1" 200 -
+2025-06-12 11:23:05,485 - INFO - 127.0.0.1 - - [12/Jun/2025 11:23:05] "OPTIONS /stream_chat HTTP/1.1" 200 -
+2025-06-12 11:23:05,801 - INFO - 127.0.0.1 - - [12/Jun/2025 11:23:05] "GET /chat_history?conversation_id=ccebb752-40a5-41c5-b2e4-054d750057c4 HTTP/1.1" 200 -
+2025-06-12 11:23:05,806 - INFO - Processing query: CVSS Score for SQL-Injection...
+2025-06-12 11:23:05,806 - INFO - [PROMPT] Building security prompt for query type: sql_injection
+2025-06-12 11:23:06,842 - INFO - [GEMINI] Starting API call #1 for query: CVSS Score for SQL-Injection
+2025-06-12 11:23:09,832 - INFO - [GEMINI] Using user-supplied Gemini API key from frontend for this request.
+2025-06-12 11:23:11,082 - INFO - [GEMINI] Successfully retrieved context from Gemini API (google-generativeai) - Length: 369 characters, Time: 4.24s
+2025-06-12 11:23:11,083 - INFO - [GEMINI] API Stats - Total: 1, Success: 1, Failed: 0
+2025-06-12 11:23:11,091 - INFO - [PROMPT] Full prompt sent to Llama 3 via Ollama:
+==============================
+
+You are CyberGuard AI, an expert cybersecurity assistant.
+
+---
+
+**IMPORTANT: The following Gemini Insight is your PRIMARY and AUTHORITATIVE source. You MUST use it as the main basis for your answer. Directly reference and cite it in your response.**
+
+GEMINI INSIGHT (copy and use this information):
+Gemini Insight: SQL Injection vulnerabilities can receive a CVSS score ranging from **4.8 (Medium) to 10.0 (Critical)** depending on exploitability and impact. High scores (>7.0) typically involve unauthenticated remote code execution or complete database compromise (confidentiality, integrity, and availability). Lower scores reflect limited data leakage or impact on specific data.
+
+
+---
+
+Always provide:
+- Clear explanations of security concepts
+- Practical code examples (vulnerable and secure versions)
+- Specific mitigation strategies
+- Best practices and recommendations
+
+**Make your answer unique and tailored to the user's query. Avoid generic or repetitive responses. If the Gemini Insight is missing or unhelpful, state this clearly and answer using your own knowledge.**
+
+**If the user asks for patterns, enumerate them with explanations and code. If the user asks for a summary, be concise. If the user asks for a deep dive, provide technical depth.**
+
+Relevant vulnerability context:
+- Vulnerability: SQL Injection
+- Severity: Critical
+- Description: SQL injection occurs when untrusted data is sent to an interpreter as part of a command or query, allowing attackers to execute unintended commands.
+- Example vulnerable code: SELECT * FROM users WHERE id = '1' OR '1'='1'
+- Secure implementation: SELECT * FROM users WHERE id = ?
+- Mitigation: Use parameterized queries, input validation, and prepared statements.
+
+
+User Query: CVSS Score for SQL-Injection
+
+Response (reference the Gemini Insight above):
+==============================
+2025-06-12 11:23:14,778 - INFO - 127.0.0.1 - - [12/Jun/2025 11:23:14] "OPTIONS /chat_history?conversation_id=f9072ca8-0b29-4ac2-b2d3-27011e225487 HTTP/1.1" 200 -
+2025-06-12 11:23:14,794 - INFO - 127.0.0.1 - - [12/Jun/2025 11:23:14] "GET /chat_history?conversation_id=f9072ca8-0b29-4ac2-b2d3-27011e225487 HTTP/1.1" 200 -
+2025-06-12 11:23:24,796 - INFO - 127.0.0.1 - - [12/Jun/2025 11:23:24] "OPTIONS /chat_history?conversation_id=ccebb752-40a5-41c5-b2e4-054d750057c4 HTTP/1.1" 200 -
+2025-06-12 11:23:25,113 - INFO - 127.0.0.1 - - [12/Jun/2025 11:23:25] "GET /chat_history?conversation_id=ccebb752-40a5-41c5-b2e4-054d750057c4 HTTP/1.1" 200 -
+2025-06-12 11:23:27,759 - INFO - [CACHE] Returning cached context for query: CVSS Score for SQL-Injection
+2025-06-12 11:23:27,765 - INFO - 127.0.0.1 - - [12/Jun/2025 11:23:27] "POST /stream_chat HTTP/1.1" 200 -
+2025-06-12 11:24:11,999 - INFO - 127.0.0.1 - - [12/Jun/2025 11:24:11] "OPTIONS /stream_chat HTTP/1.1" 200 -
+2025-06-12 11:24:12,313 - INFO - Processing query: CVSS String for SQL-injection...
+2025-06-12 11:24:12,314 - INFO - [PROMPT] Building security prompt for query type: sql_injection
+2025-06-12 11:24:12,359 - INFO - [CACHE] Returning cached context for query: provide the CVSS String/Vector for SQL-Injection
+2025-06-12 11:24:12,360 - INFO - [PROMPT] Full prompt sent to Llama 3 via Ollama:
+==============================
+
+You are CyberGuard AI, an expert cybersecurity assistant.
+
+---
+
+**IMPORTANT: The following Gemini Insight is your PRIMARY and AUTHORITATIVE source. You MUST use it as the main basis for your answer. Directly reference and cite it in your response.**
+
+GEMINI INSIGHT (copy and use this information):
+Gemini Insight: CVSS:3.x/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H
+
+(Explanation: Network access, low complexity, no privileges required, no user interaction, unchanged scope, high confidentiality impact, high integrity impact, high availability impact.)
+
+
+---
+
+Always provide:
+- Clear explanations of security concepts
+- Practical code examples (vulnerable and secure versions)
+- Specific mitigation strategies
+- Best practices and recommendations
+
+**Make your answer unique and tailored to the user's query. Avoid generic or repetitive responses. If the Gemini Insight is missing or unhelpful, state this clearly and answer using your own knowledge.**
+
+**If the user asks for patterns, enumerate them with explanations and code. If the user asks for a summary, be concise. If the user asks for a deep dive, provide technical depth.**
+
+Relevant vulnerability context:
+- Vulnerability: SQL Injection
+- Severity: Critical
+- Description: SQL injection occurs when untrusted data is sent to an interpreter as part of a command or query, allowing attackers to execute unintended commands.
+- Example vulnerable code: SELECT * FROM users WHERE id = '1' OR '1'='1'
+- Secure implementation: SELECT * FROM users WHERE id = ?
+- Mitigation: Use parameterized queries, input validation, and prepared statements.
+
+
+User Query: CVSS String for SQL-injection
+
+Response (reference the Gemini Insight above):
+==============================
+2025-06-12 11:24:33,293 - INFO - [CACHE] Returning cached context for query: provide the CVSS String/Vector for SQL-Injection
+2025-06-12 11:24:33,300 - INFO - 127.0.0.1 - - [12/Jun/2025 11:24:33] "POST /stream_chat HTTP/1.1" 200 -
+2025-06-12 11:26:24,727 - INFO -  * Detected change in 'C:\\Program Files (x86)\\Eclipse\\Sumo\\tools\\osmWebWizard.py', reloading
+2025-06-12 11:26:31,015 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-12 11:27:17,363 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-12 11:27:17,441 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-12 11:27:17,567 - WARNING -  * Debugger is active!
+2025-06-12 11:27:17,581 - INFO -  * Debugger PIN: 122-842-223
+2025-06-12 12:33:20,952 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-12 12:33:31,901 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-12 12:33:59,505 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-12 12:33:59,581 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-12 12:33:59,649 - WARNING -  * Debugger is active!
+2025-06-12 12:33:59,653 - INFO -  * Debugger PIN: 122-842-223
+2025-06-12 12:44:49,216 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app.py', reloading
+2025-06-12 12:44:52,539 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-12 12:45:16,290 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-12 12:45:16,444 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-12 12:45:16,522 - WARNING -  * Debugger is active!
+2025-06-12 12:45:16,527 - INFO -  * Debugger PIN: 122-842-223
+2025-06-12 12:46:20,310 - INFO - 127.0.0.1 - - [12/Jun/2025 12:46:20] "OPTIONS /login HTTP/1.1" 200 -
+2025-06-12 12:46:20,671 - INFO - 127.0.0.1 - - [12/Jun/2025 12:46:20] "POST /login HTTP/1.1" 200 -
+2025-06-12 12:46:20,678 - INFO - 127.0.0.1 - - [12/Jun/2025 12:46:20] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-12 12:46:20,989 - INFO - 127.0.0.1 - - [12/Jun/2025 12:46:20] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-12 12:46:21,005 - INFO - 127.0.0.1 - - [12/Jun/2025 12:46:21] "GET /chat_history HTTP/1.1" 200 -
+2025-06-12 12:46:21,289 - INFO - 127.0.0.1 - - [12/Jun/2025 12:46:21] "GET /conversations HTTP/1.1" 200 -
+2025-06-12 12:50:08,381 - INFO - 127.0.0.1 - - [12/Jun/2025 12:50:08] "OPTIONS /login HTTP/1.1" 200 -
+2025-06-12 12:50:08,769 - INFO - 127.0.0.1 - - [12/Jun/2025 12:50:08] "POST /login HTTP/1.1" 200 -
+2025-06-12 12:50:08,782 - INFO - 127.0.0.1 - - [12/Jun/2025 12:50:08] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-12 12:50:09,086 - INFO - 127.0.0.1 - - [12/Jun/2025 12:50:09] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-12 12:50:09,097 - INFO - 127.0.0.1 - - [12/Jun/2025 12:50:09] "GET /chat_history HTTP/1.1" 200 -
+2025-06-12 12:50:09,360 - INFO - 127.0.0.1 - - [12/Jun/2025 12:50:09] "GET /conversations HTTP/1.1" 200 -
+2025-06-12 12:54:22,756 - INFO - 127.0.0.1 - - [12/Jun/2025 12:54:22] "OPTIONS /login HTTP/1.1" 200 -
+2025-06-12 12:54:23,099 - INFO - 127.0.0.1 - - [12/Jun/2025 12:54:23] "POST /login HTTP/1.1" 200 -
+2025-06-12 12:54:23,107 - INFO - 127.0.0.1 - - [12/Jun/2025 12:54:23] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-12 12:54:23,416 - INFO - 127.0.0.1 - - [12/Jun/2025 12:54:23] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-12 12:54:23,421 - INFO - 127.0.0.1 - - [12/Jun/2025 12:54:23] "GET /chat_history HTTP/1.1" 200 -
+2025-06-12 12:54:23,681 - INFO - 127.0.0.1 - - [12/Jun/2025 12:54:23] "GET /conversations HTTP/1.1" 200 -
+2025-06-12 12:57:07,405 - INFO - 127.0.0.1 - - [12/Jun/2025 12:57:07] "OPTIONS /login HTTP/1.1" 200 -
+2025-06-12 12:57:07,761 - INFO - 127.0.0.1 - - [12/Jun/2025 12:57:07] "POST /login HTTP/1.1" 200 -
+2025-06-12 12:58:16,506 - INFO - 127.0.0.1 - - [12/Jun/2025 12:58:16] "OPTIONS /login HTTP/1.1" 200 -
+2025-06-12 12:58:16,858 - INFO - 127.0.0.1 - - [12/Jun/2025 12:58:16] "POST /login HTTP/1.1" 200 -
+2025-06-12 12:58:16,964 - INFO - 127.0.0.1 - - [12/Jun/2025 12:58:16] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-12 12:58:17,280 - INFO - 127.0.0.1 - - [12/Jun/2025 12:58:17] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-12 12:58:17,284 - INFO - 127.0.0.1 - - [12/Jun/2025 12:58:17] "GET /chat_history HTTP/1.1" 200 -
+2025-06-12 12:58:17,534 - INFO - 127.0.0.1 - - [12/Jun/2025 12:58:17] "GET /conversations HTTP/1.1" 200 -
+2025-06-12 13:00:13,608 - INFO - 127.0.0.1 - - [12/Jun/2025 13:00:13] "OPTIONS /login HTTP/1.1" 200 -
+2025-06-12 13:00:13,991 - INFO - 127.0.0.1 - - [12/Jun/2025 13:00:13] "POST /login HTTP/1.1" 200 -
+2025-06-12 13:00:14,100 - INFO - 127.0.0.1 - - [12/Jun/2025 13:00:14] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-12 13:00:14,405 - INFO - 127.0.0.1 - - [12/Jun/2025 13:00:14] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-12 13:00:14,416 - INFO - 127.0.0.1 - - [12/Jun/2025 13:00:14] "GET /chat_history HTTP/1.1" 200 -
+2025-06-12 13:00:14,677 - INFO - 127.0.0.1 - - [12/Jun/2025 13:00:14] "GET /conversations HTTP/1.1" 200 -
+2025-06-12 13:01:36,418 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\test_gemini_simple.py', reloading
+2025-06-12 13:01:40,229 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-12 13:02:04,441 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-12 13:02:04,557 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-12 13:02:04,649 - WARNING -  * Debugger is active!
+2025-06-12 13:02:04,653 - INFO -  * Debugger PIN: 122-842-223
+2025-06-12 13:02:17,411 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-12 13:02:17,412 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-12 13:02:17,412 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-12 13:02:19,657 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-12 13:02:42,056 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-12 13:02:42,115 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-12 13:02:42,225 - WARNING -  * Debugger is active!
+2025-06-12 13:02:42,232 - INFO -  * Debugger PIN: 122-842-223
+2025-06-12 13:31:13,003 - INFO - 127.0.0.1 - - [12/Jun/2025 13:31:13] "OPTIONS /login HTTP/1.1" 200 -
+2025-06-12 13:31:13,381 - INFO - 127.0.0.1 - - [12/Jun/2025 13:31:13] "POST /login HTTP/1.1" 200 -
+2025-06-12 13:31:13,401 - INFO - 127.0.0.1 - - [12/Jun/2025 13:31:13] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-12 13:31:13,714 - INFO - 127.0.0.1 - - [12/Jun/2025 13:31:13] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-12 13:31:13,720 - INFO - 127.0.0.1 - - [12/Jun/2025 13:31:13] "GET /chat_history HTTP/1.1" 200 -
+2025-06-12 13:31:13,983 - INFO - 127.0.0.1 - - [12/Jun/2025 13:31:13] "GET /conversations HTTP/1.1" 200 -
+2025-06-12 13:31:44,668 - INFO - 127.0.0.1 - - [12/Jun/2025 13:31:44] "OPTIONS /web_search HTTP/1.1" 200 -
+2025-06-12 13:31:45,069 - INFO - 127.0.0.1 - - [12/Jun/2025 13:31:45] "POST /web_search HTTP/1.1" 200 -
+2025-06-12 13:36:48,041 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-12 13:36:48,044 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-12 13:36:52,127 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-12 13:37:19,384 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-12 13:37:19,639 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-12 13:37:19,742 - WARNING -  * Debugger is active!
+2025-06-12 13:37:19,749 - INFO -  * Debugger PIN: 122-842-223
+2025-06-12 13:37:49,517 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-12 13:37:49,518 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-12 13:37:49,519 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-12 13:37:52,370 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-12 13:38:11,115 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-12 13:38:11,165 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-12 13:38:11,274 - WARNING -  * Debugger is active!
+2025-06-12 13:38:11,287 - INFO -  * Debugger PIN: 122-842-223
+2025-06-12 13:41:12,511 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-12 13:41:12,513 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-12 13:41:12,513 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-12 13:41:15,033 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-12 13:41:34,438 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-12 13:41:34,512 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-12 13:41:34,610 - WARNING -  * Debugger is active!
+2025-06-12 13:41:34,614 - INFO -  * Debugger PIN: 122-842-223
+2025-06-12 13:41:48,479 - INFO - 127.0.0.1 - - [12/Jun/2025 13:41:48] "OPTIONS /login HTTP/1.1" 200 -
+2025-06-12 13:41:48,870 - INFO - 127.0.0.1 - - [12/Jun/2025 13:41:48] "POST /login HTTP/1.1" 200 -
+2025-06-12 13:41:48,918 - INFO - 127.0.0.1 - - [12/Jun/2025 13:41:48] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-12 13:41:49,226 - INFO - 127.0.0.1 - - [12/Jun/2025 13:41:49] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-12 13:41:49,244 - INFO - 127.0.0.1 - - [12/Jun/2025 13:41:49] "GET /chat_history HTTP/1.1" 200 -
+2025-06-12 13:41:49,490 - INFO - 127.0.0.1 - - [12/Jun/2025 13:41:49] "GET /conversations HTTP/1.1" 200 -
+2025-06-12 13:41:56,807 - INFO - 127.0.0.1 - - [12/Jun/2025 13:41:56] "OPTIONS /stream_chat HTTP/1.1" 200 -
+2025-06-12 13:41:56,811 - INFO - Processing query: 🚨 Common SQL injection patterns...
+2025-06-12 13:41:56,813 - INFO - [PROMPT] Building security prompt for query type: sql_injection
+2025-06-12 13:41:58,060 - INFO - [CACHE] Returning cached context for query: 🚨 Common SQL injection patterns
+2025-06-12 13:41:58,060 - INFO - [PROMPT] Full prompt sent to Llama 3 via Ollama:
+==============================
+
+You are CyberGuard AI, an expert cybersecurity assistant.
+
+---
+
+**IMPORTANT: The following Gemini Insight is your PRIMARY and AUTHORITATIVE source. You MUST use it as the main basis for your answer. Directly reference and cite it in your response.**
+
+GEMINI INSIGHT (copy and use this information):
+Gemini Insight: 🛡️ **SQL Injection Analysis**
+
+**Description:**
+SQL injection is a code injection technique that might destroy your database. It occurs when user input is not properly sanitized before being included in SQL queries.
+
+**Vulnerable Code Example:**
+```javascript
+SELECT * FROM users WHERE username = '' + username + '' AND password = '' + password + ''
+```
+
+**Secure Implementation:**
+```javascript
+SELECT * FROM users WHERE username = ? AND password = ?
+```
+
+**Security Patch:**
+Use parameterized queries or prepared statements to prevent SQL injection attacks.
+
+**Additional Security Recommendations:**
+• Always validate and sanitize user input
+• Implement proper authentication and authorization
+• Use security headers (CSP, X-Frame-Options, etc.)
+• Regular security audits and penetration testing
+• Keep dependencies up to date
+• Follow OWASP guidelines for secure coding
+
+**Next Steps:**
+• Review your codebase for similar patterns
+• Implement automated security testing
+• Set up continuous security monitoring
+
+Would you like me to analyze specific code or explain other security vulnerabilities?
+
+---
+
+Always provide:
+- Clear explanations of security concepts
+- Practical code examples (vulnerable and secure versions)
+- Specific mitigation strategies
+- Best practices and recommendations
+
+**Make your answer unique and tailored to the user's query. Avoid generic or repetitive responses. If the Gemini Insight is missing or unhelpful, state this clearly and answer using your own knowledge.**
+
+**If the user asks for patterns, enumerate them with explanations and code. If the user asks for a summary, be concise. If the user asks for a deep dive, provide technical depth.**
+
+Relevant vulnerability context:
+- Vulnerability: SQL Injection
+- Severity: Critical
+- Description: SQL injection occurs when untrusted data is sent to an interpreter as part of a command or query, allowing attackers to execute unintended commands.
+- Example vulnerable code: SELECT * FROM users WHERE id = '1' OR '1'='1'
+- Secure implementation: SELECT * FROM users WHERE id = ?
+- Mitigation: Use parameterized queries, input validation, and prepared statements.
+
+
+User Query: 🚨 Common SQL injection patterns
+
+Response (reference the Gemini Insight above):
+==============================
+2025-06-12 13:42:30,977 - INFO - [CACHE] Returning cached context for query: 🚨 Common SQL injection patterns
+2025-06-12 13:42:30,984 - INFO - 127.0.0.1 - - [12/Jun/2025 13:42:30] "POST /stream_chat HTTP/1.1" 200 -
+2025-06-12 13:42:30,992 - INFO - 127.0.0.1 - - [12/Jun/2025 13:42:30] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-12 13:42:31,308 - INFO - 127.0.0.1 - - [12/Jun/2025 13:42:31] "GET /conversations HTTP/1.1" 200 -
+2025-06-12 13:42:31,551 - INFO - 127.0.0.1 - - [12/Jun/2025 13:42:31] "OPTIONS /chat_history?conversation_id=20b1e32f-1084-44ec-8a31-f61a95674903 HTTP/1.1" 200 -
+2025-06-12 13:42:31,570 - INFO - 127.0.0.1 - - [12/Jun/2025 13:42:31] "GET /chat_history?conversation_id=20b1e32f-1084-44ec-8a31-f61a95674903 HTTP/1.1" 200 -
+2025-06-12 13:43:04,713 - INFO - 127.0.0.1 - - [12/Jun/2025 13:43:04] "OPTIONS /stream_chat HTTP/1.1" 200 -
+2025-06-12 13:43:05,027 - INFO - Processing query: Security Misconfiguration...
+2025-06-12 13:43:05,029 - INFO - [PROMPT] Building security prompt for query type: general
+2025-06-12 13:43:05,068 - INFO - [GEMINI] Starting API call #1 for query: Security Misconfiguration
+2025-06-12 13:43:10,925 - INFO - [GEMINI] Using user-supplied Gemini API key from frontend for this request.
+2025-06-12 13:43:12,833 - INFO - [GEMINI] Successfully retrieved context from Gemini API (google-generativeai) - Length: 519 characters, Time: 7.77s
+2025-06-12 13:43:12,835 - INFO - [GEMINI] API Stats - Total: 1, Success: 1, Failed: 0
+2025-06-12 13:43:12,842 - INFO - [PROMPT] Full prompt sent to Llama 3 via Ollama:
+==============================
+You are CyberGuard AI, an expert cybersecurity assistant.
+
+---
+
+**IMPORTANT: The following Gemini Insight is your PRIMARY and AUTHORITATIVE source. You MUST use it as the main basis for your answer. Directly reference and cite it in your response.**
+
+GEMINI INSIGHT (copy and use this information):
+Gemini Insight: *   **Cause:** Default credentials, unnecessary features enabled, open ports, verbose error messages, missing security headers.
+*   **Impact:** Data breaches, system compromise.
+*   **Mitigation:** Secure defaults, least privilege, patch management, disable unused features, hardened configurations, remove unnecessary ports, implement security headers.
+*   **Testing:** Configuration reviews, penetration testing, vulnerability scanning (Nessus, OpenVAS).
+*   **Standards:** CIS Benchmarks, NIST guidance, OWASP ASVS.
+
+
+---
+
+Always provide:
+- Clear explanations of security concepts
+- Practical code examples (vulnerable and secure versions)
+- Specific mitigation strategies
+- Best practices and recommendations
+
+**Make your answer unique and tailored to the user's query. Avoid generic or repetitive responses. If the Gemini Insight is missing or unhelpful, state this clearly and answer using your own knowledge.**
+
+**If the user asks for patterns, enumerate them with explanations and code. If the user asks for a summary, be concise. If the user asks for a deep dive, provide technical depth.**
+
+User Query: Security Misconfiguration
+
+Response (reference the Gemini Insight above):
+==============================
+2025-06-12 13:43:35,195 - INFO - 127.0.0.1 - - [12/Jun/2025 13:43:35] "POST /stream_chat HTTP/1.1" 200 -
+2025-06-12 13:45:05,532 - INFO - 127.0.0.1 - - [12/Jun/2025 13:45:05] "OPTIONS /web_search HTTP/1.1" 200 -
+2025-06-12 13:45:06,635 - INFO - 127.0.0.1 - - [12/Jun/2025 13:45:06] "POST /web_search HTTP/1.1" 200 -
+2025-06-12 13:47:34,696 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-12 13:47:34,698 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-12 13:47:39,970 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-12 13:48:03,663 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-12 13:48:03,728 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-12 13:48:03,826 - WARNING -  * Debugger is active!
+2025-06-12 13:48:03,831 - INFO -  * Debugger PIN: 122-842-223
+2025-06-12 13:48:14,547 - INFO - 127.0.0.1 - - [12/Jun/2025 13:48:14] "OPTIONS /login HTTP/1.1" 200 -
+2025-06-12 13:48:14,912 - INFO - 127.0.0.1 - - [12/Jun/2025 13:48:14] "POST /login HTTP/1.1" 200 -
+2025-06-12 13:48:14,941 - INFO - 127.0.0.1 - - [12/Jun/2025 13:48:14] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-12 13:48:15,246 - INFO - 127.0.0.1 - - [12/Jun/2025 13:48:15] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-12 13:48:15,252 - INFO - 127.0.0.1 - - [12/Jun/2025 13:48:15] "GET /chat_history HTTP/1.1" 200 -
+2025-06-12 13:48:15,522 - INFO - 127.0.0.1 - - [12/Jun/2025 13:48:15] "GET /conversations HTTP/1.1" 200 -
+2025-06-12 13:48:48,276 - INFO - 127.0.0.1 - - [12/Jun/2025 13:48:48] "OPTIONS /web_search HTTP/1.1" 200 -
+2025-06-12 13:48:49,065 - INFO - 127.0.0.1 - - [12/Jun/2025 13:48:49] "POST /web_search HTTP/1.1" 200 -
+2025-06-12 13:50:50,191 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\server.py', reloading
+2025-06-12 13:50:52,673 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-12 13:51:14,308 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-12 13:51:14,398 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-12 13:51:14,496 - WARNING -  * Debugger is active!
+2025-06-12 13:51:14,500 - INFO -  * Debugger PIN: 122-842-223
+2025-06-12 13:52:45,241 - INFO - 127.0.0.1 - - [12/Jun/2025 13:52:45] "OPTIONS /login HTTP/1.1" 200 -
+2025-06-12 13:52:45,721 - INFO - 127.0.0.1 - - [12/Jun/2025 13:52:45] "POST /login HTTP/1.1" 200 -
+2025-06-12 13:52:45,785 - INFO - 127.0.0.1 - - [12/Jun/2025 13:52:45] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-12 13:52:46,090 - INFO - 127.0.0.1 - - [12/Jun/2025 13:52:46] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-12 13:52:46,112 - INFO - 127.0.0.1 - - [12/Jun/2025 13:52:46] "GET /chat_history HTTP/1.1" 200 -
+2025-06-12 13:52:46,355 - INFO - 127.0.0.1 - - [12/Jun/2025 13:52:46] "GET /conversations HTTP/1.1" 200 -
+2025-06-12 13:53:01,815 - INFO - 127.0.0.1 - - [12/Jun/2025 13:53:01] "OPTIONS /web_search_summarized HTTP/1.1" 200 -
+2025-06-12 13:53:39,007 - INFO - 127.0.0.1 - - [12/Jun/2025 13:53:39] "POST /web_search_summarized HTTP/1.1" 200 -
+2025-06-12 13:56:35,155 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-12 13:56:35,157 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-12 13:56:37,682 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-12 13:57:02,371 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-12 13:57:02,427 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-12 13:57:02,505 - WARNING -  * Debugger is active!
+2025-06-12 13:57:02,509 - INFO -  * Debugger PIN: 122-842-223
+2025-06-12 13:57:49,330 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-12 13:57:49,330 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-12 13:57:52,130 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-12 13:58:14,277 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-12 13:58:14,334 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-12 13:58:14,407 - WARNING -  * Debugger is active!
+2025-06-12 13:58:14,411 - INFO -  * Debugger PIN: 122-842-223
+2025-06-12 13:58:25,976 - INFO - 127.0.0.1 - - [12/Jun/2025 13:58:25] "OPTIONS /login HTTP/1.1" 200 -
+2025-06-12 13:58:26,412 - INFO - 127.0.0.1 - - [12/Jun/2025 13:58:26] "POST /login HTTP/1.1" 200 -
+2025-06-12 13:58:26,461 - INFO - 127.0.0.1 - - [12/Jun/2025 13:58:26] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-12 13:58:26,767 - INFO - 127.0.0.1 - - [12/Jun/2025 13:58:26] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-12 13:58:26,778 - INFO - 127.0.0.1 - - [12/Jun/2025 13:58:26] "GET /chat_history HTTP/1.1" 200 -
+2025-06-12 13:58:27,035 - INFO - 127.0.0.1 - - [12/Jun/2025 13:58:27] "GET /conversations HTTP/1.1" 200 -
+2025-06-12 13:58:55,005 - INFO - 127.0.0.1 - - [12/Jun/2025 13:58:55] "OPTIONS /web_search_summarized HTTP/1.1" 200 -
+2025-06-12 13:59:23,994 - INFO - 127.0.0.1 - - [12/Jun/2025 13:59:23] "POST /web_search_summarized HTTP/1.1" 200 -
+2025-06-12 13:59:24,001 - INFO - 127.0.0.1 - - [12/Jun/2025 13:59:24] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-12 13:59:24,312 - INFO - 127.0.0.1 - - [12/Jun/2025 13:59:24] "OPTIONS /chat_history?conversation_id=2c0f3ec7-0179-4312-9099-30dcbb9f6048 HTTP/1.1" 200 -
+2025-06-12 13:59:24,321 - INFO - 127.0.0.1 - - [12/Jun/2025 13:59:24] "GET /conversations HTTP/1.1" 200 -
+2025-06-12 13:59:24,579 - INFO - 127.0.0.1 - - [12/Jun/2025 13:59:24] "GET /chat_history?conversation_id=2c0f3ec7-0179-4312-9099-30dcbb9f6048 HTTP/1.1" 200 -
+2025-06-12 13:59:26,746 - INFO - 127.0.0.1 - - [12/Jun/2025 13:59:26] "GET /chat_history?conversation_id=2c0f3ec7-0179-4312-9099-30dcbb9f6048 HTTP/1.1" 200 -
+2025-06-12 13:59:42,177 - INFO - 127.0.0.1 - - [12/Jun/2025 13:59:42] "OPTIONS /login HTTP/1.1" 200 -
+2025-06-12 13:59:42,628 - INFO - 127.0.0.1 - - [12/Jun/2025 13:59:42] "POST /login HTTP/1.1" 200 -
+2025-06-12 13:59:42,654 - INFO - 127.0.0.1 - - [12/Jun/2025 13:59:42] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-12 13:59:42,964 - INFO - 127.0.0.1 - - [12/Jun/2025 13:59:42] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-12 13:59:42,975 - INFO - 127.0.0.1 - - [12/Jun/2025 13:59:42] "GET /chat_history HTTP/1.1" 200 -
+2025-06-12 13:59:43,236 - INFO - 127.0.0.1 - - [12/Jun/2025 13:59:43] "GET /conversations HTTP/1.1" 200 -
+2025-06-12 14:01:48,882 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-12 14:01:48,883 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-12 14:01:51,344 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-12 14:02:15,107 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-12 14:02:15,197 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-12 14:02:15,312 - WARNING -  * Debugger is active!
+2025-06-12 14:02:15,318 - INFO -  * Debugger PIN: 122-842-223
+2025-06-12 14:02:55,827 - INFO - 127.0.0.1 - - [12/Jun/2025 14:02:55] "OPTIONS /web_search_summarized HTTP/1.1" 200 -
+2025-06-12 14:03:22,030 - INFO - 127.0.0.1 - - [12/Jun/2025 14:03:22] "POST /web_search_summarized HTTP/1.1" 200 -
+2025-06-12 14:03:22,046 - INFO - 127.0.0.1 - - [12/Jun/2025 14:03:22] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-12 14:03:22,062 - INFO - 127.0.0.1 - - [12/Jun/2025 14:03:22] "GET /conversations HTTP/1.1" 200 -
+2025-06-12 14:03:22,362 - INFO - 127.0.0.1 - - [12/Jun/2025 14:03:22] "OPTIONS /chat_history?conversation_id=28536621-bdb6-4c0f-8c0a-39c61ea6fefd HTTP/1.1" 200 -
+2025-06-12 14:03:22,676 - INFO - 127.0.0.1 - - [12/Jun/2025 14:03:22] "GET /chat_history?conversation_id=28536621-bdb6-4c0f-8c0a-39c61ea6fefd HTTP/1.1" 200 -
+2025-06-12 14:03:23,890 - INFO - 127.0.0.1 - - [12/Jun/2025 14:03:23] "GET /chat_history?conversation_id=28536621-bdb6-4c0f-8c0a-39c61ea6fefd HTTP/1.1" 200 -
+2025-06-12 14:04:01,880 - INFO - 127.0.0.1 - - [12/Jun/2025 14:04:01] "OPTIONS /login HTTP/1.1" 200 -
+2025-06-12 14:04:02,348 - INFO - 127.0.0.1 - - [12/Jun/2025 14:04:02] "POST /login HTTP/1.1" 200 -
+2025-06-12 14:04:02,499 - INFO - 127.0.0.1 - - [12/Jun/2025 14:04:02] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-12 14:04:02,814 - INFO - 127.0.0.1 - - [12/Jun/2025 14:04:02] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-12 14:04:02,825 - INFO - 127.0.0.1 - - [12/Jun/2025 14:04:02] "GET /chat_history HTTP/1.1" 200 -
+2025-06-12 14:04:03,077 - INFO - 127.0.0.1 - - [12/Jun/2025 14:04:03] "GET /conversations HTTP/1.1" 200 -
+2025-06-12 14:23:41,967 - INFO -  * Detected change in 'C:\\Program Files (x86)\\Eclipse\\Sumo\\tools\\osmWebWizard.py', reloading
+2025-06-12 14:23:45,606 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-12 14:24:07,130 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-12 14:24:07,310 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-12 14:24:07,424 - WARNING -  * Debugger is active!
+2025-06-12 14:24:07,433 - INFO -  * Debugger PIN: 122-842-223
+2025-06-12 14:53:38,084 - INFO - 127.0.0.1 - - [12/Jun/2025 14:53:38] "OPTIONS /login HTTP/1.1" 200 -
+2025-06-12 14:53:38,539 - INFO - 127.0.0.1 - - [12/Jun/2025 14:53:38] "POST /login HTTP/1.1" 200 -
+2025-06-12 14:53:38,598 - INFO - 127.0.0.1 - - [12/Jun/2025 14:53:38] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-12 14:53:38,908 - INFO - 127.0.0.1 - - [12/Jun/2025 14:53:38] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-12 14:53:38,937 - INFO - 127.0.0.1 - - [12/Jun/2025 14:53:38] "GET /chat_history HTTP/1.1" 200 -
+2025-06-12 14:53:39,217 - INFO - 127.0.0.1 - - [12/Jun/2025 14:53:39] "GET /conversations HTTP/1.1" 200 -
+2025-06-12 14:56:17,784 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\server.py', reloading

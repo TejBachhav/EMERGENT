@@ -23,8 +23,73 @@ const App = () => {
   const [conversationLoading, setConversationLoading] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false);
   const [copiedCodeIndex, setCopiedCodeIndex] = useState(null);
+  const [geminiApiKey, setGeminiApiKey] = useState(() => localStorage.getItem('geminiApiKey') || '');
+  const [showGeminiKeyInput, setShowGeminiKeyInput] = useState(false);
+  const [showProfileCard, setShowProfileCard] = useState(false);
+  const [username, setUsername] = useState("");
   const messagesEndRef = useRef(null);
   const textareaRef = useRef(null);
+  const inputMenuRef = useRef(null);
+
+  // Dictation (Speech-to-Text) support
+  const [isDictating, setIsDictating] = useState(false);
+  const [dictateTarget, setDictateTarget] = useState('input'); // 'input' or message id
+  const recognitionRef = useRef(null);
+
+  // Text-to-Speech (TTS) for bot responses
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [speakingMsgId, setSpeakingMsgId] = useState(null);
+  const utterRef = useRef(null);
+
+  const handleSpeak = (text, msgId) => {
+    if (!('speechSynthesis' in window)) {
+      alert('Text-to-speech is not supported in this browser.');
+      return;
+    }
+    window.speechSynthesis.cancel(); // Stop any ongoing speech
+    const utter = new window.SpeechSynthesisUtterance(text);
+    utter.lang = 'en-US';
+    utter.rate = 1.0;
+    utter.onstart = () => {
+      setIsSpeaking(true);
+      setIsPaused(false);
+      setSpeakingMsgId(msgId);
+    };
+    utter.onend = () => {
+      setIsSpeaking(false);
+      setIsPaused(false);
+      setSpeakingMsgId(null);
+    };
+    utter.onerror = () => {
+      setIsSpeaking(false);
+      setIsPaused(false);
+      setSpeakingMsgId(null);
+    };
+    utterRef.current = utter;
+    window.speechSynthesis.speak(utter);
+  };
+
+  const handlePause = () => {
+    if (window.speechSynthesis.speaking && !window.speechSynthesis.paused) {
+      window.speechSynthesis.pause();
+      setIsPaused(true);
+    }
+  };
+
+  const handleResume = () => {
+    if (window.speechSynthesis.paused) {
+      window.speechSynthesis.resume();
+      setIsPaused(false);
+    }
+  };
+
+  const handleStop = () => {
+    window.speechSynthesis.cancel();
+    setIsSpeaking(false);
+    setIsPaused(false);
+    setSpeakingMsgId(null);
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -206,6 +271,9 @@ const App = () => {
       if (res.ok && data.token) {
         setToken(data.token);
         setIsLoggedIn(true);
+        setUsername(loginForm.username); // Set username in state
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("username", loginForm.username);
         setLoginForm({ username: '', password: '' });
       } else {
         setLoginError(data.error || 'Login failed');
@@ -274,7 +342,7 @@ const App = () => {
           'Authorization': `Bearer ${token}`
         },
         credentials: 'include',
-        body: JSON.stringify({ message: inputMessage, conversation_id: selectedConversation }),
+        body: JSON.stringify({ message: inputMessage, conversation_id: selectedConversation, gemini_api_key: geminiApiKey || undefined }),
       });
 
       if (!response.ok) {
@@ -402,64 +470,105 @@ const App = () => {
         } catch (e) { /* not JSON, ignore */ }
       }
       return (
-        <ReactMarkdown
-          children={text}
-          components={{
-            ol({node, ...props}) {
-              return <ol style={{ paddingLeft: 24, margin: '8px 0', color: '#fff' }} {...props} />;
-            },
-            ul({node, ...props}) {
-              return <ul style={{ paddingLeft: 20, margin: '8px 0', color: '#fff' }} {...props} />;
-            },
-            li({node, ...props}) {
-              return <li style={{ margin: '4px 0', fontSize: 15, lineHeight: 1.7 }} {...props} />;
-            },
-            code({node, inline, className, children, ...props}) {
-              if (!inline) {
-                const codeString = String(children).replace(/\n$/, '');
-                return (
-                  <div className="code-block-container enhanced-code-block" style={{ position: 'relative', margin: '12px 0', borderRadius: 12, overflow: 'hidden', border: '1.5px solid #4fd1c5', background: '#181f2a', boxShadow: '0 4px 15px rgba(0,0,0,0.3)', maxHeight: 340, overflowY: 'auto', padding: 0 }}>
-                    <div className="code-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 16px', background: 'linear-gradient(135deg, #232b3a 60%, #4fd1c5 100%)', borderBottom: '1px solid #4fd1c5' }}>
-                      <span className="code-language" style={{ fontSize: 12, fontWeight: 600, color: '#4fd1c5', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{/language-(\w+)/.exec(className || '')?.[1] || 'text'}</span>
-                      <button
-                        className="code-action-btn"
-                        style={{ background: 'none', border: 'none', color: copiedCodeIndex === msgIndex ? '#4fd1c5' : '#fff', cursor: 'pointer', fontSize: 13, borderRadius: 4, padding: '2px 8px', transition: 'color 0.2s' }}
-                        onClick={() => {
-                          navigator.clipboard.writeText(codeString);
-                          setCopiedCodeIndex(msgIndex);
-                          setTimeout(() => setCopiedCodeIndex(null), 1200);
+        <div style={{ position: 'relative' }}>
+          <ReactMarkdown
+            children={text}
+            components={{
+              p({ node, children, ...props }) {
+                // Avoid <div> inside <p> hydration errors by using a fragment
+                return <>{children}</>;
+              },
+              ol({node, ...props}) {
+                return <ol style={{ paddingLeft: 24, margin: '8px 0', color: '#fff' }} {...props} />;
+              },
+              ul({node, ...props}) {
+                return <ul style={{ paddingLeft: 20, margin: '8px 0', color: '#fff' }} {...props} />;
+              },
+              li({node, ...props}) {
+                return <li style={{ margin: '4px 0', fontSize: 15, lineHeight: 1.7 }} {...props} />;
+              },
+              code({node, inline, className, children, ...props}) {
+                if (!inline) {
+                  const codeString = String(children).replace(/\n$/, '');
+                  return (
+                    <div className="code-block-container enhanced-code-block" style={{ position: 'relative', margin: '12px 0', borderRadius: 12, overflow: 'hidden', border: '1.5px solid #4fd1c5', background: '#181f2a', boxShadow: '0 4px 15px rgba(0,0,0,0.3)', maxHeight: 340, overflowY: 'auto', padding: 0 }}>
+                      <div className="code-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 16px', background: 'linear-gradient(135deg, #232b3a 60%, #4fd1c5 100%)', borderBottom: '1px solid #4fd1c5' }}>
+                        <span className="code-language" style={{ fontSize: 12, fontWeight: 600, color: '#4fd1c5', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{/language-(\w+)/.exec(className || '')?.[1] || 'text'}</span>
+                        <button
+                          className="code-action-btn"
+                          style={{ background: 'none', border: 'none', color: copiedCodeIndex === msgIndex ? '#4fd1c5' : '#fff', cursor: 'pointer', fontSize: 13, borderRadius: 4, padding: '2px 8px', transition: 'color 0.2s' }}
+                          onClick={() => {
+                            navigator.clipboard.writeText(codeString);
+                            setCopiedCodeIndex(msgIndex);
+                            setTimeout(() => setCopiedCodeIndex(null), 1200);
+                          }}
+                          title="Copy code"
+                        >
+                          {copiedCodeIndex === msgIndex ? 'Copied!' : '📋 Copy'}
+                        </button>
+                      </div>
+                      <SyntaxHighlighter
+                        style={atomDark}
+                        language={/language-(\w+)/.exec(className || '')?.[1] || 'text'}
+                        PreTag="div"
+                        customStyle={{
+                          margin: 0,
+                          borderRadius: '0 0 8px 8px',
+                          background: 'rgba(0, 0, 0, 0.7)',
+                          overflowX: 'auto',
+                          maxWidth: '100%',
+                          fontSize: 15,
+                          padding: 18,
                         }}
-                        title="Copy code"
+                        showLineNumbers={true}
+                        {...props}
                       >
-                        {copiedCodeIndex === msgIndex ? 'Copied!' : '📋 Copy'}
-                      </button>
+                        {codeString}
+                      </SyntaxHighlighter>
                     </div>
-                    <SyntaxHighlighter
-                      style={atomDark}
-                      language={/language-(\w+)/.exec(className || '')?.[1] || 'text'}
-                      PreTag="div"
-                      customStyle={{
-                        margin: 0,
-                        borderRadius: '0 0 8px 8px',
-                        background: 'rgba(0, 0, 0, 0.7)',
-                        overflowX: 'auto',
-                        maxWidth: '100%',
-                        fontSize: 15,
-                        padding: 18,
-                      }}
-                      showLineNumbers={true}
-                      {...props}
-                    >
-                      {codeString}
-                    </SyntaxHighlighter>
-                  </div>
-                );
-              } else {
-                return <code className={className} style={{ background: '#232b3a', color: '#4fd1c5', borderRadius: 4, padding: '2px 6px', fontSize: 14 }} {...props}>{children}</code>;
+                  );
+                } else {
+                  return <code className={className} style={{ background: '#232b3a', color: '#4fd1c5', borderRadius: 4, padding: '2px 6px', fontSize: 14 }} {...props}>{children}</code>;
+                }
               }
-            }
-          }}
-        />
+            }}
+          />
+          {/* Copy and Dictate buttons for each bot message */}
+          <div style={{ display: 'flex', gap: 8, position: 'absolute', top: 0, right: 0 }}>
+            <button
+              style={{ background: 'none', border: 'none', color: '#4fd1c5', fontSize: 20, cursor: 'pointer', padding: 2 }}
+              title="Copy response"
+              onClick={() => navigator.clipboard.writeText(text)}
+            >📋</button>
+            <button
+              style={{ background: 'none', border: 'none', color: '#4fd1c5', fontSize: 20, cursor: 'pointer', padding: 2 }}
+              title="Dictate response (text-to-speech)"
+              onClick={() => handleSpeak(text, message.id)}
+              disabled={isSpeaking && speakingMsgId !== message.id}
+            >🔊</button>
+            {isSpeaking && speakingMsgId === message.id && !isPaused && (
+              <button
+                style={{ background: 'none', border: 'none', color: '#4fd1c5', fontSize: 20, cursor: 'pointer', padding: 2 }}
+                title="Pause reading"
+                onClick={handlePause}
+              >⏸️</button>
+            )}
+            {isSpeaking && speakingMsgId === message.id && isPaused && (
+              <button
+                style={{ background: 'none', border: 'none', color: '#4fd1c5', fontSize: 20, cursor: 'pointer', padding: 2 }}
+                title="Resume reading"
+                onClick={handleResume}
+              >▶️</button>
+            )}
+            {isSpeaking && speakingMsgId === message.id && (
+              <button
+                style={{ background: 'none', border: 'none', color: '#4fd1c5', fontSize: 20, cursor: 'pointer', padding: 2 }}
+                title="Stop reading"
+                onClick={handleStop}
+              >⏹️</button>
+            )}
+          </div>
+        </div>
       );
     }
 
@@ -520,31 +629,238 @@ const App = () => {
     });
   };
 
+  const handleGeminiKeySave = () => {
+    localStorage.setItem('geminiApiKey', geminiApiKey);
+    setShowGeminiKeyInput(false);
+  };
+
+  // Dictation logic
+  const handleStartDictation = (target = 'input', messageId = null) => {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      alert('Speech recognition is not supported in this browser.');
+      return;
+    }
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      if (target === 'input') {
+        setInputMessage(prev => prev ? prev + ' ' + transcript : transcript);
+      } else if (target && typeof target === 'string') {
+        setMessages(prevMsgs => prevMsgs.map(m => m.id === target ? { ...m, text: m.text + ' ' + transcript } : m));
+      }
+      setIsDictating(false);
+      setDictateTarget('input');
+    };
+    recognition.onerror = (event) => {
+      setIsDictating(false);
+      setDictateTarget('input');
+      alert('Speech recognition error: ' + event.error);
+    };
+    recognition.onend = () => {
+      setIsDictating(false);
+      setDictateTarget('input');
+    };
+    recognitionRef.current = recognition;
+    setIsDictating(true);
+    setDictateTarget(target === 'input' ? 'input' : messageId);
+    recognition.start();
+  };
+
+  // Stop dictation
+  const handleStopDictation = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      setIsDictating(false);
+      setDictateTarget('input');
+    }
+  };
+
+  // Add a copy button for the last bot response
+  const lastBotMessage = messages.length > 0 ? [...messages].reverse().find(m => m.sender === 'bot') : null;
+
+  const [webSearchQuery, setWebSearchQuery] = useState("");
+  const [isWebSearching, setIsWebSearching] = useState(false);
+  const [inputMode, setInputMode] = useState('chat'); // 'chat' or 'websearch'
+  const [showInputMenu, setShowInputMenu] = useState(false);
+
+  const handleSend = async () => {
+    if (inputMode === 'websearch') {
+      if (!inputMessage.trim()) return;
+      setIsWebSearching(true);
+      try {
+        // Always send conversation_id if available
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/web_search_summarized`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          credentials: 'include',
+          body: JSON.stringify({ query: inputMessage, conversation_id: selectedConversation })
+        });
+        const data = await response.json();
+        // If this was a new conversation, update conversation list and select it
+        if (!selectedConversation && data.conversation_id) {
+          setSelectedConversation(data.conversation_id);
+          // Refetch conversations
+          fetch(`${process.env.REACT_APP_BACKEND_URL}/conversations`, {
+            headers: { 'Authorization': `Bearer ${token}` },
+            credentials: 'include',
+          })
+            .then(res => res.json())
+            .then(data => {
+              if (Array.isArray(data.conversations)) {
+                setConversations(data.conversations);
+              }
+            });
+        }
+        // Refetch chat history for the conversation to include the new messages
+        if (data.conversation_id) {
+          fetch(`${process.env.REACT_APP_BACKEND_URL}/chat_history?conversation_id=${data.conversation_id}`, {
+            headers: { 'Authorization': `Bearer ${token}` },
+            credentials: 'include',
+          })
+            .then(res => res.json())
+            .then(data => {
+              if (Array.isArray(data.history)) {
+                setMessages(data.history);
+              }
+            });
+        }
+        setInputMessage("");
+      } catch (e) {
+        setMessages(prev => [...prev, {
+          id: Date.now() + 2,
+          text: 'Web search failed. Please try again later.',
+          sender: 'bot',
+          timestamp: new Date().toLocaleTimeString(),
+          hasCode: false,
+          reactions: [],
+        }]);
+      }
+      setIsWebSearching(false);
+      setInputMode('chat');
+      return;
+    } else {
+      handleSendMessage();
+    }
+  };
+
+  // In the input bar, update the + menu Web Search button to set inputMode to 'websearch' and focus the input
+  // Remove the separate web search input rendering
   return (
     <div className="app">
-      {/* Enhanced Animated Background */}
-      <div className="background">
-        <div className="cyber-grid"></div>
-        <div className="stars"></div>
-        <div className="floating-shapes">
-          <div className="shape shape-1"></div>
-          <div className="shape shape-2"></div>
-          <div className="shape shape-3"></div>
-          <div className="shape shape-4"></div>
-          <div className="shape shape-5"></div>
-          <div className="shape shape-6"></div>
+      {/* Gemini API Key Input Button */}
+      {isLoggedIn && (
+        <button
+          style={{
+            position: 'fixed',
+            left: 24,
+            bottom: 24,
+            zIndex: 1100,
+            background: '#232b3a',
+            color: ' #667eea',
+            border: 'none',
+            borderRadius: 12,
+            padding: '10px 18px',
+            fontWeight: 600,
+            fontSize: 15,
+            boxShadow: '0 2px 8px rgba(0,0,0,0.18)',
+            cursor: 'pointer',
+            transition: 'background 0.18s',
+          }}
+          onClick={() => setShowGeminiKeyInput(v => !v)}
+          title="Set Gemini API Key"
+        >
+          {geminiApiKey ? '🔑 Gemini Key Set' : '🔑 Set Gemini API Key'}
+        </button>
+      )}
+      {/* Gemini API Key Modal */}
+      {showGeminiKeyInput && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          background: 'rgba(10,10,20,0.75)',
+          zIndex: 1200,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+          <div style={{
+            background: '#181f2a',
+            borderRadius: 18,
+            boxShadow: '0 8px 32px 0 rgba(102,126,234,0.15)',
+            padding: '36px 32px 28px 32px',
+            minWidth: 320,
+            maxWidth: 370,
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 18,
+            border: '1.5px solid #667eea',
+            position: 'relative',
+          }}>
+            <button
+              style={{
+                position: 'absolute',
+                top: 12,
+                right: 12,
+                background: 'none',
+                border: 'none',
+                color: '#fff',
+                fontSize: 22,
+                cursor: 'pointer',
+                opacity: 0.7,
+              }}
+              onClick={() => setShowGeminiKeyInput(false)}
+              title="Close"
+            >✕</button>
+            <div style={{ fontWeight: 700, fontSize: 18, color: '#4fd1c5', marginBottom: 8 }}>Set Gemini API Key</div>
+            <div style={{ color: '#b3b3d1', fontSize: 14, marginBottom: 8 }}>
+              Enter your <b>Google Gemini API Key</b> below. This key is used only for your current session and never stored on the server.
+            </div>
+            <input
+              type="password"
+              value={geminiApiKey}
+              onChange={e => setGeminiApiKey(e.target.value)}
+              placeholder="Paste your Gemini API Key here"
+              style={{
+                padding: '10px 12px',
+                borderRadius: 8,
+                border: '1.5px solid #2d2d4d',
+                background: '#23234a',
+                color: '#fff',
+                fontSize: 16,
+                outline: 'none',
+                marginBottom: 12,
+              }}
+              autoFocus
+            />
+            <button
+              onClick={handleGeminiKeySave}
+              style={{
+                background: 'linear-gradient(90deg, #667eea 60%, #4fd1c5 100%)',
+                color: '#fff',
+                fontWeight: 700,
+                border: 'none',
+                borderRadius: 8,
+                padding: '12px 0',
+                fontSize: 16,
+                cursor: 'pointer',
+                boxShadow: '0 2px 8px 0 rgba(102,126,234,0.10)',
+                transition: 'background 0.2s, box-shadow 0.2s',
+              }}
+            >Save Key</button>
+          </div>
         </div>
-        <div className="gradient-orb orb-1"></div>
-        <div className="gradient-orb orb-2"></div>
-        <div className="gradient-orb orb-3"></div>
-        <div className="security-particles">
-          <div className="particle"></div>
-          <div className="particle"></div>
-          <div className="particle"></div>
-          <div className="particle"></div>
-          <div className="particle"></div>
-        </div>
-      </div>
+      )}
 
       {/* Chat History Button - fixed left corner */}
       {isLoggedIn && (
@@ -635,14 +951,61 @@ const App = () => {
                   marginBottom: 2,
                   borderRadius: 6,
                   transition: 'background 0.15s',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: 8,
                 }}
-                onClick={() => { setSelectedConversation(conv.conversation_id); setShowSidebar(false); }}
+                onClick={e => {
+                  // Prevent click if delete button is pressed
+                  if (e.target.classList.contains('delete-conv-btn')) return;
+                  setSelectedConversation(conv.conversation_id); setShowSidebar(false);
+                }}
               >
-                <div className="conv-title" style={{ fontWeight: 600, fontSize: 15, marginBottom: 2 }}>{conv.last_message?.slice(0, 32) || 'Conversation'}</div>
-                <div className="conv-meta" style={{ fontSize: 12, color: '#8fa2c1', display: 'flex', justifyContent: 'space-between' }}>
-                  <span>{new Date(conv.last_time).toLocaleString()}</span>
-                  <span>{conv.message_count} msg</span>
+                <div style={{flex: 1, minWidth: 0}}>
+                  <div className="conv-title" style={{ fontWeight: 600, fontSize: 15, marginBottom: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{conv.last_message?.slice(0, 32) || 'Conversation'}</div>
+                  <div className="conv-meta" style={{ fontSize: 12, color: '#8fa2c1', display: 'flex', justifyContent: 'space-between' }}>
+                    <span>{new Date(conv.last_time).toLocaleString()}</span>
+                    <span>{conv.message_count} msg</span>
+                  </div>
                 </div>
+                <button
+                  className="delete-conv-btn"
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: '#ff5c5c',
+                    fontSize: 18,
+                    cursor: 'pointer',
+                    marginLeft: 8,
+                    borderRadius: 6,
+                    padding: '2px 6px',
+                    transition: 'background 0.15s',
+                  }}
+                  title="Delete conversation"
+                  onClick={async (e) => {
+                    e.stopPropagation();
+                    if (!window.confirm('Are you sure you want to delete this conversation? This cannot be undone.')) return;
+                    try {
+                      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/conversation/${conv.conversation_id}`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': `Bearer ${token}` },
+                        credentials: 'include',
+                      });
+                      if (res.ok) {
+                        setConversations(prev => prev.filter(c => c.conversation_id !== conv.conversation_id));
+                        if (selectedConversation === conv.conversation_id) {
+                          setSelectedConversation(null);
+                          setMessages([]);
+                        }
+                      } else {
+                        alert('Failed to delete conversation.');
+                      }
+                    } catch {
+                      alert('Network error while deleting conversation.');
+                    }
+                  }}
+                >🗑️</button>
               </div>
             ))}
           </div>
@@ -658,6 +1021,146 @@ const App = () => {
             opacity: 0.7,
           }} onClick={() => setShowSidebar(false)} title="Close chat history">✕</button>
         </div>
+      )}
+
+      {/* User Profile Card - top right */}
+      {isLoggedIn && (
+        <>
+          {/* Avatar button (always visible) */}
+          <button
+            style={{
+              position: 'fixed',
+              top: 24,
+              right: 24,
+              zIndex: 1100,
+              width: 48,
+              height: 48,
+              borderRadius: '50%',
+              background: 'linear-gradient(135deg, #232b3a 60%, #4fd1c5 100%)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 26,
+              fontWeight: 700,
+              color: '#fff',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
+              border: '1.5px solid #4fd1c5',
+              cursor: 'pointer',
+            }}
+            onClick={() => setShowProfileCard(true)}
+            title="Show profile"
+          >
+            {username?.[0]?.toUpperCase() || 'U'}
+          </button>
+
+          {/* Profile card popup */}
+          {showProfileCard && (
+            <div
+              style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                width: '100vw',
+                height: '100vh',
+                zIndex: 1200,
+                background: 'rgba(10,10,20,0.10)',
+                display: 'flex',
+                alignItems: 'flex-start',
+                justifyContent: 'flex-end',
+              }}
+              onClick={e => {
+                // Only close if background is clicked, not the card itself
+                if (e.target === e.currentTarget) setShowProfileCard(false);
+              }}
+            >
+              <div
+                style={{
+                  marginTop: 24,
+                  marginRight: 24,
+                  background: 'rgba(24,31,42,0.98)',
+                  border: '1.5px solid #4fd1c5',
+                  borderRadius: 16,
+                  boxShadow: '0 4px 16px 0 rgba(79,209,197,0.10)',
+                  padding: '18px 24px 16px 24px',
+                  minWidth: 220,
+                  maxWidth: 320,
+                  color: '#fff',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'flex-start',
+                  gap: 10,
+                  position: 'relative',
+                }}
+                onClick={e => e.stopPropagation()}
+              >
+                <button
+                  style={{
+                    position: 'absolute',
+                    top: 10,
+                    right: 10,
+                    background: 'none',
+                    border: 'none',
+                    color: '#fff',
+                    fontSize: 20,
+                    cursor: 'pointer',
+                    opacity: 0.7,
+                  }}
+                  onClick={() => setShowProfileCard(false)}
+                  title="Close profile"
+                >✕</button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <div style={{
+                    width: 44,
+                    height: 44,
+                    borderRadius: '50%',
+                    background: 'linear-gradient(135deg, #232b3a 60%, #4fd1c5 100%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 26,
+                    fontWeight: 700,
+                    color: '#fff',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.12)'
+                  }}>
+                    {username?.[0]?.toUpperCase() || 'U'}
+                  </div>
+                  <div>
+                    <div style={{ fontWeight: 700, fontSize: 17, color: '#4fd1c5', marginBottom: 2 }}>{username || 'User'}</div>
+                    <div style={{ fontSize: 13, color: '#b3b3d1' }}>CyberGuard Account</div>
+                  </div>
+                </div>
+                <div style={{ width: '100%', marginTop: 8, display: 'flex', justifyContent: 'flex-end' }}>
+                  <button
+                    onClick={() => {
+                      setIsLoggedIn(false);
+                      setToken('');
+                      setMessages([]);
+                      setConversations([]);
+                      setSelectedConversation(null);
+                      setInputMessage('');
+                      setUsername("");
+                      localStorage.removeItem('geminiApiKey');
+                      localStorage.removeItem("username");
+                      setShowProfileCard(false);
+                    }}
+                    style={{
+                      background: 'linear-gradient(90deg, #ff5c5c 60%, #4fd1c5 100%)',
+                      color: '#fff',
+                      fontWeight: 700,
+                      border: 'none',
+                      borderRadius: 8,
+                      padding: '8px 18px',
+                      fontSize: 15,
+                      cursor: 'pointer',
+                      boxShadow: '0 2px 8px 0 rgba(255,92,92,0.10)',
+                      transition: 'background 0.2s, box-shadow 0.2s',
+                    }}
+                  >Logout</button>
+                </div>
+              </div>
+            </div>
+          )}
+        </>
       )}
 
       {/* Main chat area always present */}
@@ -877,24 +1380,127 @@ const App = () => {
 
             {/* Enhanced Input Area */}
             <div className="input-container">
-              <div className="input-wrapper">
+              <div className="input-wrapper" style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                 <textarea
                   ref={textareaRef}
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  placeholder="Describe your security concern, paste code for review, or ask about vulnerabilities..."
+                  onKeyPress={e => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSend();
+                    }
+                  }}
+                  placeholder={inputMode === 'websearch' ? 'Search the web...' : 'Describe your security concern, paste code for review, or ask about vulnerabilities...'}
                   className="message-input"
                   rows="1"
-                  style={{ height: "35px", minHeight: "24px", maxHeight: "120px" }}
-                  disabled={isSending}
+                  style={{ height: "24px", minHeight: "20px", maxHeight: "120px" }}
+                  disabled={isSending || isWebSearching}
+                  autoFocus
                 />
+                {/* Dictate button */}
                 <button
-                  onClick={handleSendMessage}
-                  disabled={!inputMessage.trim() || isSending}
-                  className={`send-button ${isSending ? 'sending' : ''}`}
+                  onClick={isDictating ? handleStopDictation : () => handleStartDictation('input')}
+                  className={`dictate-btn${isDictating ? ' active' : ''}`}
+                  style={{
+                    marginLeft: 8,
+                    background: isDictating ? '#4fd1c5' : '#232b3a',
+                    color: isDictating ? '#181f2a' : '#4fd1c5',
+                    border: 'none',
+                    borderRadius: 8,
+                    padding: '8px 12px',
+                    fontWeight: 700,
+                    fontSize: 16,
+                    cursor: 'pointer',
+                    boxShadow: isDictating ? '0 2px 8px 0 rgba(79,209,197,0.18)' : 'none',
+                    transition: 'background 0.2s, color 0.2s',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                  title={isDictating ? 'Stop dictation' : 'Dictate your message'}
+                  disabled={isSending || isWebSearching}
                 >
-                  {isSending ? (
+                  {isDictating ? '🛑' : <span style={{fontSize: 22, lineHeight: 1}}>🎙️</span>}
+                </button>
+                {/* + icon for menu */}
+                <div style={{ position: 'relative', marginLeft: 8 }}>
+                  <button
+                    onClick={() => setShowInputMenu(v => !v)}
+                    style={{
+                      background: '#232b3a',
+                      color: '#4fd1c5',
+                      border: 'none',
+                      borderRadius: '50%',
+                      width: 36,
+                      height: 36,
+                      fontSize: 24,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                    title="More options"
+                  >＋</button>
+                  {showInputMenu && (
+                    <div ref={inputMenuRef} style={{
+                      position: 'absolute',
+                      right: 0,
+                      top: 44,
+                      background: '#181f2a',
+                      border: '1.5px solid #4fd1c5',
+                      borderRadius: 10,
+                      boxShadow: '0 4px 16px 0 rgba(79,209,197,0.10)',
+                      padding: '10px 0',
+                      minWidth: 160,
+                      zIndex: 1000,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 0,
+                    }}>
+                      <button
+                        onClick={() => {
+                          setShowInputMenu(false);
+                          setInputMode('websearch');
+                          setTimeout(() => textareaRef.current?.focus(), 100);
+                        }}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: '#4fd1c5',
+                          fontWeight: 600,
+                          fontSize: 15,
+                          padding: '10px 18px',
+                          textAlign: 'left',
+                          cursor: 'pointer',
+                          width: '100%',
+                          borderBottom: '1px solid #232b3a',
+                        }}
+                      >🌐 Web Search</button>
+                      <button
+                        onClick={() => { setShowInputMenu(false); handleUploadFile(); }}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: '#4fd1c5',
+                          fontWeight: 600,
+                          fontSize: 15,
+                          padding: '10px 18px',
+                          textAlign: 'left',
+                          cursor: 'pointer',
+                          width: '100%',
+                        }}
+                      >📁 Upload File</button>
+                    </div>
+                  )}
+                </div>
+                {/* Send button */}
+                <button
+                  onClick={handleSend}
+                  disabled={(!inputMessage.trim() && inputMode === 'chat') || isSending || isWebSearching}
+                  className={`send-button ${isSending || isWebSearching ? 'sending' : ''}`}
+                >
+                  {(isSending || isWebSearching) ? (
                     <div className="loading-spinner"></div>
                   ) : (
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
