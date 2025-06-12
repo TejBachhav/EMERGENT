@@ -5114,3 +5114,4 @@ Response (reference the Gemini Insight above):
 2025-06-12 14:53:38,937 - INFO - 127.0.0.1 - - [12/Jun/2025 14:53:38] "GET /chat_history HTTP/1.1" 200 -
 2025-06-12 14:53:39,217 - INFO - 127.0.0.1 - - [12/Jun/2025 14:53:39] "GET /conversations HTTP/1.1" 200 -
 2025-06-12 14:56:17,784 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\server.py', reloading
+2025-06-12 14:56:21,324 - INFO -  * Restarting with watchdog (windowsapi)
