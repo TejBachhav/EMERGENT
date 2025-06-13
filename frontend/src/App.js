@@ -4,6 +4,24 @@ import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import ReactMarkdown from 'react-markdown';
 import './App.css';
 
+// Utility to generate a UUID (RFC4122 version 4)
+function generateUUID() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
+// Returns a valid, non-empty conversation_id. If invalid, generates a new one and updates state.
+function getValidConversationId(selectedConversation, setSelectedConversation) {
+  if (typeof selectedConversation === 'string' && selectedConversation.trim() && selectedConversation !== 'None') {
+    return selectedConversation;
+  }
+  const newId = generateUUID();
+  setSelectedConversation(newId);
+  return newId;
+}
+
 const App = () => {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
@@ -30,6 +48,7 @@ const App = () => {
   const messagesEndRef = useRef(null);
   const textareaRef = useRef(null);
   const inputMenuRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   // Dictation (Speech-to-Text) support
   const [isDictating, setIsDictating] = useState(false);
@@ -41,6 +60,13 @@ const App = () => {
   const [isPaused, setIsPaused] = useState(false);
   const [speakingMsgId, setSpeakingMsgId] = useState(null);
   const utterRef = useRef(null);
+
+  const handleRemoveFile = (fileId) => {
+    setUploadedFiles(prev => prev.filter(f => f.file_id !== fileId));
+    if (selectedFile && selectedFile.file_id === fileId) {
+      setSelectedFile(null);
+    }
+  };
 
   const handleSpeak = (text, msgId) => {
     if (!('speechSynthesis' in window)) {
@@ -335,6 +361,7 @@ const App = () => {
     setIsTyping(true);
 
     try {
+      const conversation_id = getValidConversationId(selectedConversation, setSelectedConversation);
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/stream_chat`, {
         method: 'POST',
         headers: {
@@ -342,7 +369,7 @@ const App = () => {
           'Authorization': `Bearer ${token}`
         },
         credentials: 'include',
-        body: JSON.stringify({ message: inputMessage, conversation_id: selectedConversation, gemini_api_key: geminiApiKey || undefined }),
+        body: JSON.stringify({ message: inputMessage, conversation_id, gemini_api_key: geminiApiKey || undefined }),
       });
 
       if (!response.ok) {
@@ -687,11 +714,145 @@ const App = () => {
   const [inputMode, setInputMode] = useState('chat'); // 'chat' or 'websearch'
   const [showInputMenu, setShowInputMenu] = useState(false);
 
+  // Add state for file upload and chat-with-file
+  const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [fileUploadLoading, setFileUploadLoading] = useState(false);
+
+  // Handle file upload
+  const handleUploadFile = () => {
+    if (!isLoggedIn) return;
+    fileInputRef.current?.click();
+  };
+
+  const onFileInputChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setFileUploadLoading(true);
+    const formData = new FormData();
+    formData.append('file', file);
+    const conversation_id = getValidConversationId(selectedConversation, setSelectedConversation);
+    formData.append('conversation_id', conversation_id);
+    try {
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/upload_file`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` },
+        credentials: 'include',
+        body: formData
+      });
+      const data = await res.json();
+      if (res.ok && data.file_id) {
+        setUploadedFiles(prev => [...prev, data]);
+        setSelectedFile(data);
+        // Optionally, show a message in chat about the upload
+        setMessages(prev => [...prev, {
+          id: Date.now(),
+          text: `📁 Uploaded file: ${data.filename}`,
+          sender: 'user',
+          timestamp: new Date().toLocaleTimeString(),
+          hasCode: false,
+          reactions: [],
+          file_id: data.file_id
+        }]);
+      } else {
+        setMessages(prev => [...prev, {
+          id: Date.now(),
+          text: `🚨 File upload failed: ${data.error || 'Unknown error'}`,
+          sender: 'bot',
+          timestamp: new Date().toLocaleTimeString(),
+          hasCode: false,
+          reactions: [],
+        }]);
+      }
+    } catch (err) {
+      setMessages(prev => [...prev, {
+        id: Date.now(),
+        text: '🚨 File upload failed: Network error',
+        sender: 'bot',
+        timestamp: new Date().toLocaleTimeString(),
+        hasCode: false,
+        reactions: [],
+      }]);
+    }
+    setFileUploadLoading(false);
+  };
+
+  // Handle asking a question about a file
+  const handleSendFileQuestion = async () => {
+    if (!inputMessage.trim() || isSending || !isLoggedIn || !selectedFile) return;
+    const userMessage = {
+      id: Date.now(),
+      text: inputMessage,
+      sender: 'user',
+      timestamp: new Date().toLocaleTimeString(),
+      hasCode: detectCodeBlocks(inputMessage),
+      reactions: [],
+      file_id: selectedFile.file_id
+    };
+    setMessages(prev => [...prev, userMessage]);
+    setInputMessage('');
+    setIsSending(true);
+    setIsTyping(true);
+    try {
+      const conversation_id = getValidConversationId(selectedConversation, setSelectedConversation);
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/chat_with_file`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        credentials: 'include',
+        body: JSON.stringify({ question: userMessage.text, file_id: selectedFile.file_id, conversation_id }),
+      });
+      const data = await response.json();
+      setMessages(prev => [...prev, {
+        id: Date.now() + 1,
+        text: data.answer || (data.error ? `🚨 ${data.error}` : 'No answer.'),
+        sender: 'bot',
+        timestamp: new Date().toLocaleTimeString(),
+        hasCode: detectCodeBlocks(data.answer || ''),
+        reactions: [],
+        file_id: selectedFile.file_id
+      }]);
+      setIsTyping(false);
+      setIsSending(false);
+      // If this was a new conversation, update conversation list and select it
+      if (!selectedConversation && data.conversation_id) {
+        setSelectedConversation(data.conversation_id);
+        fetch(`${process.env.REACT_APP_BACKEND_URL}/conversations`, {
+          headers: { 'Authorization': `Bearer ${token}` },
+          credentials: 'include',
+        })
+          .then(res => res.json())
+          .then(data => setConversations(data.conversations || []));
+      }
+    } catch (error) {
+      setMessages(prev => [...prev, {
+        id: Date.now() + 1,
+        text: '🚨 File Q&A failed: Network error',
+        sender: 'bot',
+        timestamp: new Date().toLocaleTimeString(),
+        isError: true,
+        hasCode: false,
+        reactions: [],
+        file_id: selectedFile.file_id
+      }]);
+      setIsTyping(false);
+      setIsSending(false);
+    }
+  };
+
+  // Update handleSend to support file Q&A mode
   const handleSend = async () => {
+    if (selectedFile) {
+      await handleSendFileQuestion();
+      return;
+    }
     if (inputMode === 'websearch') {
       if (!inputMessage.trim()) return;
       setIsWebSearching(true);
       try {
+        const conversation_id = getValidConversationId(selectedConversation, setSelectedConversation);
         // Always send conversation_id if available
         const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/web_search_summarized`, {
           method: 'POST',
@@ -700,7 +861,7 @@ const App = () => {
             'Authorization': `Bearer ${token}`
           },
           credentials: 'include',
-          body: JSON.stringify({ query: inputMessage, conversation_id: selectedConversation })
+          body: JSON.stringify({ query: inputMessage, conversation_id }),
         });
         const data = await response.json();
         // If this was a new conversation, update conversation list and select it
@@ -750,7 +911,7 @@ const App = () => {
     }
   };
 
-  // In the input bar, update the + menu Web Search button to set inputMode to 'websearch' and focus the input
+  // In the input area, update the + menu Web Search button to set inputMode to 'websearch' and focus the input
   // Remove the separate web search input rendering
   return (
     <div className="app">
@@ -1391,7 +1552,7 @@ const App = () => {
                       handleSend();
                     }
                   }}
-                  placeholder={inputMode === 'websearch' ? 'Search the web...' : 'Describe your security concern, paste code for review, or ask about vulnerabilities...'}
+                  placeholder={inputMode === 'websearch' ? 'Search the web...' : selectedFile ? `Ask about ${selectedFile.filename}...` : 'Describe your security concern, paste code for review, or ask about vulnerabilities...'}
                   className="message-input"
                   rows="1"
                   style={{ height: "24px", minHeight: "20px", maxHeight: "120px" }}
@@ -1446,17 +1607,19 @@ const App = () => {
                     <div ref={inputMenuRef} style={{
                       position: 'absolute',
                       right: 0,
-                      top: 44,
+                      bottom: 44, // changed from top: 44 to bottom: 44
                       background: '#181f2a',
                       border: '1.5px solid #4fd1c5',
                       borderRadius: 10,
                       boxShadow: '0 4px 16px 0 rgba(79,209,197,0.10)',
                       padding: '10px 0',
-                      minWidth: 160,
+                      minWidth: 180,
                       zIndex: 1000,
                       display: 'flex',
                       flexDirection: 'column',
                       gap: 0,
+                      maxHeight: 220,
+                      overflowY: 'auto',
                     }}>
                       <button
                         onClick={() => {
@@ -1491,6 +1654,7 @@ const App = () => {
                           width: '100%',
                         }}
                       >📁 Upload File</button>
+                      {/* Add more tool buttons here as needed */}
                     </div>
                   )}
                 </div>
@@ -1509,6 +1673,14 @@ const App = () => {
                     </svg>
                   )}
                 </button>
+                {/* Hidden file input (still needed for upload) */}
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  style={{ display: 'none' }}
+                  onChange={onFileInputChange}
+                  accept=".pdf,.docx,.txt,.py,.js,.java,.c,.cpp,.go,.rb,.sh,.md,.json,.yaml,.yml"
+                />
               </div>
               <div className="input-footer">
                 <div className="security-indicator-small">
@@ -1516,6 +1688,60 @@ const App = () => {
                 </div>
               </div>
             </div>
+
+            {/* Uploaded files list and selected file context (as before) */}
+            {uploadedFiles.length > 0 && (
+              <div className="uploaded-files-list" style={{ margin: '8px 0 0 0', display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                {uploadedFiles.map(f => (
+                  <div key={f.file_id} style={{ display: 'inline-flex', alignItems: 'center', position: 'relative' }}>
+                    <button
+                      onClick={() => setSelectedFile(f)}
+                      style={{
+                        background: selectedFile && selectedFile.file_id === f.file_id ? '#4fd1c5' : '#232b3a',
+                        color: selectedFile && selectedFile.file_id === f.file_id ? '#181f2a' : '#4fd1c5',
+                        border: 'none',
+                        borderRadius: 8,
+                        padding: '6px 14px',
+                        fontWeight: 600,
+                        fontSize: 14,
+                        cursor: 'pointer',
+                        boxShadow: selectedFile && selectedFile.file_id === f.file_id ? '0 2px 8px 0 rgba(79,209,197,0.18)' : 'none',
+                        marginRight: 2
+                      }}
+                      title={`Ask about ${f.filename}`}
+                    >{f.filename}</button>
+                    <button
+                      onClick={() => handleRemoveFile(f.file_id)}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: '#ff5c5c',
+                        fontSize: 16,
+                        marginLeft: -8,
+                        cursor: 'pointer',
+                        padding: '0 4px',
+                        position: 'absolute',
+                        right: 0,
+                        top: 0
+                      }}
+                      title={`Remove ${f.filename}`}
+                    >✕</button>
+                  </div>
+                ))}
+                <button
+                  onClick={() => { setSelectedFile(null); }}
+                  style={{
+                    background: '#232b3a', color: '#ff5c5c', border: 'none', borderRadius: 8, padding: '6px 14px', fontWeight: 600, fontSize: 14, cursor: 'pointer', marginLeft: 4
+                  }}
+                  title="Clear file selection"
+                >✕</button>
+              </div>
+            )}
+            {selectedFile && (
+              <div style={{ margin: '8px 0', color: '#4fd1c5', fontWeight: 600 }}>
+                <span>📁 Chatting about: {selectedFile.filename}</span>
+              </div>
+            )}
           </>
         )}
       </div>

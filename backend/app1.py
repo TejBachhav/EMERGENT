@@ -876,12 +876,10 @@ def stream_chat():
             return jsonify({"error": "Request must be JSON"}), 400
         data = request.get_json()
         user_message = data.get('message', '').strip()
-        conversation_id = data.get('conversation_id')
+        conversation_id = sanitize_conversation_id(data.get('conversation_id'))
         user_gemini_key = data.get('gemini_api_key')  # <-- Accept Gemini API key from frontend
         if not user_message:
             return jsonify({"error": "Message cannot be empty"}), 400
-        if not conversation_id:
-            conversation_id = str(uuid.uuid4())
         logger.info(f"Processing query: {user_message[:400]}...")
         vuln_type = detect_vulnerability_type(user_message)
         if vuln_type in VULNERABILITIES:
@@ -986,11 +984,15 @@ def web_search_summarized():
     try:
         data = request.get_json()
         query = data.get('query', '').strip()
-        conversation_id = data.get('conversation_id')
+        conversation_id = sanitize_conversation_id(data.get('conversation_id'))
         if not query:
             return jsonify({'error': 'Query is required.'}), 400
-        if not conversation_id:
+        # Ensure conversation_id is a string and not None/null (required by MongoDB schema)
+        # Defensive: ensure conversation_id is a non-empty string for MongoDB schema
+        if not conversation_id or conversation_id == 'None' or conversation_id is None:
             conversation_id = str(uuid.uuid4())
+        else:
+            conversation_id = str(conversation_id) if conversation_id is not None else str(uuid.uuid4())
         SEARCH_API_KEY = os.getenv('SEARCH_API_KEY', 'AIzaSyA8twmTNR78KB_Zk0Fn8h1TcXMIb7gtlvo')
         SEARCH_ENGINE_ID = os.getenv('SEARCH_ENGINE_ID', '06946e95765a74451')
         try:
@@ -1073,6 +1075,189 @@ def web_search_summarized():
         logger.error(f"[WEB_SEARCH_SUMMARIZED] Unexpected error: {e}")
         return jsonify({'error': f'Web search summarization error: {e}'}), 500
 
+# ============================================================================
+# FILE UPLOAD AND CHAT WITH FILES ENDPOINTS
+# ============================================================================
+
+import uuid
+from werkzeug.utils import secure_filename
+import tempfile
+import mimetypes
+
+try:
+    import PyPDF2
+except ImportError:
+    PyPDF2 = None
+try:
+    import docx
+except ImportError:
+    docx = None
+
+files_col = db['files']  # New collection for uploaded files and extracted content
+
+ALLOWED_EXTENSIONS = {'pdf', 'docx', 'txt', 'py', 'js', 'java', 'c', 'cpp', 'go', 'rb', 'sh', 'md', 'json', 'yaml', 'yml'}
+
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+def extract_text_from_file(file_path, filetype):
+    """
+    Extract text from supported file types (PDF, DOCX, TXT/code).
+    """
+    if filetype == 'pdf' and PyPDF2:
+        try:
+            with open(file_path, 'rb') as f:
+                reader = PyPDF2.PdfReader(f)
+                text = '\n'.join(page.extract_text() or '' for page in reader.pages)
+            return text
+        except Exception as e:
+            logger.error(f"[FILE] PDF extraction error: {e}")
+            return ''
+    elif filetype == 'docx' and docx:
+        try:
+            doc = docx.Document(file_path)
+            text = '\n'.join([p.text for p in doc.paragraphs])
+            return text
+        except Exception as e:
+            logger.error(f"[FILE] DOCX extraction error: {e}")
+            return ''
+    else:  # txt, code, markdown, etc.
+        try:
+            with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                return f.read()
+        except Exception as e:
+            logger.error(f"[FILE] Text extraction error: {e}")
+            return ''
+
+
+@app.route('/upload_file', methods=['POST'])
+@token_required
+def upload_file():
+    """
+    Accepts file upload, extracts text, and stores in MongoDB with file_id and conversation_id.
+    """
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file part in request.'}), 400
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'error': 'No selected file.'}), 400
+    if not allowed_file(file.filename):
+        return jsonify({'error': 'File type not allowed.'}), 400
+    filename = secure_filename(file.filename)
+    ext = filename.rsplit('.', 1)[1].lower()
+    filetype = ext
+    temp = tempfile.NamedTemporaryFile(delete=False)
+    file.save(temp.name)
+    text_content = extract_text_from_file(temp.name, filetype)
+    temp.close()
+    file_id = str(uuid.uuid4())
+    conversation_id = sanitize_conversation_id(request.form.get('conversation_id'))
+    username = g.user['username']
+    files_col.insert_one({
+        'file_id': file_id,
+        'username': username,
+        'conversation_id': conversation_id,
+        'filename': filename,
+        'filetype': filetype,
+        'text_content': text_content,
+        'uploaded_at': datetime.utcnow().isoformat()
+    })
+    return jsonify({'file_id': file_id, 'conversation_id': conversation_id, 'filename': filename, 'filetype': filetype})
+
+
+@app.route('/chat_with_file', methods=['POST'])
+@token_required
+def chat_with_file():
+    """
+    Accepts a user question, file_id, and conversation_id. Retrieves file content, augments Llama 3 prompt, and returns answer.
+    """
+    data = request.get_json()
+    question = data.get('question', '').strip()
+    file_id = data.get('file_id')
+    conversation_id = sanitize_conversation_id(data.get('conversation_id'))
+    if not question or not file_id:
+        return jsonify({'error': 'Question and file_id are required.'}), 400
+    username = g.user['username']
+    file_doc = files_col.find_one({'file_id': file_id, 'username': username})
+    if not file_doc:
+        return jsonify({'error': 'File not found.'}), 404
+    file_excerpt = file_doc['text_content'][:6000]  # Limit excerpt for prompt size
+    # Try to extract code snippets if the file is a scan report mentioning vulnerable files/lines
+    code_snippet = None
+    # Heuristic: look for lines mentioning file paths and line numbers, then extract nearby lines as code
+    import re
+    lines = file_doc['text_content'].splitlines()
+    code_blocks = []
+    for i, line in enumerate(lines):
+        # Match lines like: /path/to/file.java (6 occurrences)
+        m = re.match(r"(.+\.\w+) \((\d+) occurrences?\)", line)
+        if m:
+            file_path = m.group(1)
+            # Look ahead for code or context (next 10 lines)
+            snippet = []
+            for j in range(i+1, min(i+11, len(lines))):
+                snippet.append(lines[j])
+            code_blocks.append(f"File: {file_path}\n" + '\n'.join(snippet))
+    # If we found code blocks, append them to the prompt
+    if code_blocks:
+        file_excerpt += "\n\n---\nExtracted vulnerable code/context from report:\n" + '\n\n'.join(code_blocks)
+    prompt = (
+        f"You are a helpful assistant. The user uploaded a file named '{file_doc['filename']}' (type: {file_doc['filetype']}). "
+        f"Use the following file content to answer the user's question. If the file is code, provide code-aware answers.\n\n"
+        f"User question: {question}\n\n"
+        f"File excerpt:\n{file_excerpt}\n\n"
+        f"Answer:"
+    )
+    answer = generate_response_with_ollama(prompt, max_tokens=1800)
+    now = datetime.utcnow().isoformat()
+    # Save user and bot messages to chat history
+    user_msg_doc = {
+        'username': username,
+        'id': int(time.time() * 1000),
+        'text': question,
+        'sender': 'user',
+        'timestamp': now,
+        'hasCode': detectCodeBlocks(question),
+        'reactions': [],
+        'conversation_id': conversation_id,
+        'file_id': file_id
+    }
+    chats_col.insert_one(user_msg_doc)
+    bot_msg_doc = {
+        'username': username,
+        'id': int(time.time() * 1000) + 1,
+        'text': answer,
+        'sender': 'bot',
+        'timestamp': now,
+        'hasCode': detectCodeBlocks(answer),
+        'reactions': [],
+        'conversation_id': conversation_id,
+        'file_id': file_id
+    }
+    chats_col.insert_one(bot_msg_doc)
+    return jsonify({'answer': answer, 'file_id': file_id, 'conversation_id': conversation_id})
+
+@app.route('/delete_file/<file_id>', methods=['DELETE'])
+@token_required
+def delete_file(file_id):
+    """
+    Delete a file by file_id for the current user (removes from DB, optionally from disk if stored).
+    """
+    username = g.user['username']
+    file_doc = files_col.find_one({'file_id': file_id, 'username': username})
+    if not file_doc:
+        return jsonify({'error': 'File not found.'}), 404
+    files_col.delete_one({'file_id': file_id, 'username': username})
+    # Optionally, delete file from disk if you store the path
+    # if 'filepath' in file_doc:
+    #     try:
+    #         os.remove(file_doc['filepath'])
+    #     except Exception as e:
+    #         logger.warning(f"[FILE] Could not delete file from disk: {e}")
+    return jsonify({'success': True, 'file_id': file_id})
+
 # JWT authentication decorator and code block detector must be defined before any route uses them
 
 def token_required(f):
@@ -1100,6 +1285,18 @@ def detectCodeBlocks(text):
     codeBlockRegex = re.compile(r'```(\w+)?\n([\s\S]*?)\n```')
     inlineCodeRegex = re.compile(r'`([^`]+)`')
     return bool(codeBlockRegex.search(text) or inlineCodeRegex.search(text))
+
+# Utility to ensure conversation_id is always a valid, non-empty string
+import uuid
+
+def sanitize_conversation_id(conversation_id):
+    """
+    Ensures conversation_id is always a valid, non-empty string for MongoDB schema.
+    Generates a new UUID string if missing, None, 'None', or empty.
+    """
+    if not conversation_id or str(conversation_id).lower() == 'none' or str(conversation_id).strip() == '':
+        return str(uuid.uuid4())
+    return str(conversation_id)
 
 if __name__ == "__main__":
     print("[CYBERGUARD AI] Starting Security Backend with Llama 3 + Gemini")

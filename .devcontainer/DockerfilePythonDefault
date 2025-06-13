@@ -1,4 +1,4 @@
-FROM python:3.11-slim
+pip install PyPDF2 python-docxFROM python:3.11-slim
 
 ARG GITHUB_TOKEN
 ARG PLUGIN_LIB_TAG
