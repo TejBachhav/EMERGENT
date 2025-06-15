@@ -66,5 +66,9 @@
   {
     "query": "Security Misconfiguration",
     "context": "*   **Cause:** Default credentials, unnecessary features enabled, open ports, verbose error messages, missing security headers.\n*   **Impact:** Data breaches, system compromise.\n*   **Mitigation:** Secure defaults, least privilege, patch management, disable unused features, hardened configurations, remove unnecessary ports, implement security headers.\n*   **Testing:** Configuration reviews, penetration testing, vulnerability scanning (Nessus, OpenVAS).\n*   **Standards:** CIS Benchmarks, NIST guidance, OWASP ASVS.\n"
+  },
+  {
+    "query": "hi",
+    "context": "Possible relevant cybersecurity contexts (choose the most applicable):\n\n*   **User Authentication:** Hi could be an attempt to bypass login screens, probing for default usernames/passwords.\n*   **Network Scanning:** Might be part of a ping sweep, checking for active hosts on a network.\n*   **Social Engineering:** Could be the initial contact in a phishing or pretexting attack.\n*   **Vulnerability Scanning:** Part of banner grabbing, trying to identify services.\n*   **Incident Response:** Indicator of compromise (IOC), correlating with known attack patterns.\n\nBest response (most likely Social Engineering as it's the simplest and requires least technical knowledge):\n\n**Social Engineering:** Initial contact in phishing or pretexting attempt. Verify sender identity. Report suspicious messages.\n"
   }
 ]

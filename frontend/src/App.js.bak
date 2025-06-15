@@ -2,9 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import ReactMarkdown from 'react-markdown';
-import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import './App.css';
-import ScanReportReview from './ScanReportReview';
 
 // Utility to generate a UUID (RFC4122 version 4)
 function generateUUID() {
@@ -24,7 +22,7 @@ function getValidConversationId(selectedConversation, setSelectedConversation) {
   return newId;
 }
 
-const App = ({ token, setToken, selectedConversation, setSelectedConversation }) => {
+const App = () => {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -33,11 +31,13 @@ const App = ({ token, setToken, selectedConversation, setSelectedConversation })
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loginForm, setLoginForm] = useState({ username: '', password: '' });
   const [loginError, setLoginError] = useState('');
+  const [token, setToken] = useState('');
   const [showRegister, setShowRegister] = useState(false);
   const [registerForm, setRegisterForm] = useState({ username: '', password: '' });
   const [registerError, setRegisterError] = useState('');
   const [registerSuccess, setRegisterSuccess] = useState('');
   const [conversations, setConversations] = useState([]);
+  const [selectedConversation, setSelectedConversation] = useState(null);
   const [conversationLoading, setConversationLoading] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false);
   const [copiedCodeIndex, setCopiedCodeIndex] = useState(null);
@@ -49,6 +49,7 @@ const App = ({ token, setToken, selectedConversation, setSelectedConversation })
   const textareaRef = useRef(null);
   const inputMenuRef = useRef(null);
   const fileInputRef = useRef(null);
+  const scanFileInputRef = useRef(null);
 
   // Dictation (Speech-to-Text) support
   const [isDictating, setIsDictating] = useState(false);
@@ -60,6 +61,13 @@ const App = ({ token, setToken, selectedConversation, setSelectedConversation })
   const [isPaused, setIsPaused] = useState(false);
   const [speakingMsgId, setSpeakingMsgId] = useState(null);
   const utterRef = useRef(null);
+
+  const handleRemoveFile = (fileId) => {
+    setUploadedFiles(prev => prev.filter(f => f.file_id !== fileId));
+    if (selectedFile && selectedFile.file_id === fileId) {
+      setSelectedFile(null);
+    }
+  };
 
   const handleSpeak = (text, msgId) => {
     if (!('speechSynthesis' in window)) {
@@ -712,6 +720,13 @@ const App = ({ token, setToken, selectedConversation, setSelectedConversation })
   const [selectedFile, setSelectedFile] = useState(null);
   const [fileUploadLoading, setFileUploadLoading] = useState(false);
 
+  // Add state for scan report and findings
+  const [scanFindings, setScanFindings] = useState([]);
+  const [selectedFinding, setSelectedFinding] = useState(null);
+  const [scanReportPdfUrl, setScanReportPdfUrl] = useState(null);
+  const [scanUploadLoading, setScanUploadLoading] = useState(false);
+  const [remediationResult, setRemediationResult] = useState(null);
+
   // Handle file upload
   const handleUploadFile = () => {
     if (!isLoggedIn) return;
@@ -904,9 +919,7 @@ const App = ({ token, setToken, selectedConversation, setSelectedConversation })
     }
   };
 
-  // In the input area, update the + menu Web Search button to set inputMode to 'websearch' and focus the input
-  // Remove the separate web search input rendering
-  const navigate = useNavigate ? useNavigate() : null;
+  // In the return JSX, add a split view for scan report review/remediation
   return (
     <div className="app">
       {/* Gemini API Key Input Button */}
@@ -1318,6 +1331,77 @@ const App = ({ token, setToken, selectedConversation, setSelectedConversation })
         </>
       )}
 
+      {/* Scan Report Upload/Preview - new section */}
+      {isLoggedIn && (
+        <React.Fragment>
+          <div style={{ display: 'flex', gap: 24, margin: '24px 0', alignItems: 'flex-start' }}>
+            {/* Left: Scan Report Upload/Preview */}
+            <div style={{ flex: 1, minWidth: 320 }}>
+              <div style={{ marginBottom: 12 }}>
+                <button
+                  onClick={handleUploadScanReport}
+                  disabled={scanUploadLoading}
+                  style={{ background: '#232b3a', color: '#4fd1c5', border: 'none', borderRadius: 8, padding: '8px 18px', fontWeight: 600, fontSize: 15, cursor: 'pointer' }}
+                >{scanUploadLoading ? 'Uploading...' : '⬆️ Upload Checkmarx Report (JSON/PDF)'}</button>
+                <input
+                  type="file"
+                  ref={scanFileInputRef}
+                  style={{ display: 'none' }}
+                  onChange={onScanFileInputChange}
+                  accept=".json,.pdf"
+                />
+              </div>
+              {scanReportPdfUrl && (
+                <div style={{ margin: '12px 0' }}>
+                  <a href={scanReportPdfUrl} target="_blank" rel="noopener noreferrer" style={{ color: '#4fd1c5', fontWeight: 600 }}>Download Original PDF Report</a>
+                  <iframe src={scanReportPdfUrl} title="Checkmarx PDF Preview" style={{ width: '100%', height: 400, border: '1.5px solid #4fd1c5', borderRadius: 8, marginTop: 8 }}></iframe>
+                </div>
+              )}
+              {scanFindings.length > 0 && (
+                <div style={{ marginTop: 16 }}>
+                  <div style={{ fontWeight: 700, color: '#4fd1c5', marginBottom: 8 }}>Vulnerable Code Snippets</div>
+                  <div style={{ maxHeight: 400, overflowY: 'auto', border: '1.5px solid #4fd1c5', borderRadius: 8, background: '#181f2a', padding: 12 }}>
+                    {scanFindings.map(finding => (
+                      <div
+                        key={finding.finding_id}
+                        style={{ marginBottom: 18, padding: 8, borderRadius: 6, background: selectedFinding && selectedFinding.finding_id === finding.finding_id ? '#232b3a' : 'transparent', cursor: 'pointer', border: selectedFinding && selectedFinding.finding_id === finding.finding_id ? '1.5px solid #4fd1c5' : '1px solid #232b3a' }}
+                        onClick={() => { setSelectedFinding(finding); setRemediationResult(null); }}
+                        title={`Click to review or remediate`}
+                      >
+                        <div style={{ fontWeight: 600, color: '#ff5c5c', marginBottom: 4 }}>{finding.vuln_name} ({finding.severity})</div>
+                        <div style={{ color: '#b3b3d1', fontSize: 13, marginBottom: 4 }}>{finding.file_path}:{finding.line}</div>
+                        <pre style={{ background: '#232b3a', color: '#fff', borderRadius: 6, padding: 8, fontSize: 14, overflowX: 'auto' }}>{finding.code_snippet}</pre>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+            {/* Right: Interactive Remediation */}
+            <div style={{ flex: 1, minWidth: 320 }}>
+              {selectedFinding ? (
+                <div style={{ border: '1.5px solid #4fd1c5', borderRadius: 8, background: '#181f2a', padding: 18 }}>
+                  <div style={{ fontWeight: 700, color: '#4fd1c5', marginBottom: 8 }}>Remediation for: {selectedFinding.vuln_name}</div>
+                  <pre style={{ background: '#232b3a', color: '#fff', borderRadius: 6, padding: 8, fontSize: 14, overflowX: 'auto', marginBottom: 12 }}>{selectedFinding.code_snippet}</pre>
+                  <div style={{ display: 'flex', gap: 12, marginBottom: 12 }}>
+                    <button onClick={() => handleExplainFinding(selectedFinding)} style={{ background: '#232b3a', color: '#ffd166', border: 'none', borderRadius: 8, padding: '8px 14px', fontWeight: 600, fontSize: 15, cursor: 'pointer' }}>Explain Vulnerability & Impact</button>
+                    <button onClick={() => handlePatchFinding(selectedFinding)} style={{ background: '#232b3a', color: '#4fd1c5', border: 'none', borderRadius: 8, padding: '8px 14px', fontWeight: 600, fontSize: 15, cursor: 'pointer' }}>Patch Recommendation</button>
+                  </div>
+                  {remediationResult && (
+                    <div style={{ background: remediationResult.type === 'patch' ? '#232b3a' : '#232b3a', color: '#fff', borderRadius: 6, padding: 12, fontSize: 15, border: '1px solid #4fd1c5' }}>
+                      <b>{remediationResult.type === 'patch' ? 'Patch Recommendation:' : 'Explanation:'}</b>
+                      <div style={{ marginTop: 6, whiteSpace: 'pre-wrap' }}>{remediationResult.text}</div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div style={{ color: '#b3b3d1', fontSize: 15, marginTop: 32 }}>Select a code snippet to review or remediate.</div>
+              )}
+            </div>
+          </div>
+        </React.Fragment>
+      )}
+
       {/* Main chat area always present */}
       <div className="main-chat-area" style={{
         flex: 1,
@@ -1642,33 +1726,12 @@ const App = ({ token, setToken, selectedConversation, setSelectedConversation })
                           color: '#4fd1c5',
                           fontWeight: 600,
                           fontSize: 15,
-                          color: '#4fd1c5',
-                          fontWeight: 600,
-                          fontSize: 15,
                           padding: '10px 18px',
                           textAlign: 'left',
                           cursor: 'pointer',
                           width: '100%',
                         }}
                       >📁 Upload File</button>
-                      <button
-                        onClick={() => {
-                          setShowInputMenu(false);
-                          if (navigate) navigate('/scan-report-review');
-                          else window.location.href = '/scan-report-review';
-                        }}
-                        style={{
-                          background: 'none',
-                          border: 'none',
-                          color: '#4fd1c5',
-                          fontWeight: 600,
-                          fontSize: 15,
-                          padding: '10px 18px',
-                          textAlign: 'left',
-                          cursor: 'pointer',
-                          width: '100%'
-                        }}
-                      >📝 Scan Report Review</button>
                       {/* Add more tool buttons here as needed */}
                     </div>
                   )}
@@ -1752,47 +1815,468 @@ const App = ({ token, setToken, selectedConversation, setSelectedConversation })
                 >✕</button>
               </div>
             )}
-            {selectedFile && (
-              <div style={{ margin: '8px 0', color: '#4fd1c5', fontWeight: 600 }}>
-                <span>📁 Chatting about: {selectedFile.filename}</span>
+
+            {/* Scan Report Upload/Preview - new section */}
+            <div style={{ marginTop: 24, borderTop: '1px solid #4fd1c5', paddingTop: 24 }}>
+              <div style={{ marginBottom: 12 }}>
+                <button
+                  onClick={handleUploadScanReport}
+                  disabled={scanUploadLoading}
+                  style={{ background: '#232b3a', color: '#4fd1c5', border: 'none', borderRadius: 8, padding: '8px 18px', fontWeight: 600, fontSize: 15, cursor: 'pointer' }}
+                >{scanUploadLoading ? 'Uploading...' : '⬆️ Upload Checkmarx Report (JSON/PDF)'}</button>
+                <input
+                  type="file"
+                  ref={scanFileInputRef}
+                  style={{ display: 'none' }}
+                  onChange={onScanFileInputChange}
+                  accept=".json,.pdf"
+                />
+              </div>
+              {scanReportPdfUrl && (
+                <div style={{ margin: '12px 0' }}>
+                  <a href={scanReportPdfUrl} target="_blank" rel="noopener noreferrer" style={{ color: '#4fd1c5', fontWeight: 600 }}>Download Original PDF Report</a>
+                  <iframe src={scanReportPdfUrl} title="Checkmarx PDF Preview" style={{ width: '100%', height: 400, border: '1.5px solid #4fd1c5', borderRadius: 8, marginTop: 8 }}></iframe>
+                </div>
+              )}
+              {scanFindings.length > 0 && (
+                <div style={{ marginTop: 16 }}>
+                  <div style={{ fontWeight: 700, color: '#4fd1c5', marginBottom: 8 }}>Vulnerable Code Snippets</div>
+                  <div style={{ maxHeight: 400, overflowY: 'auto', border: '1.5px solid #4fd1c5', borderRadius: 8, background: '#181f2a', padding: 12 }}>
+                    {scanFindings.map(finding => (
+                      <div
+                        key={finding.finding_id}
+                        style={{ marginBottom: 18, padding: 8, borderRadius: 6, background: selectedFinding && selectedFinding.finding_id === finding.finding_id ? '#232b3a' : 'transparent', cursor: 'pointer', border: selectedFinding && selectedFinding.finding_id === finding.finding_id ? '1.5px solid #4fd1c5' : '1px solid #232b3a' }}
+                        onClick={() => { setSelectedFinding(finding); setRemediationResult(null); }}
+                        title={`Click to review or remediate`}
+                      >
+                        <div style={{ fontWeight: 600, color: '#ff5c5c', marginBottom: 4 }}>{finding.vuln_name} ({finding.severity})</div>
+                        <div style={{ color: '#b3b3d1', fontSize: 13, marginBottom: 4 }}>{finding.file_path}:{finding.line}</div>
+                        <pre style={{ background: '#232b3a', color: '#fff', borderRadius: 6, padding: 8, fontSize: 14, overflowX: 'auto' }}>{finding.code_snippet}</pre>
+                      </div>
+                    ))}                  </div>
+                </div>              )}
+            </div>
+          </div>
+        </React.Fragment>
+      )}
+
+      {/* Main chat area always present */}
+      <div className="main-chat-area" style={{
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        height: '95vh',
+        background: 'rgba(18,22,32,0.98)',
+        position: 'relative',
+        overflow: 'hidden',
+      }}>
+        {/* Enhanced Header */}
+        <div className="chat-header">
+          <div className="header-content">
+            <div className="bot-avatar">
+              <div className="avatar-ring"></div>
+              <div className="avatar-core">🛡️</div>
+              <div className="security-pulse"></div>
+            </div>
+            <div className="header-info">
+              <h1 className="bot-name">CyberGuard AI</h1>
+              <p className="bot-status">
+                <span className="status-dot"></span>
+                Secured • Analyzing threats
+                <span className="threat-level">
+                  <span className="level-indicator green"></span>
+                  THREAT LEVEL: LOW
+                </span>
+              </p>
+            </div>
+            <div className="security-stats">
+              <div className="stat">
+                <div className="stat-value">99.9%</div>
+                <div className="stat-label">Uptime</div>
+              </div>
+              <div className="stat">
+                <div className="stat-value">{messages.length}</div>
+                <div className="stat-label">Messages</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Login/Register Form */}
+        {!isLoggedIn ? (
+          <div className="login-form-container enhanced-form-bg">
+            <form className="login-form enhanced-form" onSubmit={showRegister ? handleRegister : handleLogin}>
+              <div className="form-header">
+                <div className="form-icon">🛡️</div>
+                <h2>{showRegister ? 'Create Your CyberGuard Account' : 'Welcome Back to CyberGuard AI'}</h2>
+                <p className="form-subtitle">{showRegister ? 'Sign up to start your secure chat journey.' : 'Login to access your secure chat.'}</p>
+              </div>
+              <div className="form-group">
+                <label htmlFor="username">Username</label>
+                <input
+                  id="username"
+                  type="text"
+                  autoComplete="username"
+                  placeholder="Enter your username"
+                  value={showRegister ? registerForm.username : loginForm.username}
+                  onChange={e => showRegister
+                    ? setRegisterForm(f => ({ ...f, username: e.target.value }))
+                    : setLoginForm(f => ({ ...f, username: e.target.value }))}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="password">Password</label>
+                <input
+                  id="password"
+                  type="password"
+                  autoComplete={showRegister ? "new-password" : "current-password"}
+                  placeholder="Enter your password"
+                  value={showRegister ? registerForm.password : loginForm.password}
+                  onChange={e => showRegister
+                    ? setRegisterForm(f => ({ ...f, password: e.target.value }))
+                    : setLoginForm(f => ({ ...f, password: e.target.value }))}
+                  required
+                />
+              </div>
+              <button type="submit" className="form-btn main-btn">{showRegister ? 'Register' : 'Login'}</button>
+              {showRegister ? (
+                <>
+                  {registerError && <div className="form-error">{registerError}</div>}
+                  {registerSuccess && <div className="form-success">{registerSuccess}</div>}
+                  <div className="toggle-link">
+                    Already have an account?{' '}
+                    <span onClick={() => { setShowRegister(false); setRegisterError(''); setRegisterSuccess(''); }}>
+                      <b>Login here</b>
+                    </span>
+                  </div>
+                </>
+              ) : (
+                <>
+                  {loginError && <div className="form-error">{loginError}</div>}
+                  <div className="toggle-link">
+                    New user?{' '}
+                    <span onClick={() => { setShowRegister(true); setLoginError(''); }}>
+                      <b>Register here</b>
+                    </span>
+                  </div>
+                </>
+              )}
+            </form>
+          </div>
+        ) : (
+          <>
+            {/* Messages Area - scrollable */}
+            {isLoggedIn && (
+              <div className="messages-container" style={{
+                flex: 1,
+                overflowY: 'auto',
+                padding: '0 0 0 0',
+                margin: 20,
+                minHeight: 0,
+                maxHeight: 'calc(100vh - 220px)',
+                background: 'transparent',
+                borderRadius: 0,
+                boxShadow: 'none',
+              }}>
+                <div className="messages-wrapper" style={{ padding: '32px 0 16px 0', minHeight: '100%' }}>
+                  {messages.map((message, index) => (
+                    <div
+                      key={message.id}
+                      className={`message-wrapper ${message.sender}`}
+                      style={{ animationDelay: `${index * 0.1}s` }}
+                    >
+                      <div className={`message ${message.sender} ${message.isError ? 'error' : ''} ${message.hasCode ? 'has-code' : ''}`}>
+                        {message.sender === 'bot' && (
+                          <div className="bot-message-avatar">
+                            🛡️
+                            <div className="avatar-glow"></div>
+                          </div>
+                        )}
+                        <div className="message-content">
+                          <div className="message-text">
+                            {renderMessageContent(message, index)}
+                            {message.isStreaming && <span className="cursor">|</span>}
+                          </div>
+                          <div className="message-footer">
+                            <div className="message-time">{message.timestamp}</div>
+                            {message.sender === 'bot' && !message.isStreaming && (
+                              <div className="message-actions">
+                                <button 
+                                  className="reaction-btn"
+                                  onClick={() => setShowReactions(showReactions === message.id ? null : message.id)}
+                                >
+                                  😊
+                                </button>
+                                {showReactions === message.id && (
+                                  <div className="reactions-popup">
+                                    {['👍', '🎯', '🔥', '💡', '❤️'].map(emoji => (
+                                      <button
+                                        key={emoji}
+                                        className="reaction-option"
+                                        onClick={() => handleReaction(message.id, emoji)}
+                                      >
+                                        {emoji}
+                                      </button>
+                                    ))}
+                                  </div>
+                                )}
+                                <div className="message-reactions">
+                                  {message.reactions.map(reaction => (
+                                    <span key={reaction.emoji} className="reaction">
+                                      {reaction.emoji} {reaction.count}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  {isTyping && (
+                    <div className="message-wrapper bot typing-indicator">
+                      <div className="message bot">
+                        <div className="bot-message-avatar">
+                          🛡️
+                          <div className="avatar-glow"></div>
+                        </div>
+                        <div className="message-content">
+                          <div className="typing-animation">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                          </div>
+                          <div className="typing-text">Analyzing security patterns...</div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  <div ref={messagesEndRef} />
+                </div>
               </div>
             )}
-          </>
+
+            {/* Quick Prompts */}
+            <div className="quick-prompts">
+              <div className="prompts-label">Quick Security Checks:</div>
+              <div className="prompts-container">
+                {quickPrompts.map((prompt, index) => (
+                  <button
+                    key={index}
+                    className="quick-prompt"
+                    onClick={() => handleQuickPrompt(prompt)}
+                    disabled={isSending}
+                  >
+                    {prompt}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Enhanced Input Area */}
+            <div className="input-container">
+              <div className="input-wrapper" style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                <textarea
+                  ref={textareaRef}
+                  value={inputMessage}
+                  onChange={(e) => setInputMessage(e.target.value)}
+                  onKeyPress={e => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSend();
+                    }
+                  }}
+                  placeholder={inputMode === 'websearch' ? 'Search the web...' : selectedFile ? `Ask about ${selectedFile.filename}...` : 'Describe your security concern, paste code for review, or ask about vulnerabilities...'}
+                  className="message-input"
+                  rows="1"
+                  style={{ height: "24px", minHeight: "20px", maxHeight: "120px" }}
+                  disabled={isSending || isWebSearching}
+                  autoFocus
+                />
+                {/* Dictate button */}
+                <button
+                  onClick={isDictating ? handleStopDictation : () => handleStartDictation('input')}
+                  className={`dictate-btn${isDictating ? ' active' : ''}`}
+                  style={{
+                    marginLeft: 8,
+                    background: isDictating ? '#4fd1c5' : '#232b3a',
+                    color: isDictating ? '#181f2a' : '#4fd1c5',
+                    border: 'none',
+                    borderRadius: 8,
+                    padding: '8px 12px',
+                    fontWeight: 700,
+                    fontSize: 16,
+                    cursor: 'pointer',
+                    boxShadow: isDictating ? '0 2px 8px 0 rgba(79,209,197,0.18)' : 'none',
+                    transition: 'background 0.2s, color 0.2s',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                  title={isDictating ? 'Stop dictation' : 'Dictate your message'}
+                  disabled={isSending || isWebSearching}
+                >
+                  {isDictating ? '🛑' : <span style={{fontSize: 22, lineHeight: 1}}>🎙️</span>}
+                </button>
+                {/* + icon for menu */}
+                <div style={{ position: 'relative', marginLeft: 8 }}>
+                  <button
+                    onClick={() => setShowInputMenu(v => !v)}
+                    style={{
+                      background: '#232b3a',
+                      color: '#4fd1c5',
+                      border: 'none',
+                      borderRadius: '50%',
+                      width: 36,
+                      height: 36,
+                      fontSize: 24,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                    title="More options"
+                  >＋</button>
+                  {showInputMenu && (
+                    <div ref={inputMenuRef} style={{
+                      position: 'absolute',
+                      right: 0,
+                      bottom: 44, // changed from top: 44 to bottom: 44
+                      background: '#181f2a',
+                      border: '1.5px solid #4fd1c5',
+                      borderRadius: 10,
+                      boxShadow: '0 4px 16px 0 rgba(79,209,197,0.10)',
+                      padding: '10px 0',
+                      minWidth: 180,
+                      zIndex: 1000,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 0,
+                      maxHeight: 220,
+                      overflowY: 'auto',
+                    }}>
+                      <button
+                        onClick={() => {
+                          setShowInputMenu(false);
+                          setInputMode('websearch');
+                          setTimeout(() => textareaRef.current?.focus(), 100);
+                        }}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: '#4fd1c5',
+                          fontWeight: 600,
+                          fontSize: 15,
+                          padding: '10px 18px',
+                          textAlign: 'left',
+                          cursor: 'pointer',
+                          width: '100%',
+                          borderBottom: '1px solid #232b3a',
+                        }}
+                      >🌐 Web Search</button>
+                      <button
+                        onClick={() => { setShowInputMenu(false); handleUploadFile(); }}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: '#4fd1c5',
+                          fontWeight: 600,
+                          fontSize: 15,
+                          padding: '10px 18px',
+                          textAlign: 'left',
+                          cursor: 'pointer',
+                          width: '100%',
+                        }}
+                      >📁 Upload File</button>
+                      {/* Add more tool buttons here as needed */}
+                    </div>
+                  )}
+                </div>
+                {/* Send button */}
+                <button
+                  onClick={handleSend}
+                  disabled={(!inputMessage.trim() && inputMode === 'chat') || isSending || isWebSearching}
+                  className={`send-button ${isSending || isWebSearching ? 'sending' : ''}`}
+                >
+                  {(isSending || isWebSearching) ? (
+                    <div className="loading-spinner"></div>
+                  ) : (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <line x1="22" y1="2" x2="11" y2="13"></line>
+                      <polygon points="22,2 15,22 11,13 2,9 22,2"></polygon>
+                    </svg>
+                  )}
+                </button>
+                {/* Hidden file input (still needed for upload) */}
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  style={{ display: 'none' }}
+                  onChange={onFileInputChange}
+                  accept=".pdf,.docx,.txt,.py,.js,.java,.c,.cpp,.go,.rb,.sh,.md,.json,.yaml,.yml"
+                />
+              </div>
+              <div className="input-footer">
+                <div className="security-indicator-small">
+                  🔒 End-to-end encrypted • 🛡️ Threat monitoring active
+                </div>
+              </div>
+            </div>
+
+            {/* Uploaded files list and selected file context (as before) */}
+            {uploadedFiles.length > 0 && (
+              <div className="uploaded-files-list" style={{ margin: '8px 0 0 0', display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                {uploadedFiles.map(f => (
+                  <div key={f.file_id} style={{ display: 'inline-flex', alignItems: 'center', position: 'relative' }}>
+                    <button
+                      onClick={() => setSelectedFile(f)}
+                      style={{
+                        background: selectedFile && selectedFile.file_id === f.file_id ? '#4fd1c5' : '#232b3a',
+                        color: selectedFile && selectedFile.file_id === f.file_id ? '#181f2a' : '#4fd1c5',
+                        border: 'none',
+                        borderRadius: 8,
+                        padding: '6px 14px',
+                        fontWeight: 600,
+                        fontSize: 14,
+                        cursor: 'pointer',
+                        boxShadow: selectedFile && selectedFile.file_id === f.file_id ? '0 2px 8px 0 rgba(79,209,197,0.18)' : 'none',
+                        marginRight: 2
+                      }}
+                      title={`Ask about ${f.filename}`}
+                    >{f.filename}</button>
+                    <button
+                      onClick={() => handleRemoveFile(f.file_id)}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: '#ff5c5c',
+                        fontSize: 16,
+                        marginLeft: -8,
+                        cursor: 'pointer',
+                        padding: '0 4px',
+                        position: 'absolute',
+                        right: 0,
+                        top: 0
+                      }}
+                      title={`Remove ${f.filename}`}
+                    >✕</button>
+                  </div>
+                ))}
+                <button
+                  onClick={() => { setSelectedFile(null); }}
+                  style={{
+                    background: '#232b3a', color: '#ff5c5c', border: 'none', borderRadius: 8, padding: '6px 14px', fontWeight: 600, fontSize: 14, cursor: 'pointer', marginLeft: 4
+                  }}
+                  title="Clear file selection"
+                >✕</button>
+              </div>
+            )}
+          </div>
         )}
       </div>
     </div>
   );
 };
-
-// Wrap App in Router and add route for ScanReportReview
-const AppWithRouter = () => {
-  // Use state lifting to share auth and conversation context
-  const [token, setToken] = useState(localStorage.getItem('token') || '');
-  const [selectedConversation, setSelectedConversation] = useState(() => {
-    const stored = localStorage.getItem('selectedConversation');
-    if (stored && stored !== 'None') return stored;
-    const newId = generateUUID();
-    localStorage.setItem('selectedConversation', newId);
-    return newId;
-  });
-  // Keep localStorage in sync
-  React.useEffect(() => {
-    if (!selectedConversation || selectedConversation === 'None') {
-      const newId = generateUUID();
-      setSelectedConversation(newId);
-      localStorage.setItem('selectedConversation', newId);
-    } else {
-      localStorage.setItem('selectedConversation', selectedConversation);
-    }
-  }, [selectedConversation]);
-  return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<App token={token} setToken={setToken} selectedConversation={selectedConversation} setSelectedConversation={setSelectedConversation} />} />
-        <Route path="/scan-report-review" element={<ScanReportReview token={token} selectedConversation={selectedConversation} setSelectedConversation={setSelectedConversation} />} />
-      </Routes>
-    </Router>
-  );
-};
-
-export default AppWithRouter;
+export default App;

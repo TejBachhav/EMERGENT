@@ -18,7 +18,11 @@ from functools import wraps
 import jwt
 from pymongo import MongoClient
 import uuid
-
+from flask import send_file
+import tempfile
+import PyPDF2
+import docx
+from werkzeug.utils import secure_filename
 try:
     from sentence_transformers import SentenceTransformer, util as st_util
     _sentence_transformers_available = True
@@ -33,6 +37,7 @@ mongo_client = MongoClient(MONGO_URI)
 db = mongo_client['cyberguard']
 users_col = db['users']
 chats_col = db['chats']
+scan_findings_col = db['scan_findings']  # New collection for scan findings
 
 def ensure_mongodb_collections():
     """
@@ -1079,20 +1084,6 @@ def web_search_summarized():
 # FILE UPLOAD AND CHAT WITH FILES ENDPOINTS
 # ============================================================================
 
-import uuid
-from werkzeug.utils import secure_filename
-import tempfile
-import mimetypes
-
-try:
-    import PyPDF2
-except ImportError:
-    PyPDF2 = None
-try:
-    import docx
-except ImportError:
-    docx = None
-
 files_col = db['files']  # New collection for uploaded files and extracted content
 
 ALLOWED_EXTENSIONS = {'pdf', 'docx', 'txt', 'py', 'js', 'java', 'c', 'cpp', 'go', 'rb', 'sh', 'md', 'json', 'yaml', 'yml'}
@@ -1192,14 +1183,14 @@ def chat_with_file():
     code_blocks = []
     for i, line in enumerate(lines):
         # Match lines like: /path/to/file.java (6 occurrences)
-        m = re.match(r"(.+\.\w+) \((\d+) occurrences?\)", line)
+        m = re.match(r"(.+\.[a-zA-Z0-9]+) \((\d+) occurrences?\)", line)
         if m:
             file_path = m.group(1)
             # Look ahead for code or context (next 10 lines)
             snippet = []
             for j in range(i+1, min(i+11, len(lines))):
                 snippet.append(lines[j])
-            code_blocks.append(f"File: {file_path}\n" + '\n'.join(snippet))
+            code_blocks.append((file_path, '\n'.join(snippet)))
     # If we found code blocks, append them to the prompt
     if code_blocks:
         file_excerpt += "\n\n---\nExtracted vulnerable code/context from report:\n" + '\n\n'.join(code_blocks)
@@ -1258,6 +1249,288 @@ def delete_file(file_id):
     #         logger.warning(f"[FILE] Could not delete file from disk: {e}")
     return jsonify({'success': True, 'file_id': file_id})
 
+# ============================================================================
+# CHECKMARX SCAN REPORT ENDPOINTS
+# ============================================================================
+
+# New collection for scan findings
+scan_findings_col = db['scan_findings']
+
+@app.route('/upload_scan_report', methods=['POST'])
+@token_required
+def upload_scan_report():
+    """
+    Accepts a Checkmarx scan report (JSON or PDF), parses it, extracts findings and vulnerable code snippets, and stores them.
+    Always returns the latest findings for the conversation after upload.
+    """
+    import logging
+    logger = logging.getLogger("scan_report")
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file part in request.'}), 400
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'error': 'No selected file.'}), 400
+    ext = file.filename.rsplit('.', 1)[-1].lower()
+    temp = tempfile.NamedTemporaryFile(delete=False)
+    file.save(temp.name)
+    username = g.user['username']
+    conversation_id = sanitize_conversation_id(request.form.get('conversation_id'))
+    findings = []
+    if ext == 'pdf':
+        # Extract text from PDF and store as text, not binary
+        pdf_text = ''
+        if _pdfplumber_available:
+            import warnings
+            try:
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore")
+                    with pdfplumber.open(temp.name) as pdf:
+                        pdf_text = "\n".join(page.extract_text() or '' for page in pdf.pages if page.extract_text())
+            except Exception as e:
+                logger.error(f"[PDF PARSE] Exception: {e}")
+                pdf_text = ''
+        # Store PDF text in DB
+        scan_findings_col.insert_one({
+            'username': username,
+            'conversation_id': conversation_id,
+            'report_filename': file.filename,
+            'pdf_text': pdf_text,
+            'created_at': datetime.utcnow().isoformat(),
+            'type': 'pdf'
+        })
+        # Use improved code extraction logic on pdf_text
+        findings = []
+        lines = pdf_text.splitlines()
+        code_blocks = []
+        # 1. Extract code blocks after 'Code Snippets:' or 'Code Snippet:'
+        for i, line in enumerate(lines):
+            if re.match(r'Code Snippets?:', line.strip()):
+                snippet_lines = []
+                for l in lines[i+1:]:
+                    # Stop at next section header or empty line
+                    if not l.strip() or re.match(r'^[A-Za-z ]+:', l.strip()):
+                        break
+                    snippet_lines.append(l)
+                if snippet_lines:
+                    code_blocks.append(('(from Code Snippets section)', '\n'.join(snippet_lines)))
+        # 2. If no code blocks found, fallback: collect all indented/code-like lines
+        if not code_blocks:
+            snippet_lines = []
+            for l in lines:
+                # Heuristic: indented or code-like (contains typical code symbols)
+                if l.startswith('    ') or l.startswith('\t') or re.search(r'[;{}=()]', l):
+                    snippet_lines.append(l)
+                elif snippet_lines:
+                    # End of a code block
+                    code_blocks.append(('(heuristic code block)', '\n'.join(snippet_lines)))
+                    snippet_lines = []
+            if snippet_lines:
+                code_blocks.append(('(heuristic code block)', '\n'.join(snippet_lines)))
+        for file_path, code_snippet in code_blocks:
+            if code_snippet.strip():
+                finding_id = str(uuid.uuid4())
+                findings.append({
+                    'finding_id': finding_id,
+                    'username': username,
+                    'conversation_id': conversation_id,
+                    'vuln_name': 'Extracted from PDF',
+                    'severity': 'Medium',
+                    'file_path': file_path,
+                    'line': '',
+                    'code_snippet': code_snippet,
+                    'status': 'unresolved',
+                    'report_filename': file.filename,
+                    'created_at': datetime.utcnow().isoformat(),
+                    'type': 'pdf-extracted'
+                })
+        # Fallback to previous logic if still no findings
+        if not findings:
+            vuln_pattern = re.compile(r'(Vulnerability(?: Name)?:\s*.+?)(?=Vulnerability(?: Name)?:|$)', re.DOTALL)
+            vuln_blocks = vuln_pattern.findall(pdf_text)
+            for block in vuln_blocks:
+                vuln_name_match = re.search(r'Vulnerability(?: Name)?:\s*(.+)', block)
+                vuln_name = vuln_name_match.group(1).strip() if vuln_name_match else 'Unknown'
+                code_snippet = ''
+                snippet_match = re.search(r'Code Snippets?:\s*(.*)', block, re.DOTALL)
+                if snippet_match:
+                    after_snippet = snippet_match.group(1)
+                    stop_match = re.search(r'^[A-Za-z ]+:', after_snippet, re.MULTILINE)
+                    if stop_match:
+                        code_snippet = after_snippet[:stop_match.start()].strip()
+                    else:
+                        code_snippet = after_snippet.strip()
+                    code_snippet = re.sub(r'\n{3,}', '\n\n', code_snippet).strip()
+                if vuln_name and code_snippet:
+                    finding_id = str(uuid.uuid4())
+                    findings.append({
+                        'finding_id': finding_id,
+                        'username': username,
+                        'conversation_id': conversation_id,
+                        'vuln_name': vuln_name,
+                        'severity': 'Medium',
+                        'file_path': '',
+                        'line': '',
+                        'code_snippet': code_snippet,
+                        'status': 'unresolved',
+                        'report_filename': file.filename,
+                        'created_at': datetime.utcnow().isoformat(),
+                        'type': 'pdf-extracted'
+                    })
+        temp.close()
+        if findings:
+            scan_findings_col.insert_many(findings)
+        # Return latest findings for this conversation
+        findings = list(scan_findings_col.find({
+            'username': username,
+            'conversation_id': conversation_id,
+            'type': {'$in': ['json', 'pdf-extracted']}
+        }, {'_id': 0}).sort([('created_at', -1)]))
+        return jsonify({'success': True, 'pdf_report': True, 'conversation_id': conversation_id, 'findings': findings, 'pdf_text': pdf_text})
+    # ...existing JSON parsing logic for Checkmarx...
+    try:
+        with open(temp.name, 'r', encoding='utf-8', errors='ignore') as f:
+            report_data = f.read()
+        import json
+        report_json = json.loads(report_data)
+    except Exception as e:
+        return jsonify({'error': f'Failed to parse report: {e}'}), 400
+    finally:
+        temp.close()
+    findings = []
+    for query in report_json.get('results', []):
+        for finding in query.get('vulnerabilities', []):
+            finding_id = str(uuid.uuid4())
+            code_snippet = finding.get('codeSnippet', '')
+            file_path = finding.get('fileName', '')
+            line = finding.get('line', '')
+            vuln_name = query.get('queryName', 'Unknown')
+            severity = finding.get('severity', 'Medium')
+            findings.append({
+                'finding_id': finding_id,
+                'username': username,
+                'conversation_id': conversation_id,
+                'vuln_name': vuln_name,
+                'severity': severity,
+                'file_path': file_path,
+                'line': line,
+                'code_snippet': code_snippet,
+                'status': 'unresolved',
+                'report_filename': file.filename,
+                'created_at': datetime.utcnow().isoformat(),
+                'type': 'json'
+            })
+    if findings:
+        scan_findings_col.insert_many(findings)
+    # Return latest findings for this conversation
+    findings = list(scan_findings_col.find({
+        'username': username,
+        'conversation_id': conversation_id,
+        'type': {'$in': ['json', 'pdf-extracted']}
+    }, {'_id': 0}).sort([('created_at', -1)]))
+    return jsonify({'success': True, 'findings': findings, 'conversation_id': conversation_id})
+
+@app.route('/scan_findings', methods=['GET'])
+@token_required
+def get_scan_findings():
+    """
+    Fetch all scan findings for the current user and conversation, sorted by severity and timestamp.
+    Adds 'is_latest' field for findings from the most recent upload.
+    """
+    username = g.user['username']
+    conversation_id = request.args.get('conversation_id')
+    query = {'username': username}
+    if conversation_id:
+        query['conversation_id'] = conversation_id
+    findings = list(scan_findings_col.find(query, {'_id': 0, 'pdf_data': 0}))
+    # Sort by severity (Critical > High > Medium > Low > Info) and created_at desc
+    severity_order = {'Critical': 4, 'High': 3, 'Medium': 2, 'Low': 1, 'Info': 0}
+    findings.sort(key=lambda f: (severity_order.get(f.get('severity', 'Medium'), 2), f.get('created_at', '')), reverse=True)
+    # Mark latest findings
+    if findings:
+        latest_time = max(f.get('created_at', '') for f in findings)
+        for f in findings:
+            f['is_latest'] = (f.get('created_at', '') == latest_time)
+    return jsonify({'findings': findings})
+
+@app.route('/scan_findings/latest', methods=['GET'])
+@token_required
+def get_latest_scan_findings():
+    """
+    Fetch the most recent scan findings for the current user (across all conversations).
+    """
+    username = g.user['username']
+    findings = list(scan_findings_col.find({'username': username, 'type': 'json'}, {'_id': 0, 'pdf_data': 0}))
+    if not findings:
+        return jsonify({'findings': []})
+    latest_time = max(f.get('created_at', '') for f in findings)
+    latest_findings = [f for f in findings if f.get('created_at', '') == latest_time]
+    return jsonify({'findings': latest_findings})
+
+@app.route('/scan_report_pdf_url', methods=['GET'])
+@token_required
+def scan_report_pdf_url():
+    """
+    Returns the download URL for the PDF report for a conversation, if it exists.
+    """
+    username = g.user['username']
+    conversation_id = request.args.get('conversation_id')
+    doc = scan_findings_col.find_one({
+        'username': username,
+        'conversation_id': conversation_id,
+        'type': 'pdf'
+    })
+    if not doc:
+        return jsonify({'pdf_available': False})
+    url = f"/download_scan_report_pdf?conversation_id={conversation_id}"
+    return jsonify({'pdf_available': True, 'download_url': url})
+
+@app.route('/scan_finding/<finding_id>/explain', methods=['POST'])
+@token_required
+def explain_scan_finding(finding_id):
+    """
+    Return an explanation for the code snippet in the finding, formatted for frontend display.
+    """
+    finding = scan_findings_col.find_one({'finding_id': finding_id})
+    if not finding:
+        return jsonify({'error': 'Finding not found.'}), 404
+    code = finding.get('code_snippet', '')
+    vuln_name = finding.get('vuln_name', 'Vulnerability')
+    file_path = finding.get('file_path', '')
+    # Use LLM or template for explanation
+    prompt = f"Explain the vulnerability and impact for the following code snippet from {file_path} (type: {vuln_name}):\n\n```\n{code}\n```\n\nExplanation (in markdown, use bullet points if needed):"
+    try:
+        explanation = generate_response_with_ollama(prompt, max_tokens=600)
+        # Ensure markdown/code block formatting
+        if not explanation.strip().startswith('```'):
+            explanation = explanation.strip()
+    except Exception as e:
+        explanation = f"Could not generate explanation: {e}"
+    return jsonify({'explanation': explanation})
+
+@app.route('/scan_finding/<finding_id>/patch', methods=['POST'])
+@token_required
+def patch_scan_finding(finding_id):
+    """
+    Return a patch recommendation for the code snippet in the finding, formatted for frontend display.
+    """
+    finding = scan_findings_col.find_one({'finding_id': finding_id})
+    if not finding:
+        return jsonify({'error': 'Finding not found.'}), 404
+    code = finding.get('code_snippet', '')
+    vuln_name = finding.get('vuln_name', 'Vulnerability')
+    file_path = finding.get('file_path', '')
+    # Use LLM or template for patch
+    prompt = f"Suggest a secure patch for the following code snippet from {file_path} (type: {vuln_name}). Output the patched code in a code block, then a brief explanation in markdown.\n\n```\n{code}\n```\n\nPatch:"
+    try:
+        patch = generate_response_with_ollama(prompt, max_tokens=600)
+        # Ensure markdown/code block formatting
+        if not patch.strip().startswith('```'):
+            patch = patch.strip()
+    except Exception as e:
+        patch = f"Could not generate patch: {e}"
+    return jsonify({'patch': patch})
+
+# ============================================================================
 # JWT authentication decorator and code block detector must be defined before any route uses them
 
 def token_required(f):
@@ -1298,6 +1571,13 @@ def sanitize_conversation_id(conversation_id):
         return str(uuid.uuid4())
     return str(conversation_id)
 
+# Move pdfplumber import and _pdfplumber_available definition to the top of the file, so they are always defined before use
+try:
+    import pdfplumber
+    _pdfplumber_available = True
+except ImportError:
+    _pdfplumber_available = False
+
 if __name__ == "__main__":
     print("[CYBERGUARD AI] Starting Security Backend with Llama 3 + Gemini")
     print("=" * 60)
@@ -1306,6 +1586,8 @@ if __name__ == "__main__":
     print(f"[HEALTH] Health Check: /api/health")
     print(f"[VULNS] Vulnerabilities: /api/vulnerabilities")
     print(f"[STATS] Stats: /api/stats")
+    print(f"[SCAN] Scan Findings: /scan_findings")
+    print(f"[UPLOAD] Upload Scan Report: /upload_scan_report")
     print("=" * 60)
     print("[INFO] Ollama model used:", OLLAMA_MODEL)
     print(f"[DEVICE] Device: {get_ollama_device_string()}")
