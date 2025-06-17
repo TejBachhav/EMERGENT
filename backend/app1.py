@@ -1276,6 +1276,12 @@ def upload_scan_report():
     username = g.user['username']
     conversation_id = sanitize_conversation_id(request.form.get('conversation_id'))
     findings = []
+    existing_snippets = set()
+    # Preload existing code_snippets for this conversation and user
+    for f in scan_findings_col.find({'username': username, 'conversation_id': conversation_id}, {'code_snippet': 1}):
+        snippet = f.get('code_snippet', '').strip()
+        if snippet:
+            existing_snippets.add(snippet)
     if ext == 'pdf':
         # Extract text from PDF and store as text, not binary
         pdf_text = ''
@@ -1298,52 +1304,52 @@ def upload_scan_report():
             'created_at': datetime.utcnow().isoformat(),
             'type': 'pdf'
         })
-        # Use improved code extraction logic on pdf_text
+        # Use enhanced code extraction logic on pdf_text with specific focus on line-numbered code blocks
+        # STRICT: Only extract code snippets where each line starts with a line number followed by code
         findings = []
         lines = pdf_text.splitlines()
         code_blocks = []
-        # 1. Extract code blocks after 'Code Snippets:' or 'Code Snippet:'
+        line_number_pattern = re.compile(r'^\s*\d+\s+\S+')
+        current_block = []
+        file_path = ""
         for i, line in enumerate(lines):
-            if re.match(r'Code Snippets?:', line.strip()):
-                snippet_lines = []
-                for l in lines[i+1:]:
-                    # Stop at next section header or empty line
-                    if not l.strip() or re.match(r'^[A-Za-z ]+:', l.strip()):
-                        break
-                    snippet_lines.append(l)
-                if snippet_lines:
-                    code_blocks.append(('(from Code Snippets section)', '\n'.join(snippet_lines)))
-        # 2. If no code blocks found, fallback: collect all indented/code-like lines
-        if not code_blocks:
-            snippet_lines = []
-            for l in lines:
-                # Heuristic: indented or code-like (contains typical code symbols)
-                if l.startswith('    ') or l.startswith('\t') or re.search(r'[;{}=()]', l):
-                    snippet_lines.append(l)
-                elif snippet_lines:
-                    # End of a code block
-                    code_blocks.append(('(heuristic code block)', '\n'.join(snippet_lines)))
-                    snippet_lines = []
-            if snippet_lines:
-                code_blocks.append(('(heuristic code block)', '\n'.join(snippet_lines)))
+            if line_number_pattern.match(line):
+                current_block.append(line)
+            else:
+                if current_block:
+                    block_text = '\n'.join(current_block).strip()
+                    if len(current_block) >= 2 and len(block_text) > 30:
+                        code_blocks.append((file_path or "(from code section)", block_text))
+                    current_block = []
+                    file_path = ""
+        if current_block:
+            block_text = '\n'.join(current_block).strip()
+            if len(current_block) >= 2 and len(block_text) > 30:
+                code_blocks.append((file_path or "(from code section)", block_text))
+        # Only create findings for these code blocks
         for file_path, code_snippet in code_blocks:
-            if code_snippet.strip():
-                finding_id = str(uuid.uuid4())
-                findings.append({
-                    'finding_id': finding_id,
-                    'username': username,
-                    'conversation_id': conversation_id,
-                    'vuln_name': 'Extracted from PDF',
-                    'severity': 'Medium',
-                    'file_path': file_path,
-                    'line': '',
-                    'code_snippet': code_snippet,
-                    'status': 'unresolved',
-                    'report_filename': file.filename,
-                    'created_at': datetime.utcnow().isoformat(),
-                    'type': 'pdf-extracted'
-                })
-        # Fallback to previous logic if still no findings
+            code_snippet_stripped = code_snippet.strip()
+            if code_snippet_stripped in existing_snippets:
+                continue  # Skip duplicate
+            existing_snippets.add(code_snippet_stripped)
+            finding_id = str(uuid.uuid4())
+            lines = code_snippet_stripped.split('\n')
+            findings.append({
+                'finding_id': finding_id,
+                'username': username,
+                'conversation_id': conversation_id,
+                'vuln_name': 'Extracted from PDF',
+                'severity': 'Medium',
+                'file_path': file_path,
+                'line': lines[0].split(' ')[0] if lines and lines[0].strip().split(' ')[0].isdigit() else '',
+                'code_snippet': code_snippet_stripped,
+                'status': 'unresolved',
+                'report_filename': file.filename,
+                'created_at': datetime.utcnow().isoformat(),
+                'type': 'pdf-extracted'
+            })
+        
+        # Fallback to previous vulnerability block-based logic if still no findings
         if not findings:
             vuln_pattern = re.compile(r'(Vulnerability(?: Name)?:\s*.+?)(?=Vulnerability(?: Name)?:|$)', re.DOTALL)
             vuln_blocks = vuln_pattern.findall(pdf_text)
@@ -1360,7 +1366,8 @@ def upload_scan_report():
                     else:
                         code_snippet = after_snippet.strip()
                     code_snippet = re.sub(r'\n{3,}', '\n\n', code_snippet).strip()
-                if vuln_name and code_snippet:
+                if vuln_name and code_snippet and code_snippet not in existing_snippets:
+                    existing_snippets.add(code_snippet)
                     finding_id = str(uuid.uuid4())
                     findings.append({
                         'finding_id': finding_id,
@@ -1399,26 +1406,28 @@ def upload_scan_report():
     findings = []
     for query in report_json.get('results', []):
         for finding in query.get('vulnerabilities', []):
-            finding_id = str(uuid.uuid4())
-            code_snippet = finding.get('codeSnippet', '')
-            file_path = finding.get('fileName', '')
-            line = finding.get('line', '')
-            vuln_name = query.get('queryName', 'Unknown')
-            severity = finding.get('severity', 'Medium')
-            findings.append({
-                'finding_id': finding_id,
-                'username': username,
-                'conversation_id': conversation_id,
-                'vuln_name': vuln_name,
-                'severity': severity,
-                'file_path': file_path,
-                'line': line,
-                'code_snippet': code_snippet,
-                'status': 'unresolved',
-                'report_filename': file.filename,
-                'created_at': datetime.utcnow().isoformat(),
-                'type': 'json'
-            })
+            code_snippet = finding.get('codeSnippet', '').strip()
+            if code_snippet and code_snippet not in existing_snippets:
+                existing_snippets.add(code_snippet)
+                finding_id = str(uuid.uuid4())
+                file_path = finding.get('fileName', '')
+                line = finding.get('line', '')
+                vuln_name = query.get('queryName', 'Unknown')
+                severity = finding.get('severity', 'Medium')
+                findings.append({
+                    'finding_id': finding_id,
+                    'username': username,
+                    'conversation_id': conversation_id,
+                    'vuln_name': vuln_name,
+                    'severity': severity,
+                    'file_path': file_path,
+                    'line': line,
+                    'code_snippet': code_snippet,
+                    'status': 'unresolved',
+                    'report_filename': file.filename,
+                    'created_at': datetime.utcnow().isoformat(),
+                    'type': 'json'
+                })
     if findings:
         scan_findings_col.insert_many(findings)
     # Return latest findings for this conversation
@@ -1497,7 +1506,17 @@ def explain_scan_finding(finding_id):
     vuln_name = finding.get('vuln_name', 'Vulnerability')
     file_path = finding.get('file_path', '')
     # Use LLM or template for explanation
-    prompt = f"Explain the vulnerability and impact for the following code snippet from {file_path} (type: {vuln_name}):\n\n```\n{code}\n```\n\nExplanation (in markdown, use bullet points if needed):"
+    prompt = (
+        f"You are a senior application security engineer reviewing a scan finding. "
+        f"Provide a concise, actionable explanation of the vulnerability and its impact for the following code snippet. "
+        f"Start with a one-sentence summary, then use bullet points for details. "
+        f"If possible, include practical remediation advice. Format your answer in markdown.\n\n"
+        f"**Finding Type:** {vuln_name}\n"
+        f"**File:** {file_path}\n"
+        f"**Code Snippet:**\n"
+        f"```\n{code}\n```\n\n"
+        f"**Explanation:**\n"
+    )
     try:
         explanation = generate_response_with_ollama(prompt, max_tokens=600)
         # Ensure markdown/code block formatting
@@ -1520,7 +1539,17 @@ def patch_scan_finding(finding_id):
     vuln_name = finding.get('vuln_name', 'Vulnerability')
     file_path = finding.get('file_path', '')
     # Use LLM or template for patch
-    prompt = f"Suggest a secure patch for the following code snippet from {file_path} (type: {vuln_name}). Output the patched code in a code block, then a brief explanation in markdown.\n\n```\n{code}\n```\n\nPatch:"
+    prompt = (
+        f"You are a senior application security engineer. "
+        f"Suggest a secure patch for the following code snippet. "
+        f"Start with a one-sentence summary of the fix, then output the patched code in a code block, followed by a brief explanation in markdown. "
+        f"If possible, explain why the patch is secure and reference best practices.\n\n"
+        f"**Finding Type:** {vuln_name}\n"
+        f"**File:** {file_path}\n"
+        f"**Original Code:**\n"
+        f"```\n{code}\n```\n\n"
+        f"**Patch:**\n"
+    )
     try:
         patch = generate_response_with_ollama(prompt, max_tokens=600)
         # Ensure markdown/code block formatting
@@ -1531,6 +1560,7 @@ def patch_scan_finding(finding_id):
     return jsonify({'patch': patch})
 
 # ============================================================================
+
 # JWT authentication decorator and code block detector must be defined before any route uses them
 
 def token_required(f):

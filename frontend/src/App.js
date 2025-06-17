@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import ReactMarkdown from 'react-markdown';
-import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate, Navigate } from 'react-router-dom';
 import './App.css';
 import ScanReportReview from './ScanReportReview';
 
@@ -24,13 +24,12 @@ function getValidConversationId(selectedConversation, setSelectedConversation) {
   return newId;
 }
 
-const App = ({ token, setToken, selectedConversation, setSelectedConversation }) => {
+const App = ({ token, setToken, selectedConversation, setSelectedConversation, isLoggedIn, setIsLoggedIn, username, setUsername }) => {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [showReactions, setShowReactions] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loginForm, setLoginForm] = useState({ username: '', password: '' });
   const [loginError, setLoginError] = useState('');
   const [showRegister, setShowRegister] = useState(false);
@@ -44,7 +43,6 @@ const App = ({ token, setToken, selectedConversation, setSelectedConversation })
   const [geminiApiKey, setGeminiApiKey] = useState(() => localStorage.getItem('geminiApiKey') || '');
   const [showGeminiKeyInput, setShowGeminiKeyInput] = useState(false);
   const [showProfileCard, setShowProfileCard] = useState(false);
-  const [username, setUsername] = useState("");
   const messagesEndRef = useRef(null);
   const textareaRef = useRef(null);
   const inputMenuRef = useRef(null);
@@ -1296,6 +1294,7 @@ const App = ({ token, setToken, selectedConversation, setSelectedConversation })
                       setUsername("");
                       localStorage.removeItem('geminiApiKey');
                       localStorage.removeItem("username");
+                      localStorage.removeItem("token");
                       setShowProfileCard(false);
                     }}
                     style={{
@@ -1642,9 +1641,6 @@ const App = ({ token, setToken, selectedConversation, setSelectedConversation })
                           color: '#4fd1c5',
                           fontWeight: 600,
                           fontSize: 15,
-                          color: '#4fd1c5',
-                          fontWeight: 600,
-                          fontSize: 15,
                           padding: '10px 18px',
                           textAlign: 'left',
                           cursor: 'pointer',
@@ -1764,6 +1760,11 @@ const App = ({ token, setToken, selectedConversation, setSelectedConversation })
   );
 };
 
+// PrivateRoute wrapper for protected routes
+const PrivateRoute = ({ isLoggedIn, children }) => {
+  return isLoggedIn ? children : <Navigate to="/" replace />;
+};
+
 // Wrap App in Router and add route for ScanReportReview
 const AppWithRouter = () => {
   // Use state lifting to share auth and conversation context
@@ -1775,6 +1776,8 @@ const AppWithRouter = () => {
     localStorage.setItem('selectedConversation', newId);
     return newId;
   });
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [username, setUsername] = useState("");
   // Keep localStorage in sync
   React.useEffect(() => {
     if (!selectedConversation || selectedConversation === 'None') {
@@ -1785,11 +1788,30 @@ const AppWithRouter = () => {
       localStorage.setItem('selectedConversation', selectedConversation);
     }
   }, [selectedConversation]);
+  // Restore session from localStorage on initial load
+  useEffect(() => {
+    const storedToken = localStorage.getItem('token');
+    const storedUsername = localStorage.getItem('username');
+    // Only restore session if token exists and is not undefined/empty
+    if (storedToken && storedToken !== 'undefined' && storedToken !== '') {
+      setToken(storedToken);
+      setIsLoggedIn(true);
+      if (storedUsername) setUsername(storedUsername);
+    } else {
+      setIsLoggedIn(false);
+      setToken('');
+      setUsername("");
+    }
+  }, []);
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<App token={token} setToken={setToken} selectedConversation={selectedConversation} setSelectedConversation={setSelectedConversation} />} />
-        <Route path="/scan-report-review" element={<ScanReportReview token={token} selectedConversation={selectedConversation} setSelectedConversation={setSelectedConversation} />} />
+        <Route path="/" element={<App token={token} setToken={setToken} selectedConversation={selectedConversation} setSelectedConversation={setSelectedConversation} isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} username={username} setUsername={setUsername} />} />
+        <Route path="/scan-report-review" element={
+          <PrivateRoute isLoggedIn={isLoggedIn}>
+            <ScanReportReview token={token} selectedConversation={selectedConversation} setSelectedConversation={setSelectedConversation} />
+          </PrivateRoute>
+        } />
       </Routes>
     </Router>
   );
