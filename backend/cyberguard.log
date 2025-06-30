@@ -13427,3 +13427,384 @@ Response (reference the Gemini Insight above):
 2025-06-17 14:24:41,790 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
 2025-06-17 14:24:42,181 - WARNING -  * Debugger is active!
 2025-06-17 14:24:42,187 - INFO -  * Debugger PIN: 122-842-223
+2025-06-17 17:04:29,472 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-17 17:04:29,612 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-17 17:04:29,838 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:9000
+ * Running on http://10.50.50.161:9000
+2025-06-17 17:04:29,840 - INFO - [33mPress CTRL+C to quit[0m
+2025-06-17 17:04:29,867 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-17 17:05:02,114 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-17 17:05:02,181 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-17 17:05:02,780 - WARNING -  * Debugger is active!
+2025-06-17 17:05:02,794 - INFO -  * Debugger PIN: 122-842-223
+2025-06-17 17:05:02,858 - INFO - 127.0.0.1 - - [17/Jun/2025 17:05:02] "OPTIONS /scan_findings?conversation_id=cf280981-234f-41ce-a8d0-38fb683a47bd HTTP/1.1" 200 -
+2025-06-17 17:05:02,868 - INFO - 127.0.0.1 - - [17/Jun/2025 17:05:02] "OPTIONS /scan_findings?conversation_id=cf280981-234f-41ce-a8d0-38fb683a47bd HTTP/1.1" 200 -
+2025-06-17 17:05:03,228 - INFO - 127.0.0.1 - - [17/Jun/2025 17:05:03] "GET /scan_findings?conversation_id=cf280981-234f-41ce-a8d0-38fb683a47bd HTTP/1.1" 200 -
+2025-06-17 17:05:03,447 - INFO - 127.0.0.1 - - [17/Jun/2025 17:05:03] "GET /scan_findings?conversation_id=cf280981-234f-41ce-a8d0-38fb683a47bd HTTP/1.1" 200 -
+2025-06-17 17:05:29,335 - INFO - 127.0.0.1 - - [17/Jun/2025 17:05:29] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-17 17:05:29,411 - INFO - 127.0.0.1 - - [17/Jun/2025 17:05:29] "GET /chat_history HTTP/1.1" 200 -
+2025-06-17 17:05:29,652 - INFO - 127.0.0.1 - - [17/Jun/2025 17:05:29] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-17 17:05:29,662 - INFO - 127.0.0.1 - - [17/Jun/2025 17:05:29] "OPTIONS /chat_history?conversation_id=cf280981-234f-41ce-a8d0-38fb683a47bd HTTP/1.1" 200 -
+2025-06-17 17:05:29,670 - INFO - 127.0.0.1 - - [17/Jun/2025 17:05:29] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-17 17:05:29,683 - INFO - 127.0.0.1 - - [17/Jun/2025 17:05:29] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-17 17:05:29,687 - INFO - 127.0.0.1 - - [17/Jun/2025 17:05:29] "OPTIONS /chat_history?conversation_id=cf280981-234f-41ce-a8d0-38fb683a47bd HTTP/1.1" 200 -
+2025-06-17 17:05:30,039 - INFO - 127.0.0.1 - - [17/Jun/2025 17:05:30] "GET /chat_history HTTP/1.1" 200 -
+2025-06-17 17:05:30,040 - INFO - 127.0.0.1 - - [17/Jun/2025 17:05:30] "GET /chat_history?conversation_id=cf280981-234f-41ce-a8d0-38fb683a47bd HTTP/1.1" 200 -
+2025-06-17 17:05:30,077 - INFO - 127.0.0.1 - - [17/Jun/2025 17:05:30] "GET /conversations HTTP/1.1" 200 -
+2025-06-17 17:05:30,244 - INFO - 127.0.0.1 - - [17/Jun/2025 17:05:30] "GET /chat_history?conversation_id=cf280981-234f-41ce-a8d0-38fb683a47bd HTTP/1.1" 200 -
+2025-06-17 17:05:30,380 - INFO - 127.0.0.1 - - [17/Jun/2025 17:05:30] "GET /conversations HTTP/1.1" 200 -
+2025-06-17 17:05:51,247 - INFO - 127.0.0.1 - - [17/Jun/2025 17:05:51] "OPTIONS /scan_finding/fd604acb-694c-4b5d-87e9-8f256ae0492f/explain HTTP/1.1" 200 -
+2025-06-17 17:06:13,410 - INFO - 127.0.0.1 - - [17/Jun/2025 17:06:13] "POST /scan_finding/fd604acb-694c-4b5d-87e9-8f256ae0492f/explain HTTP/1.1" 200 -
+2025-06-17 17:06:42,445 - INFO - 127.0.0.1 - - [17/Jun/2025 17:06:42] "OPTIONS /scan_finding/fd604acb-694c-4b5d-87e9-8f256ae0492f/patch HTTP/1.1" 200 -
+2025-06-17 17:06:54,096 - INFO - 127.0.0.1 - - [17/Jun/2025 17:06:54] "POST /scan_finding/fd604acb-694c-4b5d-87e9-8f256ae0492f/patch HTTP/1.1" 200 -
+2025-06-17 17:08:34,490 - INFO - 127.0.0.1 - - [17/Jun/2025 17:08:34] "OPTIONS /chat_history?conversation_id=cbdfdc2d-83e3-40ac-acf0-411e27e5d36a HTTP/1.1" 200 -
+2025-06-17 17:08:34,806 - INFO - 127.0.0.1 - - [17/Jun/2025 17:08:34] "GET /chat_history?conversation_id=cbdfdc2d-83e3-40ac-acf0-411e27e5d36a HTTP/1.1" 200 -
+2025-06-17 17:11:01,817 - INFO - 127.0.0.1 - - [17/Jun/2025 17:11:01] "OPTIONS /chat_history?conversation_id=b5d10945-3fcd-4322-b813-21b1838f384c HTTP/1.1" 200 -
+2025-06-17 17:11:02,156 - INFO - 127.0.0.1 - - [17/Jun/2025 17:11:02] "GET /chat_history?conversation_id=b5d10945-3fcd-4322-b813-21b1838f384c HTTP/1.1" 200 -
+2025-06-17 17:11:27,035 - INFO - 127.0.0.1 - - [17/Jun/2025 17:11:27] "OPTIONS /chat_history?conversation_id=ccebb752-40a5-41c5-b2e4-054d750057c4 HTTP/1.1" 200 -
+2025-06-17 17:11:27,108 - INFO - 127.0.0.1 - - [17/Jun/2025 17:11:27] "GET /chat_history?conversation_id=ccebb752-40a5-41c5-b2e4-054d750057c4 HTTP/1.1" 200 -
+2025-06-17 17:21:43,528 - INFO - 127.0.0.1 - - [17/Jun/2025 17:21:43] "OPTIONS /stream_chat HTTP/1.1" 200 -
+2025-06-17 17:21:43,848 - INFO - Processing query: file upload...
+2025-06-17 17:21:43,849 - INFO - [PROMPT] Building security prompt for query type: general
+2025-06-17 17:21:45,905 - INFO - [GEMINI] Starting API call #1 for query: file upload
+2025-06-17 17:21:52,323 - INFO - [GEMINI] Using backend/server Gemini API key for this request.
+2025-06-17 17:21:52,325 - ERROR - [GEMINI] GEMINI_API_KEY not found in environment variables or user input.
+2025-06-17 17:21:52,326 - INFO - [PROMPT] Full prompt sent to Llama 3 via Ollama:
+==============================
+You are CyberGuard AI, an expert cybersecurity assistant.
+
+---
+
+**IMPORTANT: The following Gemini Insight is your PRIMARY and AUTHORITATIVE source. You MUST use it as the main basis for your answer. Directly reference and cite it in your response.**
+
+GEMINI INSIGHT (copy and use this information):
+Gemini Insight: [ERROR] Gemini API key is not configured on the server or provided by user. Real-time context could not be fetched. Please provide a valid Gemini API key.
+
+---
+
+Always provide:
+- Clear explanations of security concepts
+- Practical code examples (vulnerable and secure versions)
+- Specific mitigation strategies
+- Best practices and recommendations
+
+**Make your answer unique and tailored to the user's query. Avoid generic or repetitive responses. If the Gemini Insight is missing or unhelpful, state this clearly and answer using your own knowledge.**
+
+**If the user asks for patterns, enumerate them with explanations and code. If the user asks for a summary, be concise. If the user asks for a deep dive, provide technical depth.**
+
+User Query: file upload
+
+Response (reference the Gemini Insight above):
+==============================
+2025-06-17 17:22:27,037 - INFO - 127.0.0.1 - - [17/Jun/2025 17:22:27] "POST /stream_chat HTTP/1.1" 200 -
+2025-06-17 17:22:49,053 - INFO -  * Detected change in 'C:\\Program Files (x86)\\Eclipse\\Sumo\\tools\\osmWebWizard.py', reloading
+2025-06-17 17:22:56,133 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-17 17:23:50,966 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-17 17:23:51,042 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-17 17:23:51,541 - WARNING -  * Debugger is active!
+2025-06-17 17:23:51,549 - INFO -  * Debugger PIN: 122-842-223
+2025-06-18 10:37:47,667 - INFO -  * Detected change in 'C:\\Program Files (x86)\\Eclipse\\Sumo\\tools\\osmWebWizard.py', reloading
+2025-06-18 10:38:09,668 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-18 10:38:36,219 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-18 10:38:36,294 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-18 10:38:36,631 - WARNING -  * Debugger is active!
+2025-06-18 10:38:36,634 - INFO -  * Debugger PIN: 122-842-223
+2025-06-18 10:40:52,376 - INFO -  * Detected change in 'C:\\Users\\Tej Bachhav\\miniconda3\\envs\\tej\\Lib\\site-packages\\librosa\\core\\constantq.py', reloading
+2025-06-18 10:40:52,767 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\3.py', reloading
+2025-06-18 10:40:52,770 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\3_fixed.py', reloading
+2025-06-18 10:40:52,773 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\2.py', reloading
+2025-06-18 10:40:52,777 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app.py', reloading
+2025-06-18 10:40:52,986 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\1.py', reloading
+2025-06-18 10:40:52,988 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\3_enhanced.py', reloading
+2025-06-18 10:40:52,993 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\cyberguard_server.py', reloading
+2025-06-18 10:40:56,099 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-18 10:41:28,426 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-18 10:41:28,596 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-18 10:41:29,047 - WARNING -  * Debugger is active!
+2025-06-18 10:41:29,053 - INFO -  * Debugger PIN: 122-842-223
+2025-06-18 11:37:47,737 - INFO -  * Detected change in 'C:\\Program Files (x86)\\Eclipse\\Sumo\\tools\\osmWebWizard.py', reloading
+2025-06-18 11:37:57,205 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-18 11:38:53,848 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-18 11:38:53,955 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-18 11:38:54,763 - WARNING -  * Debugger is active!
+2025-06-18 11:38:54,779 - INFO -  * Debugger PIN: 122-842-223
+2025-06-18 12:03:49,621 - INFO -  * Detected change in 'C:\\Users\\Tej Bachhav\\miniconda3\\envs\\tej\\Lib\\site-packages\\librosa\\core\\constantq.py', reloading
+2025-06-18 12:03:49,815 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\3.py', reloading
+2025-06-18 12:03:49,819 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\3_fixed.py', reloading
+2025-06-18 12:03:49,823 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\2.py', reloading
+2025-06-18 12:03:49,824 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app.py', reloading
+2025-06-18 12:03:49,981 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\1.py', reloading
+2025-06-18 12:03:49,983 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\3_enhanced.py', reloading
+2025-06-18 12:03:49,987 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\cyberguard_server.py', reloading
+2025-06-18 12:03:49,988 - INFO -  * Detected change in 'C:\\DOCUMENTS\\GITHUB\\EMERGENT\\backend\\app1.py', reloading
+2025-06-18 12:03:59,717 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-18 12:04:49,006 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-18 12:04:49,089 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-18 12:04:49,816 - WARNING -  * Debugger is active!
+2025-06-18 12:04:49,829 - INFO -  * Debugger PIN: 122-842-223
+2025-06-23 15:47:16,002 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-23 15:47:16,207 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-23 15:47:17,642 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:9000
+ * Running on http://10.50.50.161:9000
+2025-06-23 15:47:17,643 - INFO - [33mPress CTRL+C to quit[0m
+2025-06-23 15:47:17,657 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-23 15:47:40,060 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-23 15:47:40,123 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-23 15:47:40,420 - WARNING -  * Debugger is active!
+2025-06-23 15:47:40,425 - INFO -  * Debugger PIN: 122-842-223
+2025-06-23 15:47:52,951 - INFO - 127.0.0.1 - - [23/Jun/2025 15:47:52] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-23 15:47:52,952 - INFO - 127.0.0.1 - - [23/Jun/2025 15:47:52] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-23 15:47:52,974 - INFO - 127.0.0.1 - - [23/Jun/2025 15:47:52] "OPTIONS /chat_history?conversation_id=ccebb752-40a5-41c5-b2e4-054d750057c4 HTTP/1.1" 200 -
+2025-06-23 15:47:53,309 - INFO - 127.0.0.1 - - [23/Jun/2025 15:47:53] "[31m[1mGET /conversations HTTP/1.1[0m" 401 -
+2025-06-23 15:47:53,311 - INFO - 127.0.0.1 - - [23/Jun/2025 15:47:53] "[31m[1mGET /chat_history HTTP/1.1[0m" 401 -
+2025-06-23 15:47:53,314 - INFO - 127.0.0.1 - - [23/Jun/2025 15:47:53] "[31m[1mGET /chat_history?conversation_id=ccebb752-40a5-41c5-b2e4-054d750057c4 HTTP/1.1[0m" 401 -
+2025-06-23 15:48:37,183 - INFO - 127.0.0.1 - - [23/Jun/2025 15:48:37] "OPTIONS /login HTTP/1.1" 200 -
+2025-06-23 15:48:37,648 - INFO - 127.0.0.1 - - [23/Jun/2025 15:48:37] "POST /login HTTP/1.1" 200 -
+2025-06-23 15:48:37,659 - INFO - 127.0.0.1 - - [23/Jun/2025 15:48:37] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-23 15:48:37,968 - INFO - 127.0.0.1 - - [23/Jun/2025 15:48:37] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-23 15:48:37,972 - INFO - 127.0.0.1 - - [23/Jun/2025 15:48:37] "OPTIONS /chat_history?conversation_id=8579f3d5-ecbe-4cda-986a-841fa7fa9a11 HTTP/1.1" 200 -
+2025-06-23 15:48:38,018 - INFO - 127.0.0.1 - - [23/Jun/2025 15:48:38] "GET /chat_history HTTP/1.1" 200 -
+2025-06-23 15:48:38,295 - INFO - 127.0.0.1 - - [23/Jun/2025 15:48:38] "GET /conversations HTTP/1.1" 200 -
+2025-06-23 15:48:38,304 - INFO - 127.0.0.1 - - [23/Jun/2025 15:48:38] "GET /chat_history?conversation_id=8579f3d5-ecbe-4cda-986a-841fa7fa9a11 HTTP/1.1" 200 -
+2025-06-23 15:48:42,952 - INFO - 127.0.0.1 - - [23/Jun/2025 15:48:42] "OPTIONS /scan_findings?conversation_id=8579f3d5-ecbe-4cda-986a-841fa7fa9a11 HTTP/1.1" 200 -
+2025-06-23 15:48:42,956 - INFO - 127.0.0.1 - - [23/Jun/2025 15:48:42] "OPTIONS /scan_findings?conversation_id=8579f3d5-ecbe-4cda-986a-841fa7fa9a11 HTTP/1.1" 200 -
+2025-06-23 15:48:42,976 - INFO - 127.0.0.1 - - [23/Jun/2025 15:48:42] "GET /scan_findings?conversation_id=8579f3d5-ecbe-4cda-986a-841fa7fa9a11 HTTP/1.1" 200 -
+2025-06-23 15:48:43,296 - INFO - 127.0.0.1 - - [23/Jun/2025 15:48:43] "GET /scan_findings?conversation_id=8579f3d5-ecbe-4cda-986a-841fa7fa9a11 HTTP/1.1" 200 -
+2025-06-23 15:48:56,650 - INFO - 127.0.0.1 - - [23/Jun/2025 15:48:56] "OPTIONS /upload_scan_report HTTP/1.1" 200 -
+2025-06-23 15:48:56,774 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:56,780 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:56,792 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:56,798 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:56,806 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:56,814 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:56,827 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:56,832 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:56,840 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:56,848 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:56,854 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:56,863 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:56,869 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:56,880 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:56,888 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:56,897 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:56,905 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:56,913 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:56,923 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:56,936 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:56,946 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:56,960 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:56,966 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:56,974 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:56,980 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:56,986 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:56,992 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:56,997 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,004 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,008 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,013 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,015 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,018 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,022 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,031 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,039 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,050 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,056 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,063 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,072 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,084 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,093 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,103 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,110 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,117 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,121 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,127 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,132 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,138 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,142 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,150 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,154 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,161 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,165 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,172 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,181 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,196 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,212 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,243 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,251 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,262 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,270 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,278 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,282 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,288 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,293 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,296 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,304 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,311 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,324 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,328 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:48:57,330 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,256 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,257 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,261 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,262 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,262 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,263 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,263 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,263 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,263 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,263 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,264 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,264 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,264 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,264 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,264 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,265 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,265 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,265 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,265 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,266 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,266 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,266 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,266 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,266 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,266 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,267 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,267 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,267 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,267 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,268 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,268 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,268 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,268 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,268 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,269 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,269 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,269 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,270 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,270 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,270 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,270 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,271 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,271 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,271 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,271 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,271 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,272 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,272 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,272 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,272 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,272 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,272 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,273 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,273 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,273 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,273 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,273 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,273 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,273 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,273 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,273 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,274 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,274 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,274 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,274 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,275 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,275 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,276 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,276 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,276 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,276 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,277 - WARNING - CropBox missing from /Page, defaulting to MediaBox
+2025-06-23 15:49:31,321 - INFO - 127.0.0.1 - - [23/Jun/2025 15:49:31] "POST /upload_scan_report HTTP/1.1" 200 -
+2025-06-23 15:50:29,308 - INFO - 127.0.0.1 - - [23/Jun/2025 15:50:29] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-23 15:50:29,310 - INFO - 127.0.0.1 - - [23/Jun/2025 15:50:29] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-23 15:50:29,314 - INFO - 127.0.0.1 - - [23/Jun/2025 15:50:29] "OPTIONS /chat_history?conversation_id=8579f3d5-ecbe-4cda-986a-841fa7fa9a11 HTTP/1.1" 200 -
+2025-06-23 15:50:29,631 - INFO - 127.0.0.1 - - [23/Jun/2025 15:50:29] "GET /chat_history HTTP/1.1" 200 -
+2025-06-23 15:50:29,634 - INFO - 127.0.0.1 - - [23/Jun/2025 15:50:29] "GET /conversations HTTP/1.1" 200 -
+2025-06-23 15:50:29,638 - INFO - 127.0.0.1 - - [23/Jun/2025 15:50:29] "GET /chat_history?conversation_id=8579f3d5-ecbe-4cda-986a-841fa7fa9a11 HTTP/1.1" 200 -
+2025-06-23 15:53:21,954 - INFO - 127.0.0.1 - - [23/Jun/2025 15:53:21] "OPTIONS /scan_finding/4e5f8b20-659f-4eaf-9a4e-3511fcbaeecc/explain HTTP/1.1" 200 -
+2025-06-23 15:53:47,154 - INFO - 127.0.0.1 - - [23/Jun/2025 15:53:47] "POST /scan_finding/4e5f8b20-659f-4eaf-9a4e-3511fcbaeecc/explain HTTP/1.1" 200 -
+2025-06-23 16:24:22,357 - INFO -  * Detected change in 'C:\\Program Files (x86)\\Eclipse\\Sumo\\tools\\osmWebWizard.py', reloading
+2025-06-23 16:24:34,477 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-23 16:25:38,752 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-23 16:25:38,824 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-23 16:25:39,341 - WARNING -  * Debugger is active!
+2025-06-23 16:25:39,353 - INFO -  * Debugger PIN: 122-842-223
+2025-06-23 16:39:19,451 - INFO - 127.0.0.1 - - [23/Jun/2025 16:39:19] "OPTIONS /login HTTP/1.1" 200 -
+2025-06-23 16:39:19,930 - INFO - 127.0.0.1 - - [23/Jun/2025 16:39:19] "POST /login HTTP/1.1" 200 -
+2025-06-23 16:39:20,000 - INFO - 127.0.0.1 - - [23/Jun/2025 16:39:20] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-23 16:39:20,309 - INFO - 127.0.0.1 - - [23/Jun/2025 16:39:20] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-23 16:39:20,317 - INFO - 127.0.0.1 - - [23/Jun/2025 16:39:20] "OPTIONS /chat_history?conversation_id=ca7abe98-91cb-4736-9595-edb0cbbc1ad8 HTTP/1.1" 200 -
+2025-06-23 16:39:20,402 - INFO - 127.0.0.1 - - [23/Jun/2025 16:39:20] "GET /chat_history HTTP/1.1" 200 -
+2025-06-23 16:39:20,611 - INFO - 127.0.0.1 - - [23/Jun/2025 16:39:20] "GET /conversations HTTP/1.1" 200 -
+2025-06-23 16:39:20,639 - INFO - 127.0.0.1 - - [23/Jun/2025 16:39:20] "GET /chat_history?conversation_id=ca7abe98-91cb-4736-9595-edb0cbbc1ad8 HTTP/1.1" 200 -
+2025-06-23 16:39:26,043 - INFO - 127.0.0.1 - - [23/Jun/2025 16:39:26] "OPTIONS /chat_history?conversation_id=cbdfdc2d-83e3-40ac-acf0-411e27e5d36a HTTP/1.1" 200 -
+2025-06-23 16:39:26,078 - INFO - 127.0.0.1 - - [23/Jun/2025 16:39:26] "GET /chat_history?conversation_id=cbdfdc2d-83e3-40ac-acf0-411e27e5d36a HTTP/1.1" 200 -
+2025-06-23 16:40:14,021 - INFO - 127.0.0.1 - - [23/Jun/2025 16:40:14] "OPTIONS /scan_findings?conversation_id=cbdfdc2d-83e3-40ac-acf0-411e27e5d36a HTTP/1.1" 200 -
+2025-06-23 16:40:14,327 - INFO - 127.0.0.1 - - [23/Jun/2025 16:40:14] "OPTIONS /scan_findings?conversation_id=cbdfdc2d-83e3-40ac-acf0-411e27e5d36a HTTP/1.1" 200 -
+2025-06-23 16:40:14,335 - INFO - 127.0.0.1 - - [23/Jun/2025 16:40:14] "GET /scan_findings?conversation_id=cbdfdc2d-83e3-40ac-acf0-411e27e5d36a HTTP/1.1" 200 -
+2025-06-23 16:40:14,597 - INFO - 127.0.0.1 - - [23/Jun/2025 16:40:14] "GET /scan_findings?conversation_id=cbdfdc2d-83e3-40ac-acf0-411e27e5d36a HTTP/1.1" 200 -
+2025-06-23 16:40:27,543 - INFO - 127.0.0.1 - - [23/Jun/2025 16:40:27] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-23 16:40:27,554 - INFO - 127.0.0.1 - - [23/Jun/2025 16:40:27] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-23 16:40:27,566 - INFO - 127.0.0.1 - - [23/Jun/2025 16:40:27] "OPTIONS /chat_history?conversation_id=cbdfdc2d-83e3-40ac-acf0-411e27e5d36a HTTP/1.1" 200 -
+2025-06-23 16:40:27,580 - INFO - 127.0.0.1 - - [23/Jun/2025 16:40:27] "GET /chat_history HTTP/1.1" 200 -
+2025-06-23 16:40:27,621 - INFO - 127.0.0.1 - - [23/Jun/2025 16:40:27] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-23 16:40:27,629 - INFO - 127.0.0.1 - - [23/Jun/2025 16:40:27] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-23 16:40:27,667 - INFO - 127.0.0.1 - - [23/Jun/2025 16:40:27] "OPTIONS /chat_history?conversation_id=cbdfdc2d-83e3-40ac-acf0-411e27e5d36a HTTP/1.1" 200 -
+2025-06-23 16:40:27,885 - INFO - 127.0.0.1 - - [23/Jun/2025 16:40:27] "GET /conversations HTTP/1.1" 200 -
+2025-06-23 16:40:27,893 - INFO - 127.0.0.1 - - [23/Jun/2025 16:40:27] "GET /chat_history?conversation_id=cbdfdc2d-83e3-40ac-acf0-411e27e5d36a HTTP/1.1" 200 -
+2025-06-23 16:40:27,948 - INFO - 127.0.0.1 - - [23/Jun/2025 16:40:27] "GET /chat_history HTTP/1.1" 200 -
+2025-06-23 16:40:28,216 - INFO - 127.0.0.1 - - [23/Jun/2025 16:40:28] "GET /conversations HTTP/1.1" 200 -
+2025-06-23 16:40:28,231 - INFO - 127.0.0.1 - - [23/Jun/2025 16:40:28] "GET /chat_history?conversation_id=cbdfdc2d-83e3-40ac-acf0-411e27e5d36a HTTP/1.1" 200 -
+2025-06-23 16:41:08,109 - INFO - 127.0.0.1 - - [23/Jun/2025 16:41:08] "OPTIONS /chat_history?conversation_id=cf280981-234f-41ce-a8d0-38fb683a47bd HTTP/1.1" 200 -
+2025-06-23 16:41:08,432 - INFO - 127.0.0.1 - - [23/Jun/2025 16:41:08] "GET /chat_history?conversation_id=cf280981-234f-41ce-a8d0-38fb683a47bd HTTP/1.1" 200 -
+2025-06-23 16:41:17,092 - INFO - 127.0.0.1 - - [23/Jun/2025 16:41:17] "OPTIONS /chat_history?conversation_id=9c815647-cf25-450d-b11a-e12199b49d40 HTTP/1.1" 200 -
+2025-06-23 16:41:17,105 - INFO - 127.0.0.1 - - [23/Jun/2025 16:41:17] "GET /chat_history?conversation_id=9c815647-cf25-450d-b11a-e12199b49d40 HTTP/1.1" 200 -
+2025-06-23 16:43:35,066 - INFO - 127.0.0.1 - - [23/Jun/2025 16:43:35] "OPTIONS /chat_history?conversation_id=ce6fec84-6b00-4ee0-8264-4a945c3bd773 HTTP/1.1" 200 -
+2025-06-23 16:43:35,403 - INFO - 127.0.0.1 - - [23/Jun/2025 16:43:35] "GET /chat_history?conversation_id=ce6fec84-6b00-4ee0-8264-4a945c3bd773 HTTP/1.1" 200 -
+2025-06-23 16:43:51,157 - INFO - 127.0.0.1 - - [23/Jun/2025 16:43:51] "OPTIONS /chat_history?conversation_id=8b0c44ff-7558-4258-bf7e-cb4c95cd70af HTTP/1.1" 200 -
+2025-06-23 16:43:51,174 - INFO - 127.0.0.1 - - [23/Jun/2025 16:43:51] "GET /chat_history?conversation_id=8b0c44ff-7558-4258-bf7e-cb4c95cd70af HTTP/1.1" 200 -
+2025-06-23 16:44:09,900 - INFO - 127.0.0.1 - - [23/Jun/2025 16:44:09] "OPTIONS /chat_history?conversation_id=f9072ca8-0b29-4ac2-b2d3-27011e225487 HTTP/1.1" 200 -
+2025-06-23 16:44:10,212 - INFO - 127.0.0.1 - - [23/Jun/2025 16:44:10] "GET /chat_history?conversation_id=f9072ca8-0b29-4ac2-b2d3-27011e225487 HTTP/1.1" 200 -
+2025-06-23 16:44:31,058 - INFO - 127.0.0.1 - - [23/Jun/2025 16:44:31] "OPTIONS /chat_history?conversation_id=2cee410b-512d-45ba-b397-486de674589d HTTP/1.1" 200 -
+2025-06-23 16:44:31,066 - INFO - 127.0.0.1 - - [23/Jun/2025 16:44:31] "GET /chat_history?conversation_id=2cee410b-512d-45ba-b397-486de674589d HTTP/1.1" 200 -
+2025-06-23 16:44:48,077 - INFO - 127.0.0.1 - - [23/Jun/2025 16:44:48] "OPTIONS /chat_history?conversation_id=1980f25c-b8b7-4b3e-a3e0-a4fd598a3221 HTTP/1.1" 200 -
+2025-06-23 16:44:48,404 - INFO - 127.0.0.1 - - [23/Jun/2025 16:44:48] "GET /chat_history?conversation_id=1980f25c-b8b7-4b3e-a3e0-a4fd598a3221 HTTP/1.1" 200 -
+2025-06-23 16:45:03,779 - INFO - 127.0.0.1 - - [23/Jun/2025 16:45:03] "OPTIONS /chat_history?conversation_id=49b681e2-9c76-45b4-a842-b9879556b16b HTTP/1.1" 200 -
+2025-06-23 16:45:03,788 - INFO - 127.0.0.1 - - [23/Jun/2025 16:45:03] "GET /chat_history?conversation_id=49b681e2-9c76-45b4-a842-b9879556b16b HTTP/1.1" 200 -
+2025-06-23 16:45:14,592 - INFO - 127.0.0.1 - - [23/Jun/2025 16:45:14] "OPTIONS /chat_history?conversation_id=8b0c44ff-7558-4258-bf7e-cb4c95cd70af HTTP/1.1" 200 -
+2025-06-23 16:45:14,917 - INFO - 127.0.0.1 - - [23/Jun/2025 16:45:14] "GET /chat_history?conversation_id=8b0c44ff-7558-4258-bf7e-cb4c95cd70af HTTP/1.1" 200 -
+2025-06-23 16:45:59,401 - INFO - 127.0.0.1 - - [23/Jun/2025 16:45:59] "OPTIONS /chat_history?conversation_id=f9072ca8-0b29-4ac2-b2d3-27011e225487 HTTP/1.1" 200 -
+2025-06-23 16:45:59,415 - INFO - 127.0.0.1 - - [23/Jun/2025 16:45:59] "GET /chat_history?conversation_id=f9072ca8-0b29-4ac2-b2d3-27011e225487 HTTP/1.1" 200 -
+2025-06-23 16:46:05,644 - INFO - 127.0.0.1 - - [23/Jun/2025 16:46:05] "OPTIONS /chat_history?conversation_id=2c0f3ec7-0179-4312-9099-30dcbb9f6048 HTTP/1.1" 200 -
+2025-06-23 16:46:06,012 - INFO - 127.0.0.1 - - [23/Jun/2025 16:46:06] "GET /chat_history?conversation_id=2c0f3ec7-0179-4312-9099-30dcbb9f6048 HTTP/1.1" 200 -
+2025-06-23 16:46:14,708 - INFO - 127.0.0.1 - - [23/Jun/2025 16:46:14] "OPTIONS /chat_history?conversation_id=28536621-bdb6-4c0f-8c0a-39c61ea6fefd HTTP/1.1" 200 -
+2025-06-23 16:46:14,718 - INFO - 127.0.0.1 - - [23/Jun/2025 16:46:14] "GET /chat_history?conversation_id=28536621-bdb6-4c0f-8c0a-39c61ea6fefd HTTP/1.1" 200 -
+2025-06-23 16:51:31,537 - INFO -  * Detected change in 'C:\\Users\\Tej Bachhav\\miniconda3\\envs\\tej\\Lib\\site-packages\\librosa\\core\\constantq.py', reloading
+2025-06-23 16:51:35,693 - INFO -  * Restarting with watchdog (windowsapi)
+2025-06-23 16:52:21,552 - INFO - [GEMINI] Gemini API client initialized successfully
+2025-06-23 16:52:21,687 - INFO - [OLLAMA] Llama 3 via Ollama device: CPU
+2025-06-23 16:52:22,427 - WARNING -  * Debugger is active!
+2025-06-23 16:52:22,451 - INFO -  * Debugger PIN: 122-842-223
+2025-06-23 17:13:57,763 - INFO - 127.0.0.1 - - [23/Jun/2025 17:13:57] "OPTIONS /login HTTP/1.1" 200 -
+2025-06-23 17:13:58,079 - INFO - 127.0.0.1 - - [23/Jun/2025 17:13:58] "POST /login HTTP/1.1" 200 -
+2025-06-23 17:13:58,432 - INFO - 127.0.0.1 - - [23/Jun/2025 17:13:58] "OPTIONS /chat_history HTTP/1.1" 200 -
+2025-06-23 17:13:58,435 - INFO - 127.0.0.1 - - [23/Jun/2025 17:13:58] "OPTIONS /conversations HTTP/1.1" 200 -
+2025-06-23 17:13:58,445 - INFO - 127.0.0.1 - - [23/Jun/2025 17:13:58] "OPTIONS /chat_history?conversation_id=b0c51aac-8cb4-4ae8-bb8a-b9aabcbbab07 HTTP/1.1" 200 -
+2025-06-23 17:13:58,851 - INFO - 127.0.0.1 - - [23/Jun/2025 17:13:58] "GET /chat_history HTTP/1.1" 200 -
+2025-06-23 17:13:58,860 - INFO - 127.0.0.1 - - [23/Jun/2025 17:13:58] "GET /chat_history?conversation_id=b0c51aac-8cb4-4ae8-bb8a-b9aabcbbab07 HTTP/1.1" 200 -
+2025-06-23 17:13:58,990 - INFO - 127.0.0.1 - - [23/Jun/2025 17:13:58] "GET /conversations HTTP/1.1" 200 -
+2025-06-23 17:14:04,387 - INFO - 127.0.0.1 - - [23/Jun/2025 17:14:04] "OPTIONS /chat_history?conversation_id=b5d10945-3fcd-4322-b813-21b1838f384c HTTP/1.1" 200 -
+2025-06-23 17:14:04,398 - INFO - 127.0.0.1 - - [23/Jun/2025 17:14:04] "GET /chat_history?conversation_id=b5d10945-3fcd-4322-b813-21b1838f384c HTTP/1.1" 200 -
+2025-06-23 17:15:38,567 - INFO - 127.0.0.1 - - [23/Jun/2025 17:15:38] "OPTIONS /chat_history?conversation_id=cbdfdc2d-83e3-40ac-acf0-411e27e5d36a HTTP/1.1" 200 -
+2025-06-23 17:15:38,896 - INFO - 127.0.0.1 - - [23/Jun/2025 17:15:38] "GET /chat_history?conversation_id=cbdfdc2d-83e3-40ac-acf0-411e27e5d36a HTTP/1.1" 200 -
+2025-06-23 17:19:57,700 - INFO - 127.0.0.1 - - [23/Jun/2025 17:19:57] "OPTIONS /scan_findings?conversation_id=cbdfdc2d-83e3-40ac-acf0-411e27e5d36a HTTP/1.1" 200 -
+2025-06-23 17:19:57,702 - INFO - 127.0.0.1 - - [23/Jun/2025 17:19:57] "OPTIONS /scan_findings?conversation_id=cbdfdc2d-83e3-40ac-acf0-411e27e5d36a HTTP/1.1" 200 -
+2025-06-23 17:19:58,031 - INFO - 127.0.0.1 - - [23/Jun/2025 17:19:58] "GET /scan_findings?conversation_id=cbdfdc2d-83e3-40ac-acf0-411e27e5d36a HTTP/1.1" 200 -
+2025-06-23 17:19:58,267 - INFO - 127.0.0.1 - - [23/Jun/2025 17:19:58] "GET /scan_findings?conversation_id=cbdfdc2d-83e3-40ac-acf0-411e27e5d36a HTTP/1.1" 200 -
+2025-06-23 17:22:53,209 - INFO - 127.0.0.1 - - [23/Jun/2025 17:22:53] "OPTIONS /scan_finding/e811b011-8b5b-4e93-8023-87383c5384e1/patch HTTP/1.1" 200 -
+2025-06-23 17:23:13,960 - INFO - 127.0.0.1 - - [23/Jun/2025 17:23:13] "POST /scan_finding/e811b011-8b5b-4e93-8023-87383c5384e1/patch HTTP/1.1" 200 -
