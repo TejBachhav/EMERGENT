@@ -852,7 +852,11 @@ const App = ({ token, setToken, selectedConversation, setSelectedConversation, i
             'Authorization': `Bearer ${token}`
           },
           credentials: 'include',
-          body: JSON.stringify({ query: inputMessage, conversation_id }),
+          body: JSON.stringify({ 
+            query: inputMessage, 
+            conversation_id,
+            gemini_api_key: geminiApiKey || undefined 
+          }),
         });
         const data = await response.json();
         // If this was a new conversation, update conversation list and select it

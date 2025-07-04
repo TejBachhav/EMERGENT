@@ -1,9 +1,44 @@
 {
+  "name": "cyberguard-ai",
+  "version": "3.0.0",
+  "description": "Advanced cybersecurity assistant with AI-powered vulnerability analysis",
+  "main": "backend/app1.py",
+  "scripts": {
+    "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
+    "backend": "cd backend && python app1.py",
+    "frontend": "cd frontend && npm start",
+    "install-all": "npm run install-backend && npm run install-frontend",
+    "install-backend": "cd backend && pip install -r requirements_clean.txt",
+    "install-frontend": "cd frontend && npm install",
+    "build": "cd frontend && npm run build",
+    "test": "cd frontend && npm test",
+    "start": "node -e \"console.log('Use npm run dev to start both servers or npm run backend/frontend for individual services')\"",
+    "setup": "npm run install-all && echo 'Setup complete! Run npm run dev to start the application.'"
+  },
+  "keywords": [
+    "cybersecurity",
+    "ai",
+    "vulnerability-scanner",
+    "security-analysis",
+    "fullstack",
+    "react",
+    "flask",
+    "mongodb",
+    "ollama",
+    "gemini"
+  ],
+  "author": "CyberGuard Team",
+  "license": "MIT",
   "devDependencies": {
-    "cross-env": "^7.0.3"
+    "cross-env": "^7.0.3",
+    "concurrently": "^8.2.2"
   },
   "dependencies": {
     "pdfjs-dist": "^5.3.31",
     "react-markdown": "^10.1.0"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
   }
 }

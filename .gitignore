@@ -1,23 +1,61 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# IDE-specific files
 .idea/
-dist
-# dependencies
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# Dependencies
 node_modules/
 /.pnp
 .pnp.js
 .yarn/install-state.gz
-.vscode
-# testing
+
+# Testing
 /coverage
 dump.rdb
-chainlit.md
-.chainlit
-# next.js
+test_result.md
+
+# Build output
+/build
+/dist
 /.next/
 /out/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
 .ipynb_checkpoints/
-# production
-/build
+.env
+
+# Logs and temporary files
+*.log
+logs/
+tmp/
+*.tmp
+*.bak
+*.swp
+*.swo
+cookies.txt
+cyberguard.log
 
 # misc
 .DS_Store
